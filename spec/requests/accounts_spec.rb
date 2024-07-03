@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# optimization has started!
 
 require 'rails_helper'
 
