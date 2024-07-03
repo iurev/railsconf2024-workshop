@@ -1,0 +1,22 @@
+name: Create PR on Optimize Issue
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  create_pr:
+    if: github.event.label.name == 'optimize'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+      - run: |
+          gem install octokit
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+      - run: ruby ai/create_pr.rb ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
