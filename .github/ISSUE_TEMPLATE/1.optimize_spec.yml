@@ -1,0 +1,12 @@
+name: AIptimize!
+description: Please AIptimize my spec!
+labels: [optimize]
+body:
+  - type: input
+    attributes:
+      label: relative path to the spec file
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional requests for AI
