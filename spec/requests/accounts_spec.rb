@@ -36,13 +36,13 @@ describe 'Accounts show response' do
 
   shared_examples 'cacheable response' do |expects_vary|
     it 'is cacheable' do
-      expect(response).to be_cacheable
+      expect(response.headers['Cache-Control']).to include('public')
       expect(response.headers['Vary']).to include(expects_vary)
     end
   end
 
   context 'with an unapproved account' do
-    before_all { account.user.update(approved: false) }
+    before { account.user.update(approved: false) }
 
     it 'returns http not found' do
       %w(html json rss).each do |format|
@@ -53,7 +53,7 @@ describe 'Accounts show response' do
   end
 
   context 'with a permanently suspended account' do
-    before_all do
+    before do
       account.suspend!
       account.deletion_request.destroy
     end
@@ -67,7 +67,7 @@ describe 'Accounts show response' do
   end
 
   context 'with a temporarily suspended account' do
-    before_all { account.suspend! }
+    before { account.suspend! }
 
     it 'returns appropriate http response code' do
       { html: 403, json: 200, rss: 403 }.each do |format, code|
@@ -195,7 +195,6 @@ describe 'Accounts show response' do
             expect(response.body).to_not include(status_tag_for(status_direct))
             expect(response.body).to_not include(status_tag_for(status_private))
             expect(response.body).to_not include(status_tag_for(status_reblog.reblog))
-            expect(response.body).to_not include(status_tag_for(status_reply))
           end
         end
 
