@@ -3,17 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Media' do
-  let_it_be(:user) { Fabricate(:user) }
-  let_it_be(:scopes) { 'write:media' }
-  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:user)    { Fabricate(:user) }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes)  { 'write:media' }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/media/:id' do
     subject do
       get "/api/v1/media/#{media.id}", headers: headers
     end
 
-    let_it_be(:media) { Fabricate(:media_attachment, account: user.account) }
+    let(:media) { Fabricate(:media_attachment, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
@@ -48,7 +48,7 @@ RSpec.describe 'Media' do
     end
 
     context 'when the media belongs to somebody else' do
-      let_it_be(:media) { Fabricate(:media_attachment) }
+      let(:media) { Fabricate(:media_attachment) }
 
       it 'returns http not found' do
         subject
@@ -58,7 +58,7 @@ RSpec.describe 'Media' do
     end
 
     context 'when media is attached to a status' do
-      let_it_be(:media) { Fabricate(:media_attachment, account: user.account, status: Fabricate.build(:status)) }
+      let(:media) { Fabricate(:media_attachment, account: user.account, status: Fabricate(:status)) }
 
       it 'returns http not found' do
         subject
@@ -95,7 +95,7 @@ RSpec.describe 'Media' do
       let(:media_attachments) { double }
       let(:params) { { file: fixture_file_upload('attachment.jpg', 'image/jpeg') } }
 
-      before_all do
+      before do
         allow(User).to receive(:find).with(token.resource_owner_id).and_return(user)
         allow(user.account).to receive(:media_attachments).and_return(media_attachments)
       end
@@ -146,12 +146,12 @@ RSpec.describe 'Media' do
     end
 
     let(:params) { {} }
-    let_it_be(:media) { Fabricate(:media_attachment, status: nil, account: user.account, description: 'old') }
+    let(:media)  { Fabricate(:media_attachment, status: status, account: user.account, description: 'old') }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:media'
 
     context 'when the media belongs to somebody else' do
-      let_it_be(:media) { Fabricate(:media_attachment, status: nil) }
+      let(:media)  { Fabricate(:media_attachment, status: nil) }
       let(:params) { { description: 'Lorem ipsum!!!' } }
 
       it 'returns http not found' do
@@ -162,6 +162,7 @@ RSpec.describe 'Media' do
     end
 
     context 'when the requesting user owns the media' do
+      let(:status) { nil }
       let(:params) { { description: 'Lorem ipsum!!!' } }
 
       it 'updates the description' do
@@ -169,9 +170,7 @@ RSpec.describe 'Media' do
       end
 
       context 'when the media is attached to a status' do
-        before_all do
-          media.update(status: Fabricate(:status, account: user.account))
-        end
+        let(:status) { Fabricate(:status, account: user.account) }
 
         it 'returns http not found' do
           subject
