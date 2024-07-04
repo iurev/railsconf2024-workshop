@@ -12,7 +12,7 @@ issue = @client.issue(@repo, issue_number)
 issue_body = issue.body
 
 path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.strip
-requests = issue_body.match(/### Additional requests for AI\n\n(.+)/m)&.[](1)&.strip
+agent_prompt = issue_body.match(/### prompt\n\n(.+)/m)&.[](1)&.strip
 
 branch_name = "optimize-#{issue_number}"
 @client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/master").object.sha)
@@ -39,7 +39,7 @@ old_code = new_code
   'master',
   branch_name,
   "Optimize: #{issue.title}",
-  "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{requests}",
+  "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{agent_prompt}",
   draft: true
 )
 
@@ -67,7 +67,6 @@ PIPE_KEY = ENV['OPENPIPE_API_KEY']
 ROOT = File.expand_path('..', __dir__)
 MODEL = "anthropic/claude-3.5-sonnet"
 MAX_TOKENS = 4096
-agent_prompt = File.read(File.join(ROOT, "ai", "prompt.txt"))
 
 
 example_original_files =
