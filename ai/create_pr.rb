@@ -4,26 +4,26 @@ require 'octokit'
 require 'base64'
 
 issue_number = ARGV[0].to_i
-repo = ENV['GITHUB_REPOSITORY']
+@repo = ENV['GITHUB_REPOSITORY']
 
-client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
+@client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
 
-issue = client.issue(repo, issue_number)
+issue = @client.issue(@repo, issue_number)
 issue_body = issue.body
 
 path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.strip
 requests = issue_body.match(/### Additional requests for AI\n\n(.+)/m)&.[](1)&.strip
 
 branch_name = "optimize-#{issue_number}"
-client.create_ref(repo, "refs/heads/#{branch_name}", client.ref(repo, "heads/master").object.sha)
+@client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/master").object.sha)
 
 # Edit the file
-file_content = client.contents(repo, path: path, ref: branch_name)
+file_content = @client.contents(@repo, path: path, ref: branch_name)
 decoded_content = Base64.decode64(file_content.content)
 new_content = decoded_content.lines.insert(1, "# aiptimize started\n").join
 
-client.update_contents(
-  repo,
+@client.update_contents(
+  @repo,
   path,
   "Add aiptimize comment",
   file_content.sha,
@@ -32,8 +32,8 @@ client.update_contents(
 )
 
 # Create PR
-pr = client.create_pull_request(
-  repo,
+@pr = @client.create_pull_request(
+  @repo,
   'master',
   branch_name,
   "Optimize: #{issue.title}",
@@ -41,7 +41,7 @@ pr = client.create_pull_request(
   draft: true
 )
 
-client.add_labels_to_an_issue(repo, pr.number, ['optimize'])
+@client.add_labels_to_an_issue(@repo, @pr.number, ['optimize'])
 
 
 
@@ -96,7 +96,7 @@ source_file_too_long = false
 
 
 def custom_print(text)
-  File.open(File.join(ROOT, "ai", "output.md"), 'a') { |f| f << text }
+  @client.add_comment(@repo, @pr.number, text)
 end
 
 def save_request(response, messages)
@@ -127,14 +127,12 @@ def save_request(response, messages)
   end
 end
 
-
-
 last_response = nil
 
 loop do
   run_id += 1
 
-  puts "RUN_ID: #{run_id}"
+  custom_print "RUN_ID: #{run_id}"
 
   url = 'https://api.anthropic.com/v1/messages'
 
@@ -157,7 +155,6 @@ loop do
 
   last_response = response
 
-  # result = JSON.parse(response.env.response_body)["choices"][0]["message"]["content"]
   result = JSON.parse(response.env.response_body)["content"][0]["text"]
   messages << { role: "assistant", content: result }
 
@@ -192,6 +189,15 @@ loop do
       new_spec_path = target_file_path.sub(/_spec\.rb$/, "_ai_suggest_#{run_id}_spec.rb")
 
       File.write(new_spec_path, new_code)
+
+      @client.update_contents(
+        @repo,
+        path,
+        "Add aiptimize comment",
+        Digest::SHA1.hexdigest("blob #{new_content.bytesize}\0#{new_content}"),
+        new_code,
+        branch: branch_name
+      )
 
       custom_print "\n\nNew spec file saved at #{new_spec_path}\n"
 
