@@ -1,11 +1,7 @@
 name: Ruby Testing
 
 on:
-  push:
-    branches-ignore:
-      - 'dependabot/**'
-      - 'renovate/**'
-  pull_request:
+  workflow_dispatch:
 
 env:
   BUNDLE_CLEAN: true
