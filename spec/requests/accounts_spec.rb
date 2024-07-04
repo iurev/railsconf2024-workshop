@@ -1,13 +1,27 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Accounts show response' do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:status) { Fabricate(:status, account: account) }
+  let_it_be(:status_reply) { Fabricate(:status, account: account, thread: Fabricate(:status)) }
+  let_it_be(:status_self_reply) { Fabricate(:status, account: account, thread: status) }
+  let_it_be(:status_media) { Fabricate(:status, account: account) }
+  let_it_be(:status_pinned) { Fabricate(:status, account: account) }
+  let_it_be(:status_private) { Fabricate(:status, account: account, visibility: :private) }
+  let_it_be(:status_direct) { Fabricate(:status, account: account, visibility: :direct) }
+  let_it_be(:status_reblog) { Fabricate(:status, account: account, reblog: Fabricate(:status)) }
+  let_it_be(:user) { Fabricate(:user) }
+
+  before_all do
+    status_media.media_attachments << Fabricate(:media_attachment, account: account, type: :image)
+    account.pinned_statuses << status_pinned
+    account.pinned_statuses << status_private
+  end
 
   context 'with an unapproved account' do
-    before { account.user.update(approved: false) }
+    before_all { account.user.update(approved: false) }
 
     it 'returns http not found' do
       %w(html json rss).each do |format|
@@ -19,7 +33,7 @@ describe 'Accounts show response' do
   end
 
   context 'with a permanently suspended account' do
-    before do
+    before_all do
       account.suspend!
       account.deletion_request.destroy
     end
@@ -34,7 +48,7 @@ describe 'Accounts show response' do
   end
 
   context 'with a temporarily suspended account' do
-    before { account.suspend! }
+    before_all { account.suspend! }
 
     it 'returns appropriate http response code' do
       { html: 403, json: 200, rss: 403 }.each do |format, code|
@@ -47,21 +61,6 @@ describe 'Accounts show response' do
 
   describe 'GET to short username paths' do
     context 'with existing statuses' do
-      let!(:status) { Fabricate(:status, account: account) }
-      let!(:status_reply) { Fabricate(:status, account: account, thread: Fabricate(:status)) }
-      let!(:status_self_reply) { Fabricate(:status, account: account, thread: status) }
-      let!(:status_media) { Fabricate(:status, account: account) }
-      let!(:status_pinned) { Fabricate(:status, account: account) }
-      let!(:status_private) { Fabricate(:status, account: account, visibility: :private) }
-      let!(:status_direct) { Fabricate(:status, account: account, visibility: :direct) }
-      let!(:status_reblog) { Fabricate(:status, account: account, reblog: Fabricate(:status)) }
-
-      before do
-        status_media.media_attachments << Fabricate(:media_attachment, account: account, type: :image)
-        account.pinned_statuses << status_pinned
-        account.pinned_statuses << status_private
-      end
-
       context 'with HTML' do
         let(:format) { 'html' }
 
@@ -100,12 +99,14 @@ describe 'Accounts show response' do
         end
 
         context 'with tag' do
-          let(:tag) { Fabricate(:tag) }
+          let_it_be(:tag) { Fabricate(:tag) }
+          let_it_be(:status_tag) { Fabricate(:status, account: account) }
 
-          let!(:status_tag) { Fabricate(:status, account: account) }
+          before_all do
+            status_tag.tags << tag
+          end
 
           before do
-            status_tag.tags << tag
             get short_account_tag_path(username: account.username, tag: tag), as: format
           end
 
@@ -150,8 +151,6 @@ describe 'Accounts show response' do
         end
 
         context 'when signed in' do
-          let(:user) { Fabricate(:user) }
-
           before do
             sign_in(user)
             get short_account_path(username: account.username), headers: headers.merge({ 'Cookie' => '123' })
@@ -171,7 +170,7 @@ describe 'Accounts show response' do
         end
 
         context 'with signature' do
-          let(:remote_account) { Fabricate(:account, domain: 'example.com') }
+          let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
 
           before do
             get short_account_path(username: account.username), headers: headers, sign_with: remote_account
@@ -269,12 +268,14 @@ describe 'Accounts show response' do
         end
 
         context 'with tag' do
-          let(:tag) { Fabricate(:tag) }
+          let_it_be(:tag) { Fabricate(:tag) }
+          let_it_be(:status_tag) { Fabricate(:status, account: account) }
 
-          let!(:status_tag) { Fabricate(:status, account: account) }
+          before_all do
+            status_tag.tags << tag
+          end
 
           before do
-            status_tag.tags << tag
             get short_account_tag_path(username: account.username, tag: tag, format: format)
           end
 
