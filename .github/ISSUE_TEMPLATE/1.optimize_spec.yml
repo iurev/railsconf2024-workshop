@@ -7,7 +7,7 @@ body:
       label: relative path to the spec file
     validations:
       required: true
-  - type: textarea
+  - type: markdown
     attributes:
       label: prompt
       value: |
