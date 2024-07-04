@@ -3,6 +3,8 @@
 require 'octokit'
 require 'base64'
 
+MAIN_BRANCH = "workshop"
+
 issue_number = ARGV[0].to_i
 @repo = ENV['GITHUB_REPOSITORY']
 
@@ -15,7 +17,7 @@ path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.st
 agent_prompt = issue_body.match(/### prompt\n\n(.+)/m)&.[](1)&.strip
 
 branch_name = "optimize-#{issue_number}"
-@client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/master").object.sha)
+@client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/#{MAIN_BRANCH}").object.sha)
 
 # Edit the file
 old_code = @client.contents(@repo, path: path, ref: branch_name)
@@ -36,7 +38,7 @@ old_code = new_code
 # Create PR
 @pr = @client.create_pull_request(
   @repo,
-  'master',
+  MAIN_BRANCH,
   branch_name,
   "Optimize: #{issue.title}",
   "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{agent_prompt}",
