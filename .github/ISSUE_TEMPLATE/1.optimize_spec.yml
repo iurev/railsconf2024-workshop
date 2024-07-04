@@ -1,6 +1,6 @@
 name: AIptimize!
 description: Please AIptimize my spec!
-labels: [optimize]
+labels: ["optimize"]
 body:
   - type: input
     attributes:
