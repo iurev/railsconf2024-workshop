@@ -81,7 +81,7 @@ prompt = agent_prompt % {example_rspec_files: example_original_files, example_gi
 
 messages = []
 
-target_file_path = ARGV[0]
+target_file_path = path
 
 raise "Please provide a valid target file path" unless target_file_path && File.file?(target_file_path)
 
