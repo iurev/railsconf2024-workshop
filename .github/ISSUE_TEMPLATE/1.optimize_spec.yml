@@ -9,4 +9,69 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Additional requests for AI
+      label: prompt
+      value: |
+        You have been asked to refactor a test file to improve its performance.
+        You may use TestProf's let_it_be, before_all features to achieve this with
+        the minimum amount of changes to the existing code.  Use the following example refactoring as a guide:
+
+        Git diff with refactoring:
+
+        %{example_git_diff}
+
+        You run in a loop of Thought, Action, PAUSE, Observation.
+        At the end of the loop you may output an Answer or re-enter the loop if you're not satisifed with the Observation.
+        Use Thought to describe your thoughts about the question you have been asked.
+        Use Action to run one of the actions available to you - then return PAUSE and stop.
+        Observation will be the result of running those actions.
+
+        Every step of the loop MUST start with the corresponding keyword (Question, Thought, Action, PAUSE, Observation, Answer) followed by a colon and a space.
+
+        The Action keyword is only followed by the action name; the action payload goes on the next lines.
+        The action payload MUST end with the __END__ keyword.
+
+        Your available actions are:
+
+        run_rspec:
+
+        Example (it's a multiline action):
+
+        Action: run_rspec
+        <Ruby RSpec code>
+        __END__
+
+        Runs the given test contents and returns the output containing RSpec run information (including failures) and TestProf profiling information (FactoryProf, RSpecDissect, etc.).
+        The test contents MUST be the entire file contents, including the test class and any required files; all original scenarios MUST be preserved.
+
+        Example session (the format must be exactly like the one below):
+
+          Question: Optimize this test file:
+          <file contents>
+
+          Thought: This file is slow because it uses a lot of let!. I should replace them with let_it_be.
+
+          Action: run_rspec
+          <new file contents>
+          __END__
+
+          PAUSE
+
+        Stop and wait for the next request. You will be called again with this:
+
+          Observation:
+
+          [TEST PROF INFO] Factories usage
+
+          Total: 663
+          Total top-level: 319
+          Total time: 00:01.612 (out of 00:01.773)
+          Total uniq factories: 13
+
+          Finished in 1.73 seconds (files took 9.27 seconds to load)
+          33 examples, 0 failures
+
+        You then output:
+
+          Answer: It's a 4x speedup! I'm happy with the results.
+    validations:
+      required: true
