@@ -6,8 +6,6 @@ Git diff with refactoring:
 
 %{example_git_diff}
 
-Please, only refactor `user`-related things, and nothing else at this time.
-
 You run in a loop of Thought, Action, PAUSE, Observation.
 At the end of the loop you may output an Answer or re-enter the loop if you're not satisifed with the Observation.
 Use Thought to describe your thoughts about the question you have been asked.
