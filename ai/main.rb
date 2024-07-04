@@ -1,8 +1,8 @@
 require "json/ext"
 require "faraday"
 
-API_KEY = ""
-PIPE_KEY = ""
+API_KEY = ENV['CLAUDE_API_KEY']
+PIPE_KEY = ENV['OPENPIPE_API_KEY']
 
 ROOT = File.expand_path('..', __dir__)
 MODEL = "anthropic/claude-3.5-sonnet"
