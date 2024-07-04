@@ -7,7 +7,7 @@ RSpec.describe 'Accounts' do
   let_it_be(:user)    { Fabricate(:user, role: role) }
   let_it_be(:scopes)  { 'admin:read:accounts admin:write:accounts' }
   let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   let_it_be(:remote_account)    { Fabricate(:account, domain: 'example.org') }
   let_it_be(:suspended_account) { Fabricate(:account, suspended: true) }
