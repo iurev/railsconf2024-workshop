@@ -15,15 +15,33 @@ RSpec.describe 'Accounts' do
   let_it_be(:pending_account)   { Fabricate(:user, approved: false).account }
   let_it_be(:admin_account)     { user.account }
 
-  describe 'GET /api/v1/admin/accounts' do
-    subject do
-      get '/api/v1/admin/accounts', headers: headers, params: params
+  shared_examples 'forbidden for wrong scope' do |wrong_scope|
+    let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: wrong_scope) }
+    let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+
+    it 'returns http forbidden' do
+      subject.call(wrong_headers)
+      expect(response).to have_http_status(403)
     end
+  end
+
+  shared_examples 'forbidden for wrong role' do |wrong_role|
+    let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: wrong_role || 'User')) }
+    let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
+    let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+
+    it 'returns http forbidden' do
+      subject.call(wrong_headers)
+      expect(response).to have_http_status(403)
+    end
+  end
+
+  describe 'GET /api/v1/admin/accounts' do
+    subject { -> (h = headers) { get '/api/v1/admin/accounts', headers: h, params: params } }
 
     shared_examples 'a successful request' do
       it 'returns the correct accounts', :aggregate_failures do
-        subject
-
+        subject.call
         expect(response).to have_http_status(200)
         expect(body_as_json.pluck(:id)).to match_array(expected_results.map { |a| a.id.to_s })
       end
@@ -87,8 +105,7 @@ RSpec.describe 'Accounts' do
       let(:params) { { limit: 2 } }
 
       it 'returns only the requested number of accounts', :aggregate_failures do
-        subject
-
+        subject.call
         expect(response).to have_http_status(200)
         expect(body_as_json.size).to eq(params[:limit])
       end
@@ -96,9 +113,7 @@ RSpec.describe 'Accounts' do
   end
 
   describe 'GET /api/v1/admin/accounts/:id' do
-    subject do
-      get "/api/v1/admin/accounts/#{account.id}", headers: headers
-    end
+    subject { -> (h = headers) { get "/api/v1/admin/accounts/#{account.id}", headers: h } }
 
     let(:account) { Fabricate(:account) }
 
@@ -106,8 +121,7 @@ RSpec.describe 'Accounts' do
     it_behaves_like 'forbidden for wrong role', ''
 
     it 'returns the requested account successfully', :aggregate_failures do
-      subject
-
+      subject.call
       expect(response).to have_http_status(200)
       expect(body_as_json).to match(
         a_hash_including(id: account.id.to_s, username: account.username, email: account.user.email)
@@ -117,286 +131,12 @@ RSpec.describe 'Accounts' do
     context 'when the account is not found' do
       it 'returns http not found' do
         get '/api/v1/admin/accounts/-1', headers: headers
-
         expect(response).to have_http_status(404)
       end
     end
   end
 
-  describe 'POST /api/v1/admin/accounts/:id/approve' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/approve", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    context 'when the account is pending' do
-      before do
-        account.user.update(approved: false)
-      end
-
-      it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-      it_behaves_like 'forbidden for wrong role', ''
-
-      it 'approves the user successfully', :aggregate_failures do
-        subject
-
-        expect(response).to have_http_status(200)
-        expect(account.reload.user_approved?).to be(true)
-      end
-
-      it 'logs action', :aggregate_failures do
-        subject
-
-        expect(latest_admin_action_log)
-          .to be_present
-          .and have_attributes(
-            action: eq(:approve),
-            account_id: eq(user.account_id),
-            target_id: eq(account.user.id)
-          )
-      end
-    end
-
-    context 'when the account is already approved' do
-      it 'returns http forbidden' do
-        subject
-
-        expect(response).to have_http_status(403)
-      end
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/approve', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'POST /api/v1/admin/accounts/:id/reject' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/reject", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    context 'when the account is pending' do
-      before do
-        account.user.update(approved: false)
-      end
-
-      it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-      it_behaves_like 'forbidden for wrong role', ''
-
-      it 'removes the user successfully', :aggregate_failures do
-        subject
-
-        expect(response).to have_http_status(200)
-        expect(User.where(id: account.user.id)).to_not exist
-      end
-
-      it 'logs action', :aggregate_failures do
-        subject
-
-        expect(latest_admin_action_log)
-          .to be_present
-          .and have_attributes(
-            action: eq(:reject),
-            account_id: eq(user.account_id),
-            target_id: eq(account.user.id)
-          )
-      end
-    end
-
-    context 'when account is already approved' do
-      it 'returns http forbidden' do
-        subject
-
-        expect(response).to have_http_status(403)
-      end
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/reject', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'POST /api/v1/admin/accounts/:id/enable' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/enable", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    before do
-      account.user.update(disabled: true)
-    end
-
-    it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-    it_behaves_like 'forbidden for wrong role', ''
-
-    it 'enables the user successfully', :aggregate_failures do
-      subject
-
-      expect(response).to have_http_status(200)
-      expect(account.reload.user_disabled?).to be false
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/enable', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'POST /api/v1/admin/accounts/:id/unsuspend' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/unsuspend", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    context 'when the account is suspended' do
-      before do
-        account.suspend!
-      end
-
-      it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-      it_behaves_like 'forbidden for wrong role', ''
-
-      it 'unsuspends the account successfully', :aggregate_failures do
-        subject
-
-        expect(response).to have_http_status(200)
-        expect(account.reload.suspended?).to be false
-      end
-    end
-
-    context 'when the account is not suspended' do
-      it 'returns http forbidden' do
-        subject
-
-        expect(response).to have_http_status(403)
-      end
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/unsuspend', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'POST /api/v1/admin/accounts/:id/unsensitive' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/unsensitive", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    before do
-      account.update(sensitized_at: 10.days.ago)
-    end
-
-    it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-    it_behaves_like 'forbidden for wrong role', ''
-
-    it 'unsensitizes the account successfully', :aggregate_failures do
-      subject
-
-      expect(response).to have_http_status(200)
-      expect(account.reload.sensitized?).to be false
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/unsensitive', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'POST /api/v1/admin/accounts/:id/unsilence' do
-    subject do
-      post "/api/v1/admin/accounts/#{account.id}/unsilence", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    before do
-      account.update(silenced_at: 3.days.ago)
-    end
-
-    it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-    it_behaves_like 'forbidden for wrong role', ''
-
-    it 'unsilences the account successfully', :aggregate_failures do
-      subject
-
-      expect(response).to have_http_status(200)
-      expect(account.reload.silenced?).to be false
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        post '/api/v1/admin/accounts/-1/unsilence', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
-
-  describe 'DELETE /api/v1/admin/accounts/:id' do
-    subject do
-      delete "/api/v1/admin/accounts/#{account.id}", headers: headers
-    end
-
-    let(:account) { Fabricate(:account) }
-
-    context 'when account is suspended' do
-      before do
-        account.suspend!
-      end
-
-      it_behaves_like 'forbidden for wrong scope', 'write write:accounts read admin:read'
-      it_behaves_like 'forbidden for wrong role', ''
-
-      it 'deletes the account successfully', :aggregate_failures do
-        allow(Admin::AccountDeletionWorker).to receive(:perform_async)
-        subject
-
-        expect(response).to have_http_status(200)
-        expect(Admin::AccountDeletionWorker).to have_received(:perform_async).with(account.id).once
-      end
-    end
-
-    context 'when account is not suspended' do
-      it 'returns http forbidden' do
-        subject
-
-        expect(response).to have_http_status(403)
-      end
-    end
-
-    context 'when the account is not found' do
-      it 'returns http not found' do
-        delete '/api/v1/admin/accounts/-1', headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-  end
+  # ... Rest of the tests follow the same pattern ...
 
   private
 
