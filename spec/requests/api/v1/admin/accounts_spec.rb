@@ -3,17 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Accounts' do
-  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let_it_be(:user)    { Fabricate(:user, role: role) }
-  let_it_be(:scopes)  { 'admin:read:accounts admin:write:accounts' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:role)    { UserRole.find_by(name: 'Admin') }
+  let(:user)    { Fabricate(:user, role: role) }
+  let(:scopes)  { 'admin:read:accounts admin:write:accounts' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   let_it_be(:remote_account)    { Fabricate(:account, domain: 'example.org') }
   let_it_be(:suspended_account) { Fabricate(:account, suspended: true) }
   let_it_be(:disabled_account)  { Fabricate(:user, disabled: true).account }
   let_it_be(:pending_account)   { Fabricate(:user, approved: false).account }
-  let_it_be(:admin_account)     { user.account }
+  let_it_be(:admin_account)     { Fabricate(:user, role: role).account }
 
   describe 'GET /api/v1/admin/accounts' do
     subject do
@@ -100,7 +100,7 @@ RSpec.describe 'Accounts' do
       get "/api/v1/admin/accounts/#{account.id}", headers: headers
     end
 
-    let_it_be(:account) { Fabricate(:account) }
+    let(:account) { Fabricate(:account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:accounts admin:write admin:write:accounts'
     it_behaves_like 'forbidden for wrong role', ''
