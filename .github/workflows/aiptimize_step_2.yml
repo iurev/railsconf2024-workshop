@@ -2,7 +2,9 @@ name: Run AI Optimization on PR
 
 on:
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize, reopened]
+    branches:
+      - 'optimize-*'
 
 env:
   BUNDLE_CLEAN: true
