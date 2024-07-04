@@ -18,18 +18,20 @@ branch_name = "optimize-#{issue_number}"
 @client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/master").object.sha)
 
 # Edit the file
-file_content = @client.contents(@repo, path: path, ref: branch_name)
-decoded_content = Base64.decode64(file_content.content)
-new_content = decoded_content.lines.insert(1, "# aiptimize started\n").join
+old_code = @client.contents(@repo, path: path, ref: branch_name)
+decoded_content = Base64.decode64(old_code.content)
+new_code = decoded_content.lines.insert(1, "# aiptimize started\n").join
 
 @client.update_contents(
   @repo,
   path,
   "Add aiptimize comment",
-  file_content.sha,
-  new_content,
+  old_code.sha,
+  new_code,
   branch: branch_name
 )
+
+old_code = new_code
 
 # Create PR
 @pr = @client.create_pull_request(
@@ -100,6 +102,8 @@ def custom_print(text)
 end
 
 def save_request(response, messages)
+  return # temp disable openpipe
+
   url = "https://app.openpipe.ai/api/v1/report-anthropic"
 
   payload = {
@@ -127,7 +131,6 @@ def save_request(response, messages)
   end
 end
 
-last_response = nil
 
 loop do
   run_id += 1
@@ -153,14 +156,10 @@ loop do
     req.body = payload.to_json
   end
 
-  last_response = response
-
   result = JSON.parse(response.env.response_body)["content"][0]["text"]
   messages << { role: "assistant", content: result }
 
   save_request(JSON.parse(response.env.response_body), messages)
-
-  custom_print result
 
   lines = result.split("\n")
 
@@ -168,7 +167,8 @@ loop do
 
   if action_index
     action = Regexp.last_match[1]
-    custom_print "\n\nAction: #{action} (at line #{action_index + 1})\n"
+    last_comment = lines[0..action_index].join("\n")
+    custom_print "\n\nAction: #{action} (at line #{action_index + 1})\n#{last_comment}"
 
     if action == "run_rspec"
       code_end_index = lines[action_index..].find_index { _1 =~ /__END__/ }
@@ -193,11 +193,12 @@ loop do
       @client.update_contents(
         @repo,
         path,
-        "Add aiptimize comment",
-        Digest::SHA1.hexdigest("blob #{new_content.bytesize}\0#{new_content}"),
+        "RUN_ID: #{run_id}",
+        Digest::SHA1.hexdigest("blob #{old_code.bytesize}\0#{old_code}"),
         new_code,
         branch: branch_name
       )
+      old_code = new_code
 
       custom_print "\n\nNew spec file saved at #{new_spec_path}\n"
 
@@ -208,11 +209,11 @@ loop do
 
       messages << { role: "user", content: "Observation:\n\n#{output}" }
     else
-      puts "Unknown action: #{action}"
+      custom_print "Unknown action: #{action}\n\n#{result}"
       break
     end
   else
-    puts "No action found"
+    custom_print "No action found\n\n#{result}"
     break
   end
 end
