@@ -2,6 +2,7 @@ name: Run AI Optimization on PR
 
 on:
   pull_request:
+    types: [opened, reopened]
 
 env:
   BUNDLE_CLEAN: true
