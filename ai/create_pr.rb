@@ -30,7 +30,7 @@ client.update_contents(
 )
 
 # Create PR
-client.create_pull_request(
+pr = client.create_pull_request(
   repo,
   'master',
   branch_name,
@@ -38,3 +38,5 @@ client.create_pull_request(
   "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{requests}",
   draft: true
 )
+
+client.add_labels_to_an_issue(repo, pr.number, ['optimize'])
