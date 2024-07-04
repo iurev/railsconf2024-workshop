@@ -38,28 +38,7 @@ jobs:
       - name: Set up Ruby environment
         uses: ./.github/actions/setup-ruby
 
-      - name: Set up Javascript environment
-        uses: ./.github/actions/setup-javascript
-        with:
-          onlyProduction: 'true'
 
-      - name: Precompile assets
-        # Previously had set this, but it's not supported
-        # export NODE_OPTIONS=--openssl-legacy-provider
-        run: |-
-          ./bin/rails assets:precompile
-
-      - name: Archive asset artifacts
-        run: |
-          tar --exclude={"*.br","*.gz"} -zcf artifacts.tar.gz public/assets public/packs*
-
-      - uses: actions/upload-artifact@v4
-        if: matrix.mode == 'test'
-        with:
-          path: |-
-            ./artifacts.tar.gz
-          name: ${{ github.sha }}
-          retention-days: 0
 
   test:
     runs-on: ubuntu-latest
@@ -116,14 +95,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: './'
-          name: ${{ github.sha }}
 
-      - name: Expand archived asset artifacts
-        run: |
-          tar xvzf artifacts.tar.gz
 
       - name: Set up Ruby environment
         uses: ./.github/actions/setup-ruby
