@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Media' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:scopes)  { 'write:media' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:scopes)        { 'write:media' }
+  let(:token)         { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers)       { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/media/:id' do
     subject do
@@ -15,7 +15,9 @@ RSpec.describe 'Media' do
 
     let_it_be(:media) { Fabricate(:media_attachment, account: user.account) }
 
-    it_behaves_like 'forbidden for wrong scope', 'read'
+    it_behaves_like 'forbidden for wrong scope', 'read' do
+      let(:scopes) { 'read' }
+    end
 
     it 'returns http success' do
       subject
@@ -89,7 +91,9 @@ RSpec.describe 'Media' do
       end
     end
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:media'
+    it_behaves_like 'forbidden for wrong scope', 'read read:media' do
+      let(:scopes) { 'read read:media' }
+    end
 
     describe 'when paperclip errors occur' do
       let(:media_attachments) { double }
@@ -148,7 +152,9 @@ RSpec.describe 'Media' do
     let(:params) { {} }
     let_it_be(:media) { Fabricate(:media_attachment, status: nil, account: user.account, description: 'old') }
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:media'
+    it_behaves_like 'forbidden for wrong scope', 'read read:media' do
+      let(:scopes) { 'read read:media' }
+    end
 
     context 'when the media belongs to somebody else' do
       let_it_be(:media) { Fabricate(:media_attachment, status: nil) }
