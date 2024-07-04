@@ -78,13 +78,13 @@ example_original_files =
 
 example_patch = File.read(File.join(ROOT, "ai", ENV.fetch("PATCH_EXAMPLE", "sample.patch")))
 
+target_file_path = path
 output = `FPROF=1 RD_PROF=1 bundle exec rspec #{target_file_path}`
 
 prompt = agent_prompt % {example_rspec_files: example_original_files, example_git_diff: example_patch, fprof: output}
 
 messages = []
 
-target_file_path = path
 
 raise "Please provide a valid target file path" unless target_file_path && File.file?(target_file_path)
 
