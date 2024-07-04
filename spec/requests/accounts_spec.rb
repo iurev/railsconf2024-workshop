@@ -4,6 +4,8 @@ require 'rails_helper'
 
 describe 'Accounts show response' do
   let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:user) { Fabricate(:user) }
+
   let_it_be(:status) { Fabricate(:status, account: account) }
   let_it_be(:status_reply) { Fabricate(:status, account: account, thread: Fabricate(:status)) }
   let_it_be(:status_self_reply) { Fabricate(:status, account: account, thread: status) }
@@ -12,12 +14,28 @@ describe 'Accounts show response' do
   let_it_be(:status_private) { Fabricate(:status, account: account, visibility: :private) }
   let_it_be(:status_direct) { Fabricate(:status, account: account, visibility: :direct) }
   let_it_be(:status_reblog) { Fabricate(:status, account: account, reblog: Fabricate(:status)) }
-  let_it_be(:user) { Fabricate(:user) }
 
   before_all do
     status_media.media_attachments << Fabricate(:media_attachment, account: account, type: :image)
     account.pinned_statuses << status_pinned
     account.pinned_statuses << status_private
+  end
+
+  shared_examples 'common HTML response' do
+    it 'returns a standard HTML response', :aggregate_failures do
+      expect(response)
+        .to have_http_status(200)
+        .and render_template(:show)
+
+      expect(response.headers['Link'].to_s).to include ActivityPub::TagManager.instance.uri_for(account)
+    end
+  end
+
+  shared_examples 'cacheable response' do |options|
+    it 'returns cacheable response' do
+      expect(response).to have_http_status(200)
+      expect(response.headers['Vary']).to include options[:expects_vary]
+    end
   end
 
   context 'with an unapproved account' do
@@ -26,7 +44,6 @@ describe 'Accounts show response' do
     it 'returns http not found' do
       %w(html json rss).each do |format|
         get short_account_path(username: account.username), as: format
-
         expect(response).to have_http_status(404)
       end
     end
@@ -41,7 +58,6 @@ describe 'Accounts show response' do
     it 'returns http gone' do
       %w(html json rss).each do |format|
         get short_account_path(username: account.username), as: format
-
         expect(response).to have_http_status(410)
       end
     end
@@ -53,7 +69,6 @@ describe 'Accounts show response' do
     it 'returns appropriate http response code' do
       { html: 403, json: 200, rss: 403 }.each do |format, code|
         get short_account_path(username: account.username), as: format
-
         expect(response).to have_http_status(code)
       end
     end
@@ -64,43 +79,24 @@ describe 'Accounts show response' do
       context 'with HTML' do
         let(:format) { 'html' }
 
-        shared_examples 'common HTML response' do
-          it 'returns a standard HTML response', :aggregate_failures do
-            expect(response)
-              .to have_http_status(200)
-              .and render_template(:show)
-
-            expect(response.headers['Link'].to_s).to include ActivityPub::TagManager.instance.uri_for(account)
-          end
-        end
-
         context 'with a normal account in an HTML request' do
-          before do
-            get short_account_path(username: account.username), as: format
-          end
-
+          before { get short_account_path(username: account.username), as: format }
           it_behaves_like 'common HTML response'
         end
 
         context 'with replies' do
-          before do
-            get short_account_with_replies_path(username: account.username), as: format
-          end
-
+          before { get short_account_with_replies_path(username: account.username), as: format }
           it_behaves_like 'common HTML response'
         end
 
         context 'with media' do
-          before do
-            get short_account_media_path(username: account.username), as: format
-          end
-
+          before { get short_account_media_path(username: account.username), as: format }
           it_behaves_like 'common HTML response'
         end
 
         context 'with tag' do
-          let(:tag) { Fabricate(:tag) }
-          let!(:status_tag) { Fabricate(:status, account: account) }
+          let_it_be(:tag) { Fabricate(:tag) }
+          let_it_be(:status_tag) { Fabricate(:status, account: account) }
 
           before do
             status_tag.tags << tag
@@ -122,16 +118,12 @@ describe 'Accounts show response' do
         end
 
         context 'with a normal account in a JSON request' do
-          before do
-            get short_account_path(username: account.username), headers: headers
-          end
+          before { get short_account_path(username: account.username), headers: headers }
 
           it 'returns a JSON version of the account', :aggregate_failures do
             expect(response)
               .to have_http_status(200)
-              .and have_attributes(
-                media_type: eq('application/activity+json')
-              )
+              .and have_attributes(media_type: eq('application/activity+json'))
 
             expect(body_as_json).to include(:id, :type, :preferredUsername, :inbox, :publicKey, :name, :summary)
           end
@@ -140,7 +132,6 @@ describe 'Accounts show response' do
 
           context 'with authorized fetch mode' do
             let(:authorized_fetch_mode) { true }
-
             it 'returns http unauthorized' do
               expect(response).to have_http_status(401)
             end
@@ -156,18 +147,15 @@ describe 'Accounts show response' do
           it 'returns a private JSON version of the account', :aggregate_failures do
             expect(response)
               .to have_http_status(200)
-              .and have_attributes(
-                media_type: eq('application/activity+json')
-              )
+              .and have_attributes(media_type: eq('application/activity+json'))
 
             expect(response.headers['Cache-Control']).to include 'private'
-
             expect(body_as_json).to include(:id, :type, :preferredUsername, :inbox, :publicKey, :name, :summary)
           end
         end
 
         context 'with signature' do
-          let(:remote_account) { Fabricate(:account, domain: 'example.com') }
+          let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
 
           before do
             get short_account_path(username: account.username), headers: headers, sign_with: remote_account
@@ -176,9 +164,7 @@ describe 'Accounts show response' do
           it 'returns a JSON version of the account', :aggregate_failures do
             expect(response)
               .to have_http_status(200)
-              .and have_attributes(
-                media_type: eq('application/activity+json')
-              )
+              .and have_attributes(media_type: eq('application/activity+json'))
 
             expect(body_as_json).to include(:id, :type, :preferredUsername, :inbox, :publicKey, :name, :summary)
           end
@@ -191,13 +177,10 @@ describe 'Accounts show response' do
             it 'returns a private signature JSON version of the account', :aggregate_failures do
               expect(response)
                 .to have_http_status(200)
-                .and have_attributes(
-                  media_type: eq('application/activity+json')
-                )
+                .and have_attributes(media_type: eq('application/activity+json'))
 
               expect(response.headers['Cache-Control']).to include 'private'
               expect(response.headers['Vary']).to include 'Signature'
-
               expect(body_as_json).to include(:id, :type, :preferredUsername, :inbox, :publicKey, :name, :summary)
             end
           end
@@ -208,9 +191,7 @@ describe 'Accounts show response' do
         let(:format) { 'rss' }
 
         context 'with a normal account in an RSS request' do
-          before do
-            get short_account_path(username: account.username, format: format)
-          end
+          before { get short_account_path(username: account.username, format: format) }
 
           it_behaves_like 'cacheable response', expects_vary: 'Accept, Accept-Language, Cookie'
 
@@ -227,9 +208,7 @@ describe 'Accounts show response' do
         end
 
         context 'with replies' do
-          before do
-            get short_account_with_replies_path(username: account.username, format: format)
-          end
+          before { get short_account_with_replies_path(username: account.username, format: format) }
 
           it_behaves_like 'cacheable response', expects_vary: 'Accept, Accept-Language, Cookie'
 
@@ -246,9 +225,7 @@ describe 'Accounts show response' do
         end
 
         context 'with media' do
-          before do
-            get short_account_media_path(username: account.username, format: format)
-          end
+          before { get short_account_media_path(username: account.username, format: format) }
 
           it_behaves_like 'cacheable response', expects_vary: 'Accept, Accept-Language, Cookie'
 
@@ -265,8 +242,8 @@ describe 'Accounts show response' do
         end
 
         context 'with tag' do
-          let(:tag) { Fabricate(:tag) }
-          let!(:status_tag) { Fabricate(:status, account: account) }
+          let_it_be(:tag) { Fabricate(:tag) }
+          let_it_be(:status_tag) { Fabricate(:status, account: account) }
 
           before do
             status_tag.tags << tag
