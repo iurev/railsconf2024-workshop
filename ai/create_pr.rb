@@ -1,4 +1,5 @@
 require 'octokit'
+require 'base64'
 
 issue_number = ARGV[0].to_i
 repo = ENV['GITHUB_REPOSITORY']
