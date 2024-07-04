@@ -13,7 +13,7 @@ RSpec.describe 'Accounts' do
   let_it_be(:suspended_account) { Fabricate(:account, suspended: true) }
   let_it_be(:disabled_account)  { Fabricate(:user, disabled: true).account }
   let_it_be(:pending_account)   { Fabricate(:user, approved: false).account }
-  let_it_be(:admin_account)     { Fabricate(:user, role: role).account }
+  let(:admin_account)           { user.account }
 
   describe 'GET /api/v1/admin/accounts' do
     subject do
