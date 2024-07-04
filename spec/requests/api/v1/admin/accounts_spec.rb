@@ -92,6 +92,10 @@ RSpec.describe 'Accounts' do
       let(:expected_results) { [pending_account] }
       let(:params)           { { pending: 'true' } }
 
+      before do
+        pending_account.user.update(approved: false)
+      end
+
       it_behaves_like 'a successful request'
     end
 
