@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Follow do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
 
   let(:json) do
     {
@@ -86,7 +85,7 @@ RSpec.describe ActivityPub::Activity::Follow do
     end
 
     context 'when a follow relationship already exists' do
-      before do
+      before_all do
         sender.active_relationships.create!(target_account: recipient, uri: 'bar')
       end
 
@@ -151,7 +150,7 @@ RSpec.describe ActivityPub::Activity::Follow do
     end
 
     context 'when a follow request already exists' do
-      before do
+      before_all do
         sender.follow_requests.create!(target_account: recipient, uri: 'bar')
       end
 
