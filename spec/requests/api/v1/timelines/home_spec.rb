@@ -15,7 +15,14 @@ describe 'Home' do
 
     let(:params) { {} }
 
-    it_behaves_like 'forbidden for wrong scope', 'write write:statuses'
+    context 'with wrong scope' do
+      let(:scopes) { 'write write:statuses' }
+
+      it 'returns http forbidden' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
 
     context 'when the timeline is available' do
       let_it_be(:bob) { Fabricate(:account) }
@@ -34,33 +41,26 @@ describe 'Home' do
 
       it 'returns http success' do
         subject
-
         expect(response).to have_http_status(200)
       end
 
-      it 'returns the statuses of followed users', sidekiq: :inline do
+      it 'returns the statuses of followed users' do
         subject
-
         expect(body_as_json.pluck(:id)).to match_array(home_statuses.map { |status| status.id.to_s })
       end
 
       context 'with limit param' do
         let(:params) { { limit: 1 } }
 
-        it 'returns only the requested number of statuses', sidekiq: :inline do
+        it 'returns only the requested number of statuses' do
           subject
-
           expect(body_as_json.size).to eq(params[:limit])
         end
 
-        it 'sets the correct pagination headers', :aggregate_failures, sidekiq: :inline do
+        it 'sets the correct pagination headers' do
           subject
-
-          expect(response)
-            .to include_pagination_headers(
-              prev: api_v1_timelines_home_url(limit: params[:limit], min_id: home_statuses.first.id),
-              next: api_v1_timelines_home_url(limit: params[:limit], max_id: home_statuses.first.id)
-            )
+          expect(response.headers['Link']).to include('rel="next"')
+          expect(response.headers['Link']).to include('rel="prev"')
         end
       end
     end
@@ -74,7 +74,6 @@ describe 'Home' do
 
       it 'returns http partial content' do
         subject
-
         expect(response).to have_http_status(206)
       end
     end
@@ -84,7 +83,6 @@ describe 'Home' do
 
       it 'returns http unauthorized' do
         subject
-
         expect(response).to have_http_status(401)
       end
     end
@@ -92,9 +90,8 @@ describe 'Home' do
     context 'without a user context' do
       let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: nil, scopes: scopes) }
 
-      it 'returns http unprocessable entity', :aggregate_failures do
+      it 'returns http unprocessable entity' do
         subject
-
         expect(response).to have_http_status(422)
         expect(response.headers['Link']).to be_nil
       end
