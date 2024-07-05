@@ -1,13 +1,20 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Tag' do
-  let(:user) { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:account) { Fabricate(:account) }
+
+  before_all do
+    @private_status = PostStatusService.new.call(account, visibility: :private, text: '#life could be a dream')
+    @life_status    = PostStatusService.new.call(account, text: 'tell me what is my #life without your #love')
+    @war_status     = PostStatusService.new.call(user.account, text: '#war, war never changes')
+    @love_status    = PostStatusService.new.call(account, text: 'what is #love?')
+  end
 
   shared_examples 'a successful request to the tag timeline' do
     it 'returns the expected statuses', :aggregate_failures do
@@ -23,36 +30,31 @@ RSpec.describe 'Tag' do
       get "/api/v1/timelines/tag/#{hashtag}", headers: headers, params: params
     end
 
-    let(:account)         { Fabricate(:account) }
-    let!(:private_status) { PostStatusService.new.call(account, visibility: :private, text: '#life could be a dream') } # rubocop:disable RSpec/LetSetup
-    let!(:life_status)    { PostStatusService.new.call(account, text: 'tell me what is my #life without your #love') }
-    let!(:war_status)     { PostStatusService.new.call(user.account, text: '#war, war never changes') }
-    let!(:love_status)    { PostStatusService.new.call(account, text: 'what is #love?') }
-    let(:params)          { {} }
-    let(:hashtag)         { 'life' }
+    let(:params)  { {} }
+    let(:hashtag) { 'life' }
 
     context 'when given only one hashtag' do
-      let(:expected_statuses) { [life_status] }
+      let(:expected_statuses) { [@life_status] }
 
       it_behaves_like 'a successful request to the tag timeline'
     end
 
     context 'with any param' do
-      let(:expected_statuses) { [life_status, love_status] }
+      let(:expected_statuses) { [@life_status, @love_status] }
       let(:params)            { { any: %(love) } }
 
       it_behaves_like 'a successful request to the tag timeline'
     end
 
     context 'with all param' do
-      let(:expected_statuses) { [life_status] }
+      let(:expected_statuses) { [@life_status] }
       let(:params)            { { all: %w(love) } }
 
       it_behaves_like 'a successful request to the tag timeline'
     end
 
     context 'with none param' do
-      let(:expected_statuses) { [war_status] }
+      let(:expected_statuses) { [@war_status] }
       let(:hashtag)           { 'war' }
       let(:params)            { { none: %w(life love) } }
 
@@ -74,8 +76,8 @@ RSpec.describe 'Tag' do
 
         expect(response)
           .to include_pagination_headers(
-            prev: api_v1_timelines_tag_url(limit: params[:limit], min_id: love_status.id),
-            next: api_v1_timelines_tag_url(limit: params[:limit], max_id: love_status.id)
+            prev: api_v1_timelines_tag_url(limit: params[:limit], min_id: @love_status.id),
+            next: api_v1_timelines_tag_url(limit: params[:limit], max_id: @love_status.id)
           )
       end
     end
@@ -83,7 +85,7 @@ RSpec.describe 'Tag' do
     context 'when the instance allows public preview' do
       context 'when the user is not authenticated' do
         let(:headers) { {} }
-        let(:expected_statuses) { [life_status] }
+        let(:expected_statuses) { [@life_status] }
 
         it_behaves_like 'a successful request to the tag timeline'
       end
@@ -105,7 +107,7 @@ RSpec.describe 'Tag' do
       end
 
       context 'when the user is authenticated' do
-        let(:expected_statuses) { [life_status] }
+        let(:expected_statuses) { [@life_status] }
 
         it_behaves_like 'a successful request to the tag timeline'
       end
