@@ -10,8 +10,8 @@ RSpec.describe BatchedRemoveStatusService do
   let_it_be(:jeff)  { Fabricate(:account) }
   let_it_be(:hank)  { Fabricate(:account, username: 'hank', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
 
-  let_it_be(:status_alice_hello) { PostStatusService.new.call(alice, text: "Hello @#{bob.pretty_acct}") }
-  let_it_be(:status_alice_other) { PostStatusService.new.call(alice, text: 'Another status') }
+  let!(:status_alice_hello) { PostStatusService.new.call(alice, text: "Hello @#{bob.pretty_acct}") }
+  let!(:status_alice_other) { PostStatusService.new.call(alice, text: 'Another status') }
 
   before_all do
     jeff.user.update(current_sign_in_at: Time.zone.now)
