@@ -8,6 +8,10 @@ RSpec.describe ActivityPub::RepliesController do
   let(:remote_reply_id) { 'https://foobar.com/statuses/1234' }
   let(:remote_querier) { nil }
 
+  before do
+    stub_const 'ActivityPub::RepliesController::DESCENDANTS_LIMIT', 5
+  end
+
   shared_examples 'common behavior' do
     context 'when status is private' do
       before { status.update!(visibility: :private) }
@@ -142,9 +146,7 @@ RSpec.describe ActivityPub::RepliesController do
     it_behaves_like 'common behavior'
   end
 
-  before_all do
-    stub_const 'ActivityPub::RepliesController::DESCENDANTS_LIMIT', 5
-
+  before do
     Fabricate(:status, thread: status, visibility: :public)
     Fabricate(:status, thread: status, visibility: :public)
     Fabricate(:status, thread: status, visibility: :private)
