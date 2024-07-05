@@ -1,0 +1,726 @@
+[TEST PROF INFO] RSpecDissect enabled
+
+Run options: exclude {:search=>true, :type=>#<Proc: ./spec/rails_helper.rb:82>}
+
+Randomized with seed 30570
+
+Progress: |=========
+
+  1) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate tags runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:518:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:518:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  2) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on reset_password_token runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:172:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:172:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  3) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate custom_emojis runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:289:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:289:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  4) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate webhooks runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:574:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:574:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  5) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate announcement_reactions runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:232:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:232:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  6) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate conversations runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:260:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:260:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+
+
+  7) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on email runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:115:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:115:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  8) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate statuses runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:486:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:486:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  9) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate account_domain_blocks runs the deduplication process
+     Failure/Error: raise Thor::Error, message
+
+     Thor::Error:
+       It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+     # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+     # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+     # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+     # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+     # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+     # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:202:in `block (6 levels) in <main>'
+     # ./spec/lib/mastodon/cli/maintenance_spec.rb:202:in `block (5 levels) in <main>'
+     # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  10) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate custom_emoji_categories runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:317:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:317:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+
+
+  11) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate domain_blocks runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:373:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:373:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  12) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate webauthn_credentials runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:546:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:546:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  13) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate accounts runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:70:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:70:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  14) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate email_domain_blocks runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:401:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:401:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+
+
+  15) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate preview_cards runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:457:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:457:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  16) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate domain_allows runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:345:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:345:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+
+
+  17) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate media_attachments runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:429:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:429:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |==========
+
+  18) Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on confirmation_token runs the deduplication process
+      Failure/Error: raise Thor::Error, message
+
+      Thor::Error:
+        It seems Sidekiq is running. All Mastodon processes need to be stopped when using this script.
+      # ./lib/mastodon/cli/base.rb:22:in `fail_with_message'
+      # ./lib/mastodon/cli/maintenance.rb:243:in `verify_sidekiq_not_active!'
+      # ./lib/mastodon/cli/maintenance.rb:191:in `verify_system_ready!'
+      # ./lib/mastodon/cli/maintenance.rb:178:in `fix_duplicates'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/command.rb:28:in `run'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:127:in `invoke_command'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor.rb:527:in `dispatch'
+      # /usr/local/rvm/gems/default/gems/thor-1.3.1/lib/thor/invocation.rb:116:in `invoke'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:7:in `block (2 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `block in fetch_or_store'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:105:in `track'
+      # /usr/local/rvm/gems/default/gems/test-prof-1.3.3/lib/test_prof/rspec_dissect.rb:23:in `fetch_or_store'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:143:in `block (6 levels) in <main>'
+      # ./spec/lib/mastodon/cli/maintenance_spec.rb:143:in `block (5 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |========================================
+
+  19) Admin::SystemCheck::SidekiqProcessCheck message sends values to message instance
+      Failure/Error: Admin::SystemCheck::Message.new(:sidekiq_process_check, missing_queues.join(', '))
+
+        #<Admin::SystemCheck::Message (class)> received :new with unexpected arguments
+          expected: (:sidekiq_process_check, "default, push, mailers, pull, scheduler, ingress")
+               got: (:sidekiq_process_check, "")
+        Diff:
+        @@ -1 +1 @@
+        -[:sidekiq_process_check, "default, push, mailers, pull, scheduler, ingress"]
+        +[:sidekiq_process_check, ""]
+
+         Please stub a default value first if message might be received with other args as well. 
+      # ./app/lib/admin/system_check/sidekiq_process_check.rb:22:in `message'
+      # ./spec/lib/admin/system_check/sidekiq_process_check_spec.rb:40:in `block (3 levels) in <main>'
+      # /usr/local/rvm/gems/default/gems/webmock-3.23.0/lib/webmock/rspec.rb:39:in `block (2 levels) in <main>'
+
+Progress: |=====================================================================================================|
+[TEST PROF INFO] RSpecDissect report
+
+Total time: 02:52.546
+
+Total `let` time: 01:35.488
+Total `before(:each)` time: 01:35.098
+
+Top 50 slowest suites (by `let` time):
+
+MediaAttachment (./spec/models/media_attachment_spec.rb:5) – 00:12.707 of 00:13.340 (32)
+ ↳ media – 53
+ ↳ subject – 5
+ ↳ media_attachment – 2
+Vacuum::MediaAttachmentsVacuum (./spec/lib/vacuum/media_attachments_vacuum_spec.rb:5) – 00:09.210 of 00:09.252 (6)
+ ↳ old_remote_media – 7
+ ↳ old_local_media – 7
+ ↳ new_remote_media – 7
+MoveWorker (./spec/workers/move_worker_spec.rb:5) – 00:03.327 of 00:05.520 (73)
+ ↳ source_account – 413
+ ↳ target_account – 256
+ ↳ block_service – 155
+Mastodon::CLI::Accounts (./spec/lib/mastodon/cli/accounts_spec.rb:6) – 00:03.073 of 00:03.802 (102)
+ ↳ target_account – 75
+ ↳ subject – 66
+ ↳ source_account – 55
+Mastodon::CLI::Media (./spec/lib/mastodon/cli/media_spec.rb:6) – 00:02.330 of 00:03.038 (20)
+ ↳ subject – 11
+ ↳ media_attachment – 8
+ ↳ account – 4
+Vacuum::PreviewCardsVacuum (./spec/lib/vacuum/preview_cards_vacuum_spec.rb:5) – 00:02.081 of 00:02.276 (4)
+ ↳ new_preview_card – 10
+ ↳ old_preview_card – 9
+ ↳ orphaned_preview_card – 5
+BackupService (./spec/services/backup_service_spec.rb:5) – 00:01.878 of 00:01.914 (2)
+ ↳ backup – 9
+ ↳ user – 4
+ ↳ status – 3
+Notification (./spec/models/notification_spec.rb:5) – 00:01.818 of 00:01.985 (30)
+ ↳ subject – 38
+ ↳ notifications – 14
+ ↳ status – 4
+Media (./spec/requests/api/v1/media_spec.rb:5) – 00:01.188 of 00:01.219 (16)
+ ↳ subject – 16
+ ↳ media – 6
+ ↳ user – 4
+Public (./spec/requests/api/v1/timelines/public_spec.rb:5) – 00:01.185 of 00:01.325 (10)
+ ↳ media_status – 12
+ ↳ local_status – 10
+ ↳ remote_status – 10
+StatusCacheHydrator (./spec/lib/status_cache_hydrator_spec.rb:5) – 00:01.163 of 00:01.286 (20)
+ ↳ subject – 20
+ ↳ compare_to_hash – 20
+ ↳ account – 14
+Account (./spec/models/account_spec.rb:5) – 00:01.135 of 00:02.302 (121)
+ ↳ subject – 66
+ ↳ account – 43
+ ↳ bob – 14
+MediaComponentHelper (./spec/helpers/media_component_helper_spec.rb:5) – 00:01.087 of 00:01.277 (5)
+ ↳ result – 5
+ ↳ status – 1
+FeedManager (./spec/lib/feed_manager_spec.rb:5) – 00:01.021 of 00:02.776 (58)
+ ↳ bob – 91
+ ↳ alice – 82
+ ↳ list – 58
+Accounts (./spec/requests/api/v1/admin/accounts_spec.rb:5) – 00:00.981 of 00:01.122 (47)
+ ↳ subject – 39
+ ↳ account – 38
+ ↳ pending_account – 10
+ActivityPub::RepliesController (./spec/controllers/activitypub/replies_controller_spec.rb:5) – 00:00.945 of 00:02.277 (36)
+ ↳ status – 360
+ ↳ remote_querier – 42
+ ↳ remote_account – 36
+Admin::Report...ionsController (./spec/controllers/admin/reports/actions_controller_spec.rb:5) – 00:00.943 of 00:01.656 (26)
+ ↳ report – 92
+ ↳ target_account – 52
+ ↳ user – 26
+Scheduler::Fo...tionsScheduler (./spec/workers/scheduler/follow_recommendations_scheduler_spec.rb:5) – 00:00.895 of 00:00.934 (2)
+ ↳ target_accounts – 8
+ ↳ follower_accounts – 3
+ ↳ scheduled_run – 2
+AccountStatusesCleanupPolicy (./spec/models/account_statuses_cleanup_policy_spec.rb:5) – 00:00.878 of 00:01.300 (36)
+ ↳ account_statuses_cleanup_policy – 136
+ ↳ account – 60
+ ↳ faved_primary – 38
+AccountStatusesFilter (./spec/lib/account_statuses_filter_spec.rb:5) – 00:00.815 of 00:10.539 (28)
+ ↳ account – 259
+ ↳ subject – 36
+ ↳ tag – 32
+Accounts show response (./spec/requests/accounts_ai_suggest_1_spec.rb:5) – 00:00.808 of 00:01.422 (22)
+ ↳ account – 93
+ ↳ status_media – 42
+ ↳ status_private – 42
+Status (./spec/models/status_spec.rb:5) – 00:00.714 of 00:00.868 (49)
+ ↳ subject – 67
+ ↳ status_without_tags – 21
+ ↳ status_with_all_tags – 21
+Account::Interactions (./spec/models/concerns/account/interactions_spec.rb:5) – 00:00.658 of 00:00.845 (68)
+ ↳ subject – 61
+ ↳ account – 56
+ ↳ me – 43
+RemoveStatusService (./spec/services/remove_status_service_spec.rb:5) – 00:00.644 of 00:01.016 (9)
+ ↳ status – 37
+ ↳ alice – 30
+ ↳ hank – 30
+NotificationMailer (./spec/mailers/notification_mailer_spec.rb:5) – 00:00.626 of 00:00.789 (23)
+ ↳ receiver – 30
+ ↳ mail – 23
+ImportService (./spec/services/import_service_spec.rb:5) – 00:00.593 of 00:00.922 (14)
+ ↳ account – 64
+ ↳ bob – 34
+ ↳ eve – 20
+ActivityPub::...sUpdateService (./spec/services/activitypub/process_status_update_service_spec.rb:9) – 00:00.589 of 00:01.024 (38)
+ ↳ status – 150
+ ↳ json – 76
+ ↳ mentions – 38
+DeleteAccountService (./spec/services/delete_account_service_spec.rb:5) – 00:00.585 of 00:00.604 (4)
+ ↳ account – 6
+ ↳ status – 6
+ ↳ mention – 6
+NotifyService (./spec/services/notify_service_spec.rb:5) – 00:00.582 of 00:00.709 (33)
+ ↳ notification – 40
+ ↳ subject – 33
+ ↳ recipient – 12
+Reports (./spec/requests/api/v1/admin/reports_spec.rb:5) – 00:00.576 of 00:00.756 (25)
+ ↳ report – 30
+ ↳ subject – 25
+ ↳ reporter – 15
+Auth::RegistrationsController (./spec/controllers/auth/registrations_controller_spec.rb:5) – 00:00.567 of 00:00.827 (29)
+ ↳ user – 21
+ ↳ subject – 12
+ ↳ accept_language – 6
+Tag (./spec/requests/api/v1/timelines/tag_spec.rb:5) – 00:00.563 of 00:00.582 (9)
+ ↳ love_status – 11
+ ↳ private_status – 9
+ ↳ life_status – 9
+FanOutOnWriteService (./spec/services/fan_out_on_write_service_spec.rb:5) – 00:00.554 of 00:01.355 (16)
+ ↳ status – 84
+ ↳ alice – 68
+ ↳ bob – 36
+Canonical Email Blocks (./spec/requests/api/v1/admin/canonical_email_blocks_spec.rb:5) – 00:00.524 of 00:00.563 (33)
+ ↳ subject – 31
+ ↳ canonical_email_block – 18
+ ↳ canonical_email_blocks – 6
+PostProcessMediaWorker (./spec/workers/post_process_media_worker_spec.rb:5) – 00:00.521 of 00:00.604 (4)
+ ↳ media_attachment – 5
+ ↳ worker – 4
+ActivityPub::Activity::Create (./spec/lib/activitypub/activity/create_spec.rb:5) – 00:00.487 of 00:01.873 (47)
+ ↳ sender – 144
+ ↳ subject – 46
+ ↳ object_json – 6
+Status::ThreadingConcern (./spec/models/concerns/status/threading_concern_spec.rb:5) – 00:00.472 of 00:00.580 (16)
+ ↳ viewer – 32
+ ↳ status – 25
+ ↳ alice – 23
+/api/v1/accounts (./spec/requests/api/v1/accounts_spec.rb:5) – 00:00.466 of 00:00.590 (29)
+ ↳ other_account – 39
+ ↳ user – 36
+ ↳ subject – 24
+Settings::Two...ionsController (./spec/controllers/settings/two_factor_authentication/confirmations_controller_spec.rb:5) – 00:00.459 of 00:00.563 (14)
+ ↳ user – 30
+ ↳ subject – 6
+ ↳ otp_backup_codes – 6
+Settings::ImportsController (./spec/controllers/settings/imports_controller_spec.rb:5) – 00:00.433 of 00:00.616 (34)
+ ↳ user – 80
+ ↳ bulk_import – 46
+ ↳ subject – 30
+Account actions (./spec/requests/api/v1/admin/account_actions_spec.rb:5) – 00:00.417 of 00:00.453 (24)
+ ↳ subject – 24
+ ↳ target_account – 12
+ ↳ user – 4
+Admin::AccountsController (./spec/controllers/admin/accounts_controller_spec.rb:5) – 00:00.417 of 00:00.611 (26)
+ ↳ account – 33
+ ↳ current_user – 28
+ ↳ subject – 24
+UserMailer (./spec/mailers/user_mailer_spec.rb:5) – 00:00.413 of 00:00.644 (35)
+ ↳ mail – 35
+ ↳ receiver – 26
+ ↳ appeal – 2
+Scheduler::Ac...eanupScheduler (./spec/workers/scheduler/accounts_statuses_cleanup_scheduler_spec.rb:5) – 00:00.411 of 00:02.201 (9)
+ ↳ account_alice – 43
+ ↳ account_chris – 43
+ ↳ account_dave – 41
+StatusRelationshipsPresenter (./spec/presenters/status_relationships_presenter_spec.rb:5) – 00:00.405 of 00:00.437 (10)
+ ↳ default_map – 60
+ ↳ current_account_id – 54
+ ↳ status_ids – 30
+ActivityPub::NoteSerializer (./spec/serializers/activitypub/note_serializer_spec.rb:5) – 00:00.400 of 00:00.407 (6)
+ ↳ account – 7
+ ↳ reply_by_account_first – 7
+ ↳ reply_by_account_next – 7
+Domain Blocks (./spec/requests/api/v1/admin/domain_blocks_spec.rb:5) – 00:00.396 of 00:00.451 (29)
+ ↳ domain_block – 32
+ ↳ subject – 26
+ ↳ headers – 3
+BulkImportService (./spec/services/bulk_import_service_spec.rb:5) – 00:00.394 of 00:00.871 (28)
+ ↳ import – 94
+ ↳ account – 70
+ ↳ rows – 36
+UpdateStatusService (./spec/services/update_status_service_spec.rb:5) – 00:00.388 of 00:00.616 (22)
+ ↳ status – 93
+ ↳ subject – 22
+ ↳ media_attachment – 14
+Filters (./spec/requests/api/v2/filters_spec.rb:5) – 00:00.368 of 00:00.399 (28)
+ ↳ subject – 28
+ ↳ filter – 13
+ ↳ keyword – 9
+
+Top 50 slowest suites (by `before(:each)` time):
+
+AccountStatusesFilter (./spec/lib/account_statuses_filter_spec.rb:5) – 00:10.351 of 00:10.539 (28)
+Vacuum::MediaAttachmentsVacuum (./spec/lib/vacuum/media_attachments_vacuum_spec.rb:5) – 00:09.237 of 00:09.252 (6)
+MoveWorker (./spec/workers/move_worker_spec.rb:5) – 00:03.776 of 00:05.520 (73)
+Caching behavior (./spec/requests/cache_spec.rb:121) – 00:02.325 of 00:02.572 (253)
+Vacuum::PreviewCardsVacuum (./spec/lib/vacuum/preview_cards_vacuum_spec.rb:5) – 00:02.272 of 00:02.276 (4)
+Mastodon::CLI::Accounts (./spec/lib/mastodon/cli/accounts_spec.rb:6) – 00:02.015 of 00:03.802 (102)
+Mastodon::CLI::Media (./spec/lib/mastodon/cli/media_spec.rb:6) – 00:01.963 of 00:03.038 (20)
+ActivityPub::RepliesController (./spec/controllers/activitypub/replies_controller_spec.rb:5) – 00:01.845 of 00:02.277 (36)
+Notification (./spec/models/notification_spec.rb:5) – 00:01.721 of 00:01.985 (30)
+ActivityPub::Activity::Create (./spec/lib/activitypub/activity/create_spec.rb:5) – 00:01.696 of 00:01.873 (47)
+Admin::Metric...chmentsMeasure (./spec/lib/admin/metrics/measure/instance_media_attachments_measure_spec.rb:5) – 00:01.603 of 00:01.623 (3)
+Scheduler::Ac...eanupScheduler (./spec/workers/scheduler/accounts_statuses_cleanup_scheduler_spec.rb:5) – 00:01.530 of 00:02.201 (9)
+Mastodon::CLI::PreviewCards (./spec/lib/mastodon/cli/preview_cards_spec.rb:6) – 00:01.438 of 00:01.462 (5)
+Accounts show response (./spec/requests/accounts_ai_suggest_1_spec.rb:5) – 00:01.362 of 00:01.422 (22)
+FanOutOnWriteService (./spec/services/fan_out_on_write_service_spec.rb:5) – 00:01.330 of 00:01.355 (16)
+AccountStatusesCleanupPolicy (./spec/models/account_statuses_cleanup_policy_spec.rb:5) – 00:01.200 of 00:01.300 (36)
+Mastodon::CLI::Maintenance (./spec/lib/mastodon/cli/maintenance_spec.rb:6) – 00:01.122 of 00:01.161 (23)
+Admin::Report...ionsController (./spec/controllers/admin/reports/actions_controller_spec.rb:5) – 00:01.085 of 00:01.656 (26)
+Public (./spec/requests/api/v1/timelines/public_spec.rb:5) – 00:01.074 of 00:01.325 (10)
+Scheduler::Fo...tionsScheduler (./spec/workers/scheduler/follow_recommendations_scheduler_spec.rb:5) – 00:00.915 of 00:00.934 (2)
+StatusesController (./spec/controllers/statuses_controller_spec.rb:5) – 00:00.856 of 00:00.912 (54)
+ActivityPub::...sUpdateService (./spec/services/activitypub/process_status_update_service_spec.rb:9) – 00:00.856 of 00:01.024 (38)
+statuses/show.html.haml (./spec/views/statuses/show.html.haml_spec.rb:5) – 00:00.853 of 00:00.885 (2)
+RemoveStatusService (./spec/services/remove_status_service_spec.rb:5) – 00:00.744 of 00:01.016 (9)
+Accounts show response (./spec/requests/accounts_spec.rb:5) – 00:00.680 of 00:00.773 (22)
+Trends::Statuses (./spec/models/trends/statuses_spec.rb:5) – 00:00.648 of 00:00.692 (9)
+Accounts show response (./spec/requests/accounts_ai_suggest_2_spec.rb:5) – 00:00.646 of 00:00.733 (22)
+FeedManager (./spec/lib/feed_manager_spec.rb:5) – 00:00.610 of 00:02.776 (58)
+ActivityPub::...oxesController (./spec/controllers/activitypub/outboxes_controller_spec.rb:5) – 00:00.585 of 00:00.696 (30)
+ActivityPub::...llowersService (./spec/services/activitypub/synchronize_followers_service_spec.rb:5) – 00:00.580 of 00:00.605 (12)
+UpdateStatusService (./spec/services/update_status_service_spec.rb:5) – 00:00.579 of 00:00.616 (22)
+Admin::Metric...ReportsMeasure (./spec/lib/admin/metrics/measure/instance_reports_measure_spec.rb:5) – 00:00.541 of 00:00.556 (3)
+BulkImportService (./spec/services/bulk_import_service_spec.rb:5) – 00:00.531 of 00:00.871 (28)
+Admin::DomainBlocksController (./spec/controllers/admin/domain_blocks_controller_spec.rb:5) – 00:00.511 of 00:00.642 (24)
+ActivityPub::Activity::Follow (./spec/lib/activitypub/activity/follow_spec.rb:5) – 00:00.497 of 00:00.519 (20)
+Admin::RolesController (./spec/controllers/admin/roles_controller_spec.rb:5) – 00:00.484 of 00:00.509 (26)
+Accounts (./spec/requests/api/v1/admin/accounts_spec.rb:5) – 00:00.476 of 00:01.122 (47)
+Status::ThreadingConcern (./spec/models/concerns/status/threading_concern_spec.rb:5) – 00:00.475 of 00:00.580 (16)
+DeleteAccountService (./spec/services/delete_account_service_spec.rb:5) – 00:00.438 of 00:00.604 (4)
+Tag (./spec/requests/api/v1/timelines/tag_spec.rb:5) – 00:00.427 of 00:00.582 (9)
+BatchedRemoveStatusService (./spec/services/batched_remove_status_service_spec.rb:5) – 00:00.423 of 00:00.432 (6)
+StatusRelationshipsPresenter (./spec/presenters/status_relationships_presenter_spec.rb:5) – 00:00.414 of 00:00.437 (10)
+Auth::SessionsController (./spec/controllers/auth/sessions_controller_spec.rb:6) – 00:00.398 of 00:00.556 (24)
+Admin::StatusesController (./spec/controllers/admin/statuses_controller_spec.rb:5) – 00:00.393 of 00:00.423 (5)
+ActivityPub::NoteSerializer (./spec/serializers/activitypub/note_serializer_spec.rb:5) – 00:00.387 of 00:00.407 (6)
+StatusCacheHydrator (./spec/lib/status_cache_hydrator_spec.rb:5) – 00:00.384 of 00:01.286 (20)
+ImportService (./spec/services/import_service_spec.rb:5) – 00:00.372 of 00:00.922 (14)
+Home (./spec/requests/api/v1/timelines/home_spec.rb:5) – 00:00.368 of 00:00.463 (8)
+FetchLinkCardService (./spec/services/fetch_link_card_service_spec.rb:5) – 00:00.356 of 00:00.380 (29)
+Settings::ImportsController (./spec/controllers/settings/imports_controller_spec.rb:5) – 00:00.354 of 00:00.616 (34)
+
+
+Finished in 2 minutes 54.1 seconds (files took 3.23 seconds to load)
+5584 examples, 19 failures
+
+Failed examples:
+
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:517 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate tags runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:171 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on reset_password_token runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:288 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate custom_emojis runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:573 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate webhooks runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:231 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate announcement_reactions runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:259 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate conversations runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:114 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on email runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:485 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate statuses runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:201 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate account_domain_blocks runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:316 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate custom_emoji_categories runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:372 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate domain_blocks runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:545 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate webauthn_credentials runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:69 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate accounts runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:400 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate email_domain_blocks runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:456 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate preview_cards runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:344 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate domain_allows runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:428 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate media_attachments runs the deduplication process
+rspec ./spec/lib/mastodon/cli/maintenance_spec.rb:142 # Mastodon::CLI::Maintenance#fix_duplicates when requirements are met with duplicate users on confirmation_token runs the deduplication process
+rspec ./spec/lib/admin/system_check/sidekiq_process_check_spec.rb:37 # Admin::SystemCheck::SidekiqProcessCheck message sends values to message instance
+
+Randomized with seed 30570

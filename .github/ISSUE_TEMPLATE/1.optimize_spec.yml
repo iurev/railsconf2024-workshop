@@ -19,7 +19,8 @@ body:
         You have been asked to refactor a test file to improve its performance.
         You should use TestProf's let_it_be, before_all features
         You must be very careful and introduce changes only when they are absolutely neccessary and will bring real performance improvements (don't over-optimize).
-        Again, do only minimal and essential changes to the existing code.
+        Again, make only minimal and essential changes to the existing code.
+        You MUST always send me back the whole file even if some parts of it didn't change.
 
         Use the following example refactoring as a guide:
 
@@ -54,6 +55,7 @@ body:
 
         Runs the given test contents and returns the output containing RSpec run information (including failures) and TestProf profiling information (FactoryProf, RSpecDissect, etc.).
         The test contents MUST be the entire file contents, including the test class and any required files; all original scenarios MUST be preserved.
+        Again, you MUST always send me back the whole file even if some parts of it didn't change.
 
         Example session (the format must be exactly like the one below):
 
