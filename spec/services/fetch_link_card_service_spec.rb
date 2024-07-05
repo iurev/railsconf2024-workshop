@@ -33,11 +33,9 @@ RSpec.describe FetchLinkCardService do
   context 'with a local status' do
     let_it_be(:status) { Fabricate(:status, text: 'http://example.com/html') }
 
-    before do
-      subject.call(status)
-    end
-
     context 'with URL of a regular HTML page' do
+      before { subject.call(status) }
+
       it 'creates preview card' do
         expect(status.preview_card).to_not be_nil
         expect(status.preview_card.url).to eq 'http://example.com/html'
@@ -47,6 +45,7 @@ RSpec.describe FetchLinkCardService do
 
     context 'with URL of a page with no title' do
       let(:html) { '<!doctype html><title></title>' }
+      before { subject.call(status) }
 
       it 'does not create a preview card' do
         expect(status.preview_card).to be_nil
@@ -229,6 +228,8 @@ RSpec.describe FetchLinkCardService do
 
     context 'with a URL of a page with oEmbed support' do
       let(:html) { '<!doctype html><title>Hello world</title><link rel="alternate" type="application/json+oembed" href="http://example.com/oembed?url=http://example.com/html">' }
+
+      before { subject.call(status) }
 
       it 'fetches the oEmbed URL' do
         expect(a_request(:get, 'http://example.com/oembed?url=http://example.com/html')).to have_been_made.once
