@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -87,6 +86,8 @@ RSpec.describe MediaAttachment do
   end
 
   shared_examples 'static 600x400 image' do |content_type, extension|
+    let_it_be(:media) { Fabricate(:media_attachment, file: attachment_fixture("600x400#{extension}")) }
+
     after do
       media.destroy
     end
@@ -129,44 +130,34 @@ RSpec.describe MediaAttachment do
   end
 
   describe 'jpeg' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('600x400.jpeg')) }
-
     it_behaves_like 'static 600x400 image', 'image/jpeg', '.jpeg'
   end
 
   describe 'png' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('600x400.png')) }
-
     it_behaves_like 'static 600x400 image', 'image/png', '.png'
   end
 
   describe 'webp' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('600x400.webp')) }
-
     it_behaves_like 'static 600x400 image', 'image/webp', '.webp'
   end
 
   describe 'avif' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('600x400.avif')) }
-
     it_behaves_like 'static 600x400 image', 'image/jpeg', '.jpeg'
   end
 
   describe 'heic' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('600x400.heic')) }
-
     it_behaves_like 'static 600x400 image', 'image/jpeg', '.jpeg'
   end
 
   describe 'base64-encoded image' do
-    let(:base64_attachment) { "data:image/jpeg;base64,#{Base64.encode64(attachment_fixture('600x400.jpeg').read)}" }
-    let(:media) { Fabricate(:media_attachment, file: base64_attachment) }
+    let_it_be(:base64_attachment) { "data:image/jpeg;base64,#{Base64.encode64(attachment_fixture('600x400.jpeg').read)}" }
+    let_it_be(:media) { Fabricate(:media_attachment, file: base64_attachment) }
 
     it_behaves_like 'static 600x400 image', 'image/jpeg', '.jpeg'
   end
 
   describe 'animated gif' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('avatar.gif')) }
+    let_it_be(:media) { Fabricate(:media_attachment, file: attachment_fixture('avatar.gif')) }
 
     it 'sets correct file metadata', paperclip: :process do
       expect(media.type).to eq 'gifv'
@@ -184,7 +175,7 @@ RSpec.describe MediaAttachment do
 
     fixtures.each do |fixture|
       context fixture[:filename] do
-        let(:media) { Fabricate(:media_attachment, file: attachment_fixture(fixture[:filename])) }
+        let_it_be(:media) { Fabricate(:media_attachment, file: attachment_fixture(fixture[:filename])) }
 
         it 'sets correct file metadata', paperclip: :process do
           expect(media.type).to eq 'image'
@@ -198,7 +189,7 @@ RSpec.describe MediaAttachment do
   end
 
   describe 'ogg with cover art' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('boop.ogg')) }
+    let_it_be(:media) { Fabricate(:media_attachment, file: attachment_fixture('boop.ogg')) }
 
     it 'sets correct file metadata', paperclip: :process do
       expect(media.type).to eq 'audio'
@@ -210,7 +201,7 @@ RSpec.describe MediaAttachment do
   end
 
   describe 'mp3 with large cover art' do
-    let(:media) { Fabricate(:media_attachment, file: attachment_fixture('boop.mp3')) }
+    let_it_be(:media) { Fabricate(:media_attachment, file: attachment_fixture('boop.mp3')) }
 
     it 'detects it as an audio file', paperclip: :process do
       expect(media.type).to eq 'audio'
