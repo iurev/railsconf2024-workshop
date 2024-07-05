@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/media'
@@ -7,7 +6,7 @@ require 'mastodon/cli/media'
 describe Mastodon::CLI::Media do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -35,7 +34,7 @@ describe Mastodon::CLI::Media do
     end
 
     context 'with a relevant account' do
-      let!(:account) do
+      let_it_be(:account) do
         Fabricate(:account, domain: 'example.com', updated_at: 1.month.ago, last_webfingered_at: 1.month.ago, avatar: attachment_fixture('attachment.jpg'), header: attachment_fixture('attachment.jpg'))
       end
 
@@ -63,7 +62,7 @@ describe Mastodon::CLI::Media do
     end
 
     context 'with a relevant media attachment' do
-      let!(:media_attachment) { Fabricate(:media_attachment, remote_url: 'https://example.com/image.jpg', created_at: 1.month.ago) }
+      let_it_be(:media_attachment) { Fabricate(:media_attachment, remote_url: 'https://example.com/image.jpg', created_at: 1.month.ago) }
 
       context 'without options' do
         it 'removes account avatars' do
@@ -102,8 +101,8 @@ describe Mastodon::CLI::Media do
     end
 
     context 'with a valid media url' do
-      let(:status) { Fabricate(:status) }
-      let(:media_attachment) { Fabricate(:media_attachment, status: status) }
+      let_it_be(:status) { Fabricate(:status) }
+      let_it_be(:media_attachment) { Fabricate(:media_attachment, status: status) }
       let(:url) { media_attachment.file.url(:original) }
 
       it 'displays the url of a connected status' do
@@ -124,13 +123,13 @@ describe Mastodon::CLI::Media do
     end
 
     context 'with --status option' do
+      let_it_be(:status) { Fabricate(:status) }
+      let_it_be(:media_attachment) { Fabricate(:media_attachment, status: status, remote_url: 'https://host.example/asset.jpg') }
+      let(:options) { { status: status.id } }
+
       before do
         media_attachment.update(file_file_name: nil)
       end
-
-      let(:media_attachment) { Fabricate(:media_attachment, status: status, remote_url: 'https://host.example/asset.jpg') }
-      let(:options) { { status: status.id } }
-      let(:status) { Fabricate(:status) }
 
       it 'redownloads the attachment file' do
         expect { subject }
@@ -149,13 +148,13 @@ describe Mastodon::CLI::Media do
       end
 
       context 'when the account exists' do
+        let_it_be(:account) { Fabricate(:account) }
+        let_it_be(:media_attachment) { Fabricate(:media_attachment, account: account) }
+        let(:options) { { account: account.acct } }
+
         before do
           media_attachment.update(file_file_name: nil)
         end
-
-        let(:media_attachment) { Fabricate(:media_attachment, account: account) }
-        let(:options) { { account: account.acct } }
-        let(:account) { Fabricate(:account) }
 
         it 'redownloads the attachment file' do
           expect { subject }
@@ -165,14 +164,14 @@ describe Mastodon::CLI::Media do
     end
 
     context 'with --domain option' do
+      let_it_be(:domain) { 'example.host' }
+      let_it_be(:account) { Fabricate(:account, domain: domain) }
+      let_it_be(:media_attachment) { Fabricate(:media_attachment, account: account) }
+      let(:options) { { domain: domain } }
+
       before do
         media_attachment.update(file_file_name: nil)
       end
-
-      let(:domain) { 'example.host' }
-      let(:media_attachment) { Fabricate(:media_attachment, account: account) }
-      let(:options) { { domain: domain } }
-      let(:account) { Fabricate(:account, domain: domain) }
 
       it 'redownloads the attachment file' do
         expect { subject }
@@ -233,12 +232,12 @@ describe Mastodon::CLI::Media do
     end
 
     context 'when in filesystem mode' do
+      let_it_be(:media_attachment) { Fabricate(:media_attachment) }
+
       before do
         allow(File).to receive(:delete).and_return(true)
         media_attachment.delete
       end
-
-      let(:media_attachment) { Fabricate(:media_attachment) }
 
       it 'removes the unlinked files' do
         expect { subject }
