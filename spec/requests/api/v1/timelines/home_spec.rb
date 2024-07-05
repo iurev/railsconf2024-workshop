@@ -21,15 +21,16 @@ describe 'Home' do
       let_it_be(:bob) { Fabricate(:account) }
       let_it_be(:tim) { Fabricate(:account) }
       let_it_be(:ana) { Fabricate(:account) }
-      let(:home_statuses) { bob.statuses + ana.statuses }
 
-      before_all do
+      before do
         user.account.follow!(bob)
         user.account.follow!(ana)
-        PostStatusService.new.call(bob, text: 'New toot from bob.')
-        PostStatusService.new.call(tim, text: 'New toot from tim.')
-        PostStatusService.new.call(ana, text: 'New toot from ana.')
+        Fabricate(:status, account: bob, text: 'New toot from bob.')
+        Fabricate(:status, account: tim, text: 'New toot from tim.')
+        Fabricate(:status, account: ana, text: 'New toot from ana.')
       end
+
+      let(:home_statuses) { Status.where(account: [bob, ana]).order(id: :desc) }
 
       it 'returns http success' do
         subject
@@ -57,8 +58,8 @@ describe 'Home' do
 
           expect(response)
             .to include_pagination_headers(
-              prev: api_v1_timelines_home_url(limit: params[:limit], min_id: ana.statuses.first.id),
-              next: api_v1_timelines_home_url(limit: params[:limit], max_id: ana.statuses.first.id)
+              prev: api_v1_timelines_home_url(limit: params[:limit], min_id: home_statuses.first.id),
+              next: api_v1_timelines_home_url(limit: params[:limit], max_id: home_statuses.first.id)
             )
         end
       end
