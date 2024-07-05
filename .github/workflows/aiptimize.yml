@@ -4,19 +4,85 @@ on:
   issues:
     types: [labeled]
 
+concurrency:
+  group: aiptimize
+  cancel-in-progress: false
+
+env:
+  BUNDLE_CLEAN: true
+  BUNDLE_FROZEN: true
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+  OPENPIPE_API_KEY: ${{ secrets.OPENPIPE_API_KEY }}
+
 jobs:
-  create_pr:
+  test:
     if: github.event.label.name == 'optimize'
+
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    env:
+      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASS: postgres
+      DISABLE_SIMPLECOV: ${{ matrix.ruby-version != '.ruby-version' }}
+      RAILS_ENV: test
+      ALLOW_NOPAM: true
+      PAM_ENABLED: true
+      PAM_DEFAULT_SERVICE: pam_test
+      PAM_CONTROLLED_SERVICE: pam_test_controlled
+      OIDC_ENABLED: true
+      OIDC_SCOPE: read
+      SAML_ENABLED: true
+      CAS_ENABLED: true
+      BUNDLE_WITH: 'pam_authentication test'
+      GITHUB_RSPEC: ${{ matrix.ruby-version == '.ruby-version' && github.event.pull_request && 'true' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '3.3'
     steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby environment
+        uses: ./.github/actions/setup-ruby
         with:
-          ruby-version: '3.1'
+          ruby-version: ${{ matrix.ruby-version}}
+          additional-system-dependencies: ffmpeg imagemagick libpam-dev
+
+      - name: Load database schema
+        run: './bin/rails db:create db:schema:load db:seed'
+
       - run: |
           gem install octokit
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
+
       - run: ruby ai/create_pr.rb ${{ github.event.issue.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
