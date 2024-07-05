@@ -9,18 +9,18 @@ RSpec.describe FetchLinkCardService do
   let_it_be(:oembed_cache) { nil }
 
   before_all do
-    stub_request(:get, 'http://example.com/html').to_return(headers: { 'Content-Type' => 'text/html' }, body: html)
+    stub_request(:get, 'http://example.com/html').to_return(status: 200, headers: { 'Content-Type' => 'text/html' }, body: html)
     stub_request(:get, 'http://example.com/not-found').to_return(status: 404, headers: { 'Content-Type' => 'text/html' }, body: html)
     stub_request(:get, 'http://example.com/text').to_return(status: 404, headers: { 'Content-Type' => 'text/plain' }, body: 'Hello')
     stub_request(:get, 'http://example.com/redirect').to_return(status: 302, headers: { 'Location' => 'http://example.com/html' })
     stub_request(:get, 'http://example.com/redirect-to-404').to_return(status: 302, headers: { 'Location' => 'http://example.com/not-found' })
-    stub_request(:get, 'http://example.com/oembed?url=http://example.com/html').to_return(headers: { 'Content-Type' => 'application/json' }, body: '{ "version": "1.0", "type": "link", "title": "oEmbed title" }')
-    stub_request(:get, 'http://example.com/oembed?format=json&url=http://example.com/html').to_return(headers: { 'Content-Type' => 'application/json' }, body: '{ "version": "1.0", "type": "link", "title": "oEmbed title" }')
+    stub_request(:get, 'http://example.com/oembed?url=http://example.com/html').to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: '{ "version": "1.0", "type": "link", "title": "oEmbed title" }')
+    stub_request(:get, 'http://example.com/oembed?format=json&url=http://example.com/html').to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: '{ "version": "1.0", "type": "link", "title": "oEmbed title" }')
 
-    stub_request(:get, 'http://example.xn--fiqs8s')
-    stub_request(:get, 'http://example.com/日本語')
-    stub_request(:get, 'http://example.com/test?data=file.gpx%5E1')
-    stub_request(:get, 'http://example.com/test-')
+    stub_request(:get, 'http://example.xn--fiqs8s').to_return(status: 200, body: '')
+    stub_request(:get, 'http://example.com/日本語').to_return(status: 200, body: '')
+    stub_request(:get, 'http://example.com/test?data=file.gpx%5E1').to_return(status: 200, body: '')
+    stub_request(:get, 'http://example.com/test-').to_return(status: 200, body: '')
 
     stub_request(:get, 'http://example.com/sjis').to_return(request_fixture('sjis.txt'))
     stub_request(:get, 'http://example.com/sjis_with_wrong_charset').to_return(request_fixture('sjis_with_wrong_charset.txt'))
@@ -69,7 +69,7 @@ RSpec.describe FetchLinkCardService do
       end
 
       it 'does not fetch the second valid URL' do
-        expect(a_request(:get, 'http://example.com/text/')).to_not have_been_made
+        expect(a_request(:get, 'http://example.com/text')).to_not have_been_made
       end
     end
 
