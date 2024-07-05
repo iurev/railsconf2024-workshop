@@ -85,3 +85,4 @@ jobs:
           git config --global user.email 'action@github.com'
 
       - run: ruby ai/create_pr.rb ${{ github.event.issue.number }}
+        continue-on-error: true
