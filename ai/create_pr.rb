@@ -165,6 +165,13 @@ loop do
     req.body = payload.to_json
   end
 
+  unless response.success?
+    @client.add_labels_to_an_issue(@repo, @pr.number, ['failed'])
+    custom_print("Something went wrong\n\n#{response.status}\n\n#{response.env.response_body}")
+
+    return
+  end
+
   result = JSON.parse(response.env.response_body)["content"][0]["text"]
   messages << { role: "assistant", content: result }
 
