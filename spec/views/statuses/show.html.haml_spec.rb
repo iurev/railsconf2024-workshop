@@ -7,13 +7,8 @@ describe 'statuses/show.html.haml', :without_verify_partial_doubles do
   let_it_be(:status) { Fabricate(:status, account: alice, text: 'Hello World') }
   let_it_be(:media_attachment) { Fabricate(:media_attachment, account: alice, status: status, type: :video) }
 
-  before_all do
-    InstancePresenter.any_instance.stubs(:site_title).returns('example site')
-    InstancePresenter.any_instance.stubs(:site_hostname).returns('example.com')
-  end
-
   before do
-    allow(view).to receive_messages(api_oembed_url: '', full_asset_url: '//asset.host/image.svg', current_account: nil, single_user_mode?: false)
+    allow(view).to receive_messages(api_oembed_url: '', site_title: 'example site', site_hostname: 'example.com', full_asset_url: '//asset.host/image.svg', current_account: nil, single_user_mode?: false)
     allow(view).to receive(:local_time)
     allow(view).to receive(:local_time_ago)
     assign(:instance_presenter, InstancePresenter.new)
