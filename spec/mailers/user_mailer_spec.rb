@@ -247,13 +247,11 @@ describe UserMailer do
   describe '#welcome' do
     let(:mail) { described_class.welcome(receiver) }
 
-    before_all do
+    it 'renders welcome mail' do
       # This is a bit hacky and low-level but this allows stubbing trending tags
       tag_ids = Fabricate.times(5, :tag).pluck(:id)
       allow(Trends.tags).to receive(:query).and_return(instance_double(Trends::Query, allowed: Tag.where(id: tag_ids)))
-    end
 
-    it 'renders welcome mail' do
       expect(mail)
         .to be_present
         .and(have_subject(I18n.t('user_mailer.welcome.subject')))
