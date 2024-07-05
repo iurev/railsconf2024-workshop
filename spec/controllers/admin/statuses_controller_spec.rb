@@ -23,33 +23,20 @@ describe Admin::StatusesController do
   end
 
   describe 'GET #index' do
-    context 'with a valid account' do
-      before do
-        get :index, params: { account_id: account.id }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
+    it 'returns http success with a valid account' do
+      get :index, params: { account_id: account.id }
+      expect(response).to have_http_status(200)
     end
 
-    context 'when filtering by media' do
-      before do
-        get :index, params: { account_id: account.id, media: '1' }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
+    it 'returns http success when filtering by media' do
+      get :index, params: { account_id: account.id, media: '1' }
+      expect(response).to have_http_status(200)
     end
   end
 
   describe 'GET #show' do
-    before do
-      get :show, params: { account_id: account.id, id: status.id }
-    end
-
     it 'returns http success' do
+      get :show, params: { account_id: account.id, id: status.id }
       expect(response).to have_http_status(200)
     end
   end
@@ -58,10 +45,9 @@ describe Admin::StatusesController do
     subject { post :batch, params: { :account_id => account.id, action => '', :admin_status_batch_action => { status_ids: status_ids } } }
 
     let(:status_ids) { [media_attached_status.id] }
+    let(:action) { 'report' }
 
-    shared_examples 'when action is report' do
-      let(:action) { 'report' }
-
+    shared_examples 'creates a report and redirects' do
       it 'creates a report and redirects to report page' do
         subject
 
@@ -75,14 +61,14 @@ describe Admin::StatusesController do
       end
     end
 
-    it_behaves_like 'when action is report'
+    it_behaves_like 'creates a report and redirects'
 
     context 'when the moderator is blocked by the author' do
       before do
         account.block!(user.account)
       end
 
-      it_behaves_like 'when action is report'
+      it_behaves_like 'creates a report and redirects'
     end
   end
 end
