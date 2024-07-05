@@ -11,10 +11,6 @@ env:
   CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
   OPENPIPE_API_KEY: ${{ secrets.OPENPIPE_API_KEY }}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   test:
     if: github.event.label.name == 'optimize'
