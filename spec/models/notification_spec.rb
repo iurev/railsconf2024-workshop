@@ -3,12 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe Notification do
-  describe '#target_status' do
-    let_it_be(:status) { Fabricate(:status) }
-    let_it_be(:reblog) { Fabricate(:status, reblog: status) }
-    let_it_be(:favourite) { Fabricate(:favourite, status: status) }
-    let_it_be(:mention) { Fabricate(:mention, status: status) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:status) { Fabricate(:status, account: account) }
+  let_it_be(:reblog) { Fabricate(:status, reblog: status) }
+  let_it_be(:favourite) { Fabricate(:favourite, status: status) }
+  let_it_be(:mention) { Fabricate(:mention, status: status) }
+  let_it_be(:follow) { Fabricate(:follow, target_account: account) }
+  let_it_be(:follow_request) { Fabricate(:follow_request, target_account: account) }
+  let_it_be(:poll) { Fabricate(:poll, account: account) }
+  let_it_be(:report) { Fabricate(:report, target_account: account) }
 
+  describe '#target_status' do
     let(:notification) { Fabricate(:notification, activity: activity) }
 
     context 'when Activity is reblog' do
@@ -60,8 +65,6 @@ RSpec.describe Notification do
 
   describe 'Setting account from activity_type' do
     context 'when activity_type is a Status' do
-      let_it_be(:status) { Fabricate(:status) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Status', activity: status)
         expect(notification.from_account).to eq(status.account)
@@ -69,8 +72,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a Follow' do
-      let_it_be(:follow) { Fabricate(:follow) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Follow', activity: follow)
         expect(notification.from_account).to eq(follow.account)
@@ -78,8 +79,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a Favourite' do
-      let_it_be(:favourite) { Fabricate(:favourite) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Favourite', activity: favourite)
         expect(notification.from_account).to eq(favourite.account)
@@ -87,8 +86,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a FollowRequest' do
-      let_it_be(:follow_request) { Fabricate(:follow_request) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'FollowRequest', activity: follow_request)
         expect(notification.from_account).to eq(follow_request.account)
@@ -96,8 +93,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a Poll' do
-      let_it_be(:poll) { Fabricate(:poll) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Poll', activity: poll)
         expect(notification.from_account).to eq(poll.account)
@@ -105,8 +100,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a Report' do
-      let_it_be(:report) { Fabricate(:report) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Report', activity: report)
         expect(notification.from_account).to eq(report.account)
@@ -114,8 +107,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is a Mention' do
-      let_it_be(:mention) { Fabricate(:mention) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Mention', activity: mention)
         expect(notification.from_account).to eq(mention.status.account)
@@ -123,8 +114,6 @@ RSpec.describe Notification do
     end
 
     context 'when activity_type is an Account' do
-      let_it_be(:account) { Fabricate(:account) }
-
       it 'sets the notification from_account correctly' do
         notification = Fabricate.build(:notification, activity_type: 'Account', account: account)
         expect(notification.account).to eq(account)
@@ -148,14 +137,6 @@ RSpec.describe Notification do
     end
 
     context 'when notifications are present' do
-      let_it_be(:mention) { Fabricate(:mention) }
-      let_it_be(:status) { Fabricate(:status) }
-      let_it_be(:reblog) { Fabricate(:status, reblog: Fabricate(:status)) }
-      let_it_be(:follow) { Fabricate(:follow) }
-      let_it_be(:follow_request) { Fabricate(:follow_request) }
-      let_it_be(:favourite) { Fabricate(:favourite) }
-      let_it_be(:poll) { Fabricate(:poll) }
-
       let(:notifications) do
         [
           Fabricate(:notification, type: :mention, activity: mention),
@@ -191,7 +172,7 @@ RSpec.describe Notification do
           expect(subject[3].target_status).to be_nil
         end
 
-        it 'preloads follow_request as nill' do
+        it 'preloads follow_request as nil' do
           expect(subject[4].type).to eq :follow_request
           expect(subject[4].target_status).to be_nil
         end
