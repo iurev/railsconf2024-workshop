@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -9,9 +8,9 @@ RSpec.describe Vacuum::PreviewCardsVacuum do
   let(:retention_period) { 7.days }
 
   describe '#perform' do
-    let!(:orphaned_preview_card) { Fabricate(:preview_card, created_at: 2.days.ago) }
-    let!(:old_preview_card) { Fabricate(:preview_card, updated_at: (retention_period + 1.day).ago) }
-    let!(:new_preview_card) { Fabricate(:preview_card) }
+    let_it_be(:orphaned_preview_card) { Fabricate(:preview_card, created_at: 2.days.ago) }
+    let_it_be(:old_preview_card) { Fabricate(:preview_card, updated_at: (7.days + 1.day).ago) }
+    let_it_be(:new_preview_card) { Fabricate(:preview_card) }
 
     before do
       old_preview_card.statuses << Fabricate(:status)
