@@ -17,6 +17,24 @@ path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.st
 agent_prompt = issue_body.match(/### prompt\n\n(.+)/m)&.[](1)&.strip
 
 branch_name = "optimize-#{issue_number}"
+
+
+# remove branch and PR if they exist
+prs = @client.pull_requests(@repo, state: 'open', head: "#{@repo.split('/').first}:#{branch_name}")
+prs.each do |pr|
+  @client.update_pull_request(@repo, pr.number, state: 'closed')
+end
+
+# Delete the branch if it exists
+begin
+  @client.branch(@repo, branch_name)
+  @client.delete_branch(@repo, branch_name)
+  puts "Branch #{branch_name} deleted."
+rescue Octokit::NotFound
+  puts "Branch #{branch_name} does not exist, so cannot be deleted."
+end
+
+
 @client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/#{MAIN_BRANCH}").object.sha)
 
 # Edit the file
@@ -172,7 +190,16 @@ loop do
     return
   end
 
-  result = JSON.parse(response.env.response_body)["content"][0]["text"]
+  result = nil
+  begin
+    result = JSON.parse(response.env.response_body)["content"][0]["text"]
+  rescue
+    @client.add_labels_to_an_issue(@repo, @pr.number, ['failed'])
+    custom_print("Something went wrong\n\n#{response.status}\n\n#{response.env.response_body}")
+
+    return
+  end
+
   messages << { role: "assistant", content: result }
 
   save_request(JSON.parse(response.env.response_body), messages)
