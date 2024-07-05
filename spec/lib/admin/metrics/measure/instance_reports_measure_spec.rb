@@ -6,9 +6,8 @@ describe Admin::Metrics::Measure::InstanceReportsMeasure do
   subject { described_class.new(start_at, end_at, params) }
 
   let_it_be(:domain) { 'example.com' }
-
-  let(:start_at) { 2.days.ago }
-  let(:end_at)   { Time.now.utc }
+  let_it_be(:start_at) { 2.days.ago }
+  let_it_be(:end_at) { Time.now.utc }
 
   let(:params) { ActionController::Parameters.new(domain: domain) }
 
