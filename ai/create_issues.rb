@@ -17,6 +17,7 @@ prompt = data.dig("body", 1, "attributes", "value")
 
 
 spec_text = File.read(File.join(ROOT, 'ai/rd_prof_top.txt'))
+already_created = File.read(File.join(ROOT, 'ai/already_created.txt'))
 
 spec_file_regex = /\((\.\/spec\/.*?\/.*?)\)/
 file_matches = spec_text.scan(spec_file_regex).flatten
@@ -25,8 +26,9 @@ file_matches.reject! { |fm| fm.include? "ai_suggest" }
 file_matches.reject! { |fm| fm.include? "maintenance_spec" }
 file_matches.reject! { |fm| fm.include? "sidekiq_process_check_spec" }
 file_matches.uniq!
-
-file_matches = file_matches[19..]
+file_matches.reject! do |fm|
+  already_created.include? fm
+end
 
 file_matches.each.with_index do |file_match, index|
   puts "#{index} / #{file_matches.length}"
@@ -34,7 +36,13 @@ file_matches.each.with_index do |file_match, index|
   issue_body = "### relative path to the spec file\n\n#{file_match}\n\n### prompt\n\n#{prompt}"
   issue = client.create_issue(REPO, issue_title, issue_body)
 
-  client.add_labels_to_an_issue(REPO, issue.number, ['optimize'])
+  # client.add_labels_to_an_issue(REPO, issue.number, ['optimize'])
+
+  begin
+    result = `ruby ai/create_pr.rb #{issue.number}`
+  rescue => e
+    puts e
+  end
 
   sleep 10
 end
