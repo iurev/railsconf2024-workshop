@@ -3,10 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Canonical Email Blocks' do
-  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let_it_be(:user)    { Fabricate(:user, role: role) }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'admin:read:canonical_email_blocks admin:write:canonical_email_blocks') }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:role)    { UserRole.find_by(name: 'Admin') }
+  let(:user)    { Fabricate(:user, role: role) }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes)  { 'admin:read:canonical_email_blocks admin:write:canonical_email_blocks' }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/canonical_email_blocks' do
     subject do
@@ -34,7 +35,7 @@ RSpec.describe 'Canonical Email Blocks' do
     end
 
     context 'when there are canonical email blocks' do
-      let_it_be(:canonical_email_blocks) { Fabricate.times(5, :canonical_email_block) }
+      let!(:canonical_email_blocks) { Fabricate.times(5, :canonical_email_block) }
       let(:expected_email_hashes)   { canonical_email_blocks.pluck(:canonical_email_hash) }
 
       it 'returns the correct canonical email hashes' do
@@ -84,7 +85,7 @@ RSpec.describe 'Canonical Email Blocks' do
       get "/api/v1/admin/canonical_email_blocks/#{canonical_email_block.id}", headers: headers
     end
 
-    let_it_be(:canonical_email_block) { Fabricate(:canonical_email_block) }
+    let!(:canonical_email_block) { Fabricate(:canonical_email_block) }
 
     it_behaves_like 'forbidden for wrong scope', 'read:statuses'
     it_behaves_like 'forbidden for wrong role', ''
@@ -134,7 +135,7 @@ RSpec.describe 'Canonical Email Blocks' do
 
     context 'when the required email param is provided' do
       context 'when there is a matching canonical email block' do
-        let_it_be(:canonical_email_block) { CanonicalEmailBlock.create(email: 'email@example.com') }
+        let!(:canonical_email_block) { CanonicalEmailBlock.create(email: 'email@example.com') }
 
         it 'returns the expected canonical email hash', :aggregate_failures do
           subject
@@ -224,7 +225,7 @@ RSpec.describe 'Canonical Email Blocks' do
       delete "/api/v1/admin/canonical_email_blocks/#{canonical_email_block.id}", headers: headers
     end
 
-    let_it_be(:canonical_email_block) { Fabricate(:canonical_email_block) }
+    let!(:canonical_email_block) { Fabricate(:canonical_email_block) }
 
     it_behaves_like 'forbidden for wrong scope', 'read:statuses'
 
