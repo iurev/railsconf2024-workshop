@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Home' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/timelines/home' do
@@ -19,12 +18,12 @@ describe 'Home' do
     it_behaves_like 'forbidden for wrong scope', 'write write:statuses'
 
     context 'when the timeline is available' do
+      let_it_be(:bob) { Fabricate(:account) }
+      let_it_be(:tim) { Fabricate(:account) }
+      let_it_be(:ana) { Fabricate(:account) }
       let(:home_statuses) { bob.statuses + ana.statuses }
-      let!(:bob)          { Fabricate(:account) }
-      let!(:tim)          { Fabricate(:account) }
-      let!(:ana)          { Fabricate(:account) }
 
-      before do
+      before_all do
         user.account.follow!(bob)
         user.account.follow!(ana)
         PostStatusService.new.call(bob, text: 'New toot from bob.')
@@ -90,7 +89,7 @@ describe 'Home' do
     end
 
     context 'without a user context' do
-      let(:token) { Fabricate(:accessible_access_token, resource_owner_id: nil, scopes: scopes) }
+      let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: nil, scopes: scopes) }
 
       it 'returns http unprocessable entity', :aggregate_failures do
         subject
