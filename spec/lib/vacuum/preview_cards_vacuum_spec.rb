@@ -3,20 +3,19 @@
 require 'rails_helper'
 
 RSpec.describe Vacuum::PreviewCardsVacuum do
-  subject { described_class.new(retention_period) }
-
   let(:retention_period) { 7.days }
+  subject { described_class.new(retention_period) }
 
   describe '#perform' do
     let_it_be(:orphaned_preview_card) { Fabricate(:preview_card, created_at: 2.days.ago) }
-    let_it_be(:old_preview_card) { Fabricate(:preview_card, updated_at: (retention_period + 1.day).ago) }
+    let_it_be(:old_preview_card) { Fabricate(:preview_card, updated_at: 8.days.ago) }
     let_it_be(:new_preview_card) { Fabricate(:preview_card) }
 
-    before_all do
+    before do
       old_preview_card.statuses << Fabricate(:status)
       new_preview_card.statuses << Fabricate(:status)
 
-      described_class.new(7.days).perform
+      subject.perform
     end
 
     it 'deletes cache of preview cards last updated before the retention period' do
