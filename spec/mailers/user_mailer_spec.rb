@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe UserMailer do
-  let(:receiver) { Fabricate(:user) }
+  let_it_be(:receiver) { Fabricate(:user) }
 
   describe '#confirmation_instructions' do
     let(:mail) { described_class.confirmation_instructions(receiver, 'spec') }
@@ -89,8 +88,8 @@ describe UserMailer do
   end
 
   describe '#warning' do
-    let(:strike) { Fabricate(:account_warning, target_account: receiver.account, text: 'dont worry its just the testsuite', action: 'suspend') }
-    let(:mail)   { described_class.warning(receiver, strike) }
+    let_it_be(:strike) { Fabricate(:account_warning, target_account: receiver.account, text: 'dont worry its just the testsuite', action: 'suspend') }
+    let(:mail) { described_class.warning(receiver, strike) }
 
     it 'renders warning notification' do
       receiver.update!(locale: nil)
@@ -103,7 +102,7 @@ describe UserMailer do
   end
 
   describe '#webauthn_credential_deleted' do
-    let(:credential) { Fabricate(:webauthn_credential, user_id: receiver.id) }
+    let_it_be(:credential) { Fabricate(:webauthn_credential, user_id: receiver.id) }
     let(:mail) { described_class.webauthn_credential_deleted(receiver, credential) }
 
     it 'renders webauthn credential deleted notification' do
@@ -155,7 +154,7 @@ describe UserMailer do
   end
 
   describe '#appeal_approved' do
-    let(:appeal) { Fabricate(:appeal, account: receiver.account, approved_at: Time.now.utc) }
+    let_it_be(:appeal) { Fabricate(:appeal, account: receiver.account, approved_at: Time.now.utc) }
     let(:mail) { described_class.appeal_approved(receiver, appeal) }
 
     it 'renders appeal_approved notification' do
@@ -167,7 +166,7 @@ describe UserMailer do
   end
 
   describe '#appeal_rejected' do
-    let(:appeal) { Fabricate(:appeal, account: receiver.account, rejected_at: Time.now.utc) }
+    let_it_be(:appeal) { Fabricate(:appeal, account: receiver.account, rejected_at: Time.now.utc) }
     let(:mail) { described_class.appeal_rejected(receiver, appeal) }
 
     it 'renders appeal_rejected notification' do
@@ -248,7 +247,7 @@ describe UserMailer do
   describe '#welcome' do
     let(:mail) { described_class.welcome(receiver) }
 
-    before do
+    before_all do
       # This is a bit hacky and low-level but this allows stubbing trending tags
       tag_ids = Fabricate.times(5, :tag).pluck(:id)
       allow(Trends.tags).to receive(:query).and_return(instance_double(Trends::Query, allowed: Tag.where(id: tag_ids)))
@@ -263,7 +262,7 @@ describe UserMailer do
   end
 
   describe '#backup_ready' do
-    let(:backup) { Fabricate(:backup) }
+    let_it_be(:backup) { Fabricate(:backup) }
     let(:mail) { described_class.backup_ready(receiver, backup) }
 
     it 'renders backup_ready mail' do
