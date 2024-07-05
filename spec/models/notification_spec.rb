@@ -168,10 +168,6 @@ RSpec.describe Notification do
         ]
       end
 
-      before_all do
-        notifications.each(&:reload)
-      end
-
       context 'with a preloaded target status' do
         it 'preloads mention' do
           expect(subject[0].type).to eq :mention
