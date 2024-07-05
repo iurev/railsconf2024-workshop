@@ -17,6 +17,7 @@ describe 'Home' do
 
     context 'with wrong scope' do
       let(:scopes) { 'write write:statuses' }
+      let(:token)  { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
 
       it 'returns http forbidden' do
         subject
@@ -35,6 +36,7 @@ describe 'Home' do
         Fabricate(:status, account: bob, text: 'New toot from bob.')
         Fabricate(:status, account: tim, text: 'New toot from tim.')
         Fabricate(:status, account: ana, text: 'New toot from ana.')
+        HomeFeed.new(user.account).regenerate!
       end
 
       let(:home_statuses) { Status.where(account: [bob, ana]).order(id: :desc) }
