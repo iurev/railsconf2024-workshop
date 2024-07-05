@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BatchedRemoveStatusService do
+RSpec.describe BatchedRemoveStatusService, sidekiq: :inline do
   subject { described_class.new }
 
   let_it_be(:alice) { Fabricate(:account) }
@@ -21,32 +21,37 @@ RSpec.describe BatchedRemoveStatusService do
 
   before do
     stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
-    allow(redis).to receive_messages(publish: nil)
-    subject.call([status_alice_hello, status_alice_other])
+    allow(Redis.any_instance).to receive(:publish).and_return(0)
   end
 
   it 'removes statuses' do
+    subject.call([status_alice_hello, status_alice_other])
     expect { Status.find(status_alice_hello.id) }.to raise_error ActiveRecord::RecordNotFound
     expect { Status.find(status_alice_other.id) }.to raise_error ActiveRecord::RecordNotFound
   end
 
   it 'removes statuses from author\'s home feed' do
+    subject.call([status_alice_hello, status_alice_other])
     expect(HomeFeed.new(alice).get(10).pluck(:id)).to_not include(status_alice_hello.id, status_alice_other.id)
   end
 
   it 'removes statuses from local follower\'s home feed' do
+    subject.call([status_alice_hello, status_alice_other])
     expect(HomeFeed.new(jeff).get(10).pluck(:id)).to_not include(status_alice_hello.id, status_alice_other.id)
   end
 
   it 'notifies streaming API of followers' do
-    expect(redis).to have_received(:publish).with("timeline:#{jeff.id}", any_args).at_least(:once)
+    expect(Redis.any_instance).to receive(:publish).with("timeline:#{jeff.id}", any_args).at_least(:once)
+    subject.call([status_alice_hello, status_alice_other])
   end
 
   it 'notifies streaming API of public timeline' do
-    expect(redis).to have_received(:publish).with('timeline:public', any_args).at_least(:once)
+    expect(Redis.any_instance).to receive(:publish).with('timeline:public', any_args).at_least(:once)
+    subject.call([status_alice_hello, status_alice_other])
   end
 
   it 'sends delete activity to followers' do
+    subject.call([status_alice_hello, status_alice_other])
     expect(a_request(:post, 'http://example.com/inbox')).to have_been_made.at_least_once
   end
 end
