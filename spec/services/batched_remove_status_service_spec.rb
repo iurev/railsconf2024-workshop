@@ -1,31 +1,27 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe BatchedRemoveStatusService do
   subject { described_class.new }
 
-  let!(:alice)  { Fabricate(:account) }
-  let!(:bob)    { Fabricate(:account, username: 'bob', domain: 'example.com') }
-  let!(:jeff)   { Fabricate(:account) }
-  let!(:hank)   { Fabricate(:account, username: 'hank', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
+  let_it_be(:alice) { Fabricate(:account) }
+  let_it_be(:bob)   { Fabricate(:account, username: 'bob', domain: 'example.com') }
+  let_it_be(:jeff)  { Fabricate(:account) }
+  let_it_be(:hank)  { Fabricate(:account, username: 'hank', protocol: :activitypub, domain: 'example.com', inbox_url: 'http://example.com/inbox') }
 
-  let(:status_alice_hello) { PostStatusService.new.call(alice, text: "Hello @#{bob.pretty_acct}") }
-  let(:status_alice_other) { PostStatusService.new.call(alice, text: 'Another status') }
+  let_it_be(:status_alice_hello) { PostStatusService.new.call(alice, text: "Hello @#{bob.pretty_acct}") }
+  let_it_be(:status_alice_other) { PostStatusService.new.call(alice, text: 'Another status') }
 
-  before do
-    allow(redis).to receive_messages(publish: nil)
-
-    stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
-
+  before_all do
     jeff.user.update(current_sign_in_at: Time.zone.now)
     jeff.follow!(alice)
     hank.follow!(alice)
+  end
 
-    status_alice_hello
-    status_alice_other
-
+  before do
+    allow(redis).to receive_messages(publish: nil)
+    stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
     subject.call([status_alice_hello, status_alice_other])
   end
 
