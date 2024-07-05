@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe 'Media' do
   let_it_be(:user)    { Fabricate(:user) }
   let_it_be(:scopes)  { 'write:media' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/media/:id' do
     let_it_be(:media) { Fabricate(:media_attachment, account: user.account) }
@@ -19,13 +19,11 @@ RSpec.describe 'Media' do
 
     it 'returns http success' do
       subject
-
       expect(response).to have_http_status(200)
     end
 
     it 'returns the media information' do
       subject
-
       expect(body_as_json).to match(
         a_hash_including(
           id: media.id.to_s,
@@ -42,7 +40,6 @@ RSpec.describe 'Media' do
 
       it 'returns http partial content' do
         subject
-
         expect(response).to have_http_status(206)
       end
     end
@@ -52,7 +49,6 @@ RSpec.describe 'Media' do
 
       it 'returns http not found' do
         subject
-
         expect(response).to have_http_status(404)
       end
     end
@@ -62,7 +58,6 @@ RSpec.describe 'Media' do
 
       it 'returns http not found' do
         subject
-
         expect(response).to have_http_status(404)
       end
     end
@@ -78,11 +73,9 @@ RSpec.describe 'Media' do
     shared_examples 'a successful media upload' do |media_type|
       it 'uploads the file successfully and returns correct media content', :aggregate_failures, sidekiq: :inline, paperclip: :process do
         subject
-
         expect(response).to have_http_status(200)
         expect(MediaAttachment.first).to be_present
         expect(MediaAttachment.first).to have_attached_file(:file)
-
         expect(body_as_json).to match(
           a_hash_including(id: MediaAttachment.first.id.to_s, description: params[:description], type: media_type)
         )
@@ -103,9 +96,7 @@ RSpec.describe 'Media' do
       context 'when imagemagick cannot identify the file type' do
         it 'returns http unprocessable entity' do
           allow(media_attachments).to receive(:create!).and_raise(Paperclip::Errors::NotIdentifiedByImageMagickError)
-
           subject
-
           expect(response).to have_http_status(422)
         end
       end
@@ -113,9 +104,7 @@ RSpec.describe 'Media' do
       context 'when there is a generic error' do
         it 'returns http 500' do
           allow(media_attachments).to receive(:create!).and_raise(Paperclip::Error)
-
           subject
-
           expect(response).to have_http_status(500)
         end
       end
@@ -123,19 +112,16 @@ RSpec.describe 'Media' do
 
     context 'with image/jpeg' do
       let(:params) { { file: fixture_file_upload('attachment.jpg', 'image/jpeg'), description: 'jpeg image' } }
-
       it_behaves_like 'a successful media upload', 'image'
     end
 
     context 'with image/gif' do
       let(:params) { { file: fixture_file_upload('attachment.gif', 'image/gif') } }
-
       it_behaves_like 'a successful media upload', 'image'
     end
 
     context 'with video/webm' do
       let(:params) { { file: fixture_file_upload('attachment.webm', 'video/webm') } }
-
       it_behaves_like 'a successful media upload', 'gifv'
     end
   end
@@ -157,7 +143,6 @@ RSpec.describe 'Media' do
 
       it 'returns http not found' do
         subject
-
         expect(response).to have_http_status(404)
       end
     end
@@ -174,7 +159,6 @@ RSpec.describe 'Media' do
 
         it 'returns http not found' do
           subject
-
           expect(response).to have_http_status(404)
         end
       end
