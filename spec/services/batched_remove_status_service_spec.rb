@@ -20,8 +20,8 @@ RSpec.describe BatchedRemoveStatusService do
   end
 
   before do
-    allow(redis).to receive_messages(publish: nil)
     stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
+    allow(redis).to receive_messages(publish: nil)
     subject.call([status_alice_hello, status_alice_other])
   end
 
@@ -38,15 +38,15 @@ RSpec.describe BatchedRemoveStatusService do
     expect(HomeFeed.new(jeff).get(10).pluck(:id)).to_not include(status_alice_hello.id, status_alice_other.id)
   end
 
-  it 'notifies streaming API of followers', sidekiq: :inline do
+  it 'notifies streaming API of followers' do
     expect(redis).to have_received(:publish).with("timeline:#{jeff.id}", any_args).at_least(:once)
   end
 
-  it 'notifies streaming API of public timeline', sidekiq: :inline do
+  it 'notifies streaming API of public timeline' do
     expect(redis).to have_received(:publish).with('timeline:public', any_args).at_least(:once)
   end
 
-  it 'sends delete activity to followers', sidekiq: :inline do
+  it 'sends delete activity to followers' do
     expect(a_request(:post, 'http://example.com/inbox')).to have_been_made.at_least_once
   end
 end
