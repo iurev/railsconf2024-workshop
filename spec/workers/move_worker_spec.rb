@@ -5,28 +5,27 @@ require 'rails_helper'
 describe MoveWorker do
   subject { described_class.new }
 
-  let_it_be(:local_follower)   { Fabricate(:account, domain: nil) }
-  let_it_be(:blocking_account) { Fabricate(:account) }
-  let_it_be(:muting_account)   { Fabricate(:account) }
-  let_it_be(:source_account)   { Fabricate(:account, protocol: :activitypub, domain: 'example.com', uri: 'https://example.org/a', inbox_url: 'https://example.org/a/inbox') }
-  let_it_be(:target_account)   { Fabricate(:account, protocol: :activitypub, domain: 'example.com', uri: 'https://example.org/b', inbox_url: 'https://example.org/b/inbox') }
-  let_it_be(:local_user)       { Fabricate(:user) }
-  let_it_be(:comment)          { 'old note prior to move' }
-  let_it_be(:account_note)     { Fabricate(:account_note, account: local_user.account, target_account: source_account, comment: comment) }
-  let_it_be(:list)             { Fabricate(:list, account: local_follower) }
+  let(:local_follower)   { Fabricate(:account, domain: nil) }
+  let(:blocking_account) { Fabricate(:account) }
+  let(:muting_account)   { Fabricate(:account) }
+  let(:source_account)   { Fabricate(:account, protocol: :activitypub, domain: 'example.com', uri: 'https://example.org/a', inbox_url: 'https://example.org/a/inbox') }
+  let(:target_account)   { Fabricate(:account, protocol: :activitypub, domain: 'example.com', uri: 'https://example.org/b', inbox_url: 'https://example.org/b/inbox') }
+  let(:local_user)       { Fabricate(:user) }
+  let(:comment)          { 'old note prior to move' }
+  let(:account_note)     { Fabricate(:account_note, account: local_user.account, target_account: source_account, comment: comment) }
+  let(:list)             { Fabricate(:list, account: local_follower) }
 
   let(:block_service) { instance_double(BlockService) }
-
-  before_all do
-    local_follower.follow!(source_account)
-    blocking_account.block!(source_account)
-    muting_account.mute!(source_account)
-    list.accounts << source_account
-  end
 
   before do
     stub_request(:post, 'https://example.org/a/inbox').to_return(status: 200)
     stub_request(:post, 'https://example.org/b/inbox').to_return(status: 200)
+
+    local_follower.follow!(source_account)
+    blocking_account.block!(source_account)
+    muting_account.mute!(source_account)
+
+    list.accounts << source_account
 
     allow(BlockService).to receive(:new).and_return(block_service)
     allow(block_service).to receive(:call)
@@ -170,7 +169,7 @@ describe MoveWorker do
     end
 
     context 'when target account is local' do
-      let_it_be(:target_account) { Fabricate(:account) }
+      let(:target_account) { Fabricate(:account) }
 
       it 'calls UnfollowFollowWorker' do
         Sidekiq::Testing.fake!
@@ -182,8 +181,8 @@ describe MoveWorker do
     end
 
     context 'when both target and source accounts are local' do
-      let_it_be(:target_account) { Fabricate(:account) }
-      let_it_be(:source_account) { Fabricate(:account) }
+      let(:target_account) { Fabricate(:account) }
+      let(:source_account) { Fabricate(:account) }
 
       it 'calls makes local followers follow the target account' do
         subject.perform(source_account.id, target_account.id)
