@@ -28,12 +28,14 @@ RSpec.describe FetchLinkCardService do
     stub_request(:get, 'http://example.com/windows-1251').to_return(request_fixture('windows-1251.txt'))
 
     Rails.cache.write('oembed_endpoint:example.com', oembed_cache) if oembed_cache
-
-    subject.call(status)
   end
 
   context 'with a local status' do
     let_it_be(:status) { Fabricate(:status, text: 'http://example.com/html') }
+
+    before do
+      subject.call(status)
+    end
 
     context 'with URL of a regular HTML page' do
       it 'creates preview card' do
@@ -52,7 +54,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a URL of a plain-text page' do
-      before { status.update!(text: 'http://example.com/text') }
+      before do
+        status.update!(text: 'http://example.com/text')
+        subject.call(status)
+      end
 
       it 'does not create a preview card' do
         expect(status.preview_card).to be_nil
@@ -60,7 +65,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with multiple URLs' do
-      before { status.update!(text: 'ftp://example.com http://example.com/html http://example.com/text') }
+      before do
+        status.update!(text: 'ftp://example.com http://example.com/html http://example.com/text')
+        subject.call(status)
+      end
 
       it 'fetches the first valid URL' do
         expect(a_request(:get, 'http://example.com/html')).to have_been_made
@@ -72,7 +80,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a redirect URL' do
-      before { status.update!(text: 'http://example.com/redirect') }
+      before do
+        status.update!(text: 'http://example.com/redirect')
+        subject.call(status)
+      end
 
       it 'follows redirect' do
         expect(a_request(:get, 'http://example.com/redirect')).to have_been_made.once
@@ -87,7 +98,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a broken redirect URL' do
-      before { status.update!(text: 'http://example.com/redirect-to-404') }
+      before do
+        status.update!(text: 'http://example.com/redirect-to-404')
+        subject.call(status)
+      end
 
       it 'follows redirect' do
         expect(a_request(:get, 'http://example.com/redirect-to-404')).to have_been_made.once
@@ -100,7 +114,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a 404 URL' do
-      before { status.update!(text: 'http://example.com/not-found') }
+      before do
+        status.update!(text: 'http://example.com/not-found')
+        subject.call(status)
+      end
 
       it 'does not create a preview card' do
         expect(status.preview_card).to be_nil
@@ -108,7 +125,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with an IDN URL' do
-      before { status.update!(text: 'Check out http://example.中国') }
+      before do
+        status.update!(text: 'Check out http://example.中国')
+        subject.call(status)
+      end
 
       it 'fetches the URL' do
         expect(a_request(:get, 'http://example.xn--fiqs8s/')).to have_been_made.once
@@ -116,7 +136,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a URL of a page in Shift JIS encoding' do
-      before { status.update!(text: 'Check out http://example.com/sjis') }
+      before do
+        status.update!(text: 'Check out http://example.com/sjis')
+        subject.call(status)
+      end
 
       it 'decodes the HTML' do
         expect(status.preview_card.title).to eq('SJISのページ')
@@ -124,7 +147,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a URL of a page in Shift JIS encoding labeled as UTF-8' do
-      before { status.update!(text: 'Check out http://example.com/sjis_with_wrong_charset') }
+      before do
+        status.update!(text: 'Check out http://example.com/sjis_with_wrong_charset')
+        subject.call(status)
+      end
 
       it 'decodes the HTML despite the wrong charset header' do
         expect(status.preview_card.title).to eq('SJISのページ')
@@ -132,7 +158,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a URL of a page in KOI8-R encoding' do
-      before { status.update!(text: 'Check out http://example.com/koi8-r') }
+      before do
+        status.update!(text: 'Check out http://example.com/koi8-r')
+        subject.call(status)
+      end
 
       it 'decodes the HTML' do
         expect(status.preview_card.title).to eq('Московя начинаетъ только въ XVI ст. привлекать внимане иностранцевъ.')
@@ -140,7 +169,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a URL of a page in Windows-1251 encoding' do
-      before { status.update!(text: 'Check out http://example.com/windows-1251') }
+      before do
+        status.update!(text: 'Check out http://example.com/windows-1251')
+        subject.call(status)
+      end
 
       it 'decodes the HTML' do
         expect(status.preview_card.title).to eq('сэмпл текст')
@@ -148,7 +180,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a Japanese path URL' do
-      before { status.update!(text: 'テストhttp://example.com/日本語') }
+      before do
+        status.update!(text: 'テストhttp://example.com/日本語')
+        subject.call(status)
+      end
 
       it 'fetches the URL' do
         expect(a_request(:get, 'http://example.com/日本語')).to have_been_made.once
@@ -156,7 +191,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a hyphen-suffixed URL' do
-      before { status.update!(text: 'test http://example.com/test-') }
+      before do
+        status.update!(text: 'test http://example.com/test-')
+        subject.call(status)
+      end
 
       it 'fetches the URL' do
         expect(a_request(:get, 'http://example.com/test-')).to have_been_made.once
@@ -164,7 +202,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a caret-suffixed URL' do
-      before { status.update!(text: 'test http://example.com/test?data=file.gpx^1') }
+      before do
+        status.update!(text: 'test http://example.com/test?data=file.gpx^1')
+        subject.call(status)
+      end
 
       it 'fetches the URL' do
         expect(a_request(:get, 'http://example.com/test?data=file.gpx%5E1')).to have_been_made.once
@@ -176,7 +217,10 @@ RSpec.describe FetchLinkCardService do
     end
 
     context 'with a non-isolated URL' do
-      before { status.update!(text: 'testhttp://example.com/sjis') }
+      before do
+        status.update!(text: 'testhttp://example.com/sjis')
+        subject.call(status)
+      end
 
       it 'does not fetch URLs not isolated from their surroundings' do
         expect(a_request(:get, 'http://example.com/sjis')).to_not have_been_made
@@ -212,7 +256,11 @@ RSpec.describe FetchLinkCardService do
       end
 
       context 'when oEmbed endpoint cache populated but page returns 404' do
-        before { status.update!(text: 'http://example.com/redirect-to-404') }
+        before do
+          status.update!(text: 'http://example.com/redirect-to-404')
+          subject.call(status)
+        end
+
         let(:oembed_cache) { { endpoint: 'http://example.com/oembed?url=http://example.com/html', format: :json } }
 
         it 'uses the cached oEmbed response' do
@@ -239,6 +287,10 @@ RSpec.describe FetchLinkCardService do
       Ich will mal unter <br> <a href="http://example.com/not-found" target="_blank" rel="noopener noreferrer" title="http://example.com/not-found">http://example.com/not-found</a> was sammeln. !
       <a href="http://sn.jonkman.ca/group/416/id" target="_blank" rel="noopener noreferrer" title="http://sn.jonkman.ca/group/416/id">security</a>&nbsp;
       TEXT
+    end
+
+    before do
+      subject.call(status)
     end
 
     it 'parses out URLs' do
