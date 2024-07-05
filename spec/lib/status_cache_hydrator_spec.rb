@@ -1,19 +1,18 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe StatusCacheHydrator do
-  let(:status)  { Fabricate(:status) }
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:status)  { Fabricate(:status) }
 
   describe '#hydrate' do
     let(:compare_to_hash) { InlineRenderer.render(status, account, :status) }
 
     shared_examples 'shared behavior' do
       context 'when handling a new status' do
-        let(:poll) { Fabricate(:poll) }
-        let(:status) { Fabricate(:status, poll: poll) }
+        let_it_be(:poll) { Fabricate(:poll) }
+        let_it_be(:status) { Fabricate(:status, poll: poll) }
 
         it 'renders the same attributes as a full render' do
           expect(subject).to eql(compare_to_hash)
@@ -21,8 +20,8 @@ describe StatusCacheHydrator do
       end
 
       context 'when handling a new status with own poll' do
-        let(:poll) { Fabricate(:poll, account: account) }
-        let(:status) { Fabricate(:status, poll: poll, account: account) }
+        let_it_be(:poll) { Fabricate(:poll, account: account) }
+        let_it_be(:status) { Fabricate(:status, poll: poll, account: account) }
 
         it 'renders the same attributes as a full render' do
           expect(subject).to eql(compare_to_hash)
@@ -30,9 +29,9 @@ describe StatusCacheHydrator do
       end
 
       context 'when handling a filtered status' do
-        let(:status) { Fabricate(:status, text: 'this toot is about that banned word') }
+        let_it_be(:status) { Fabricate(:status, text: 'this toot is about that banned word') }
 
-        before do
+        before_all do
           account.custom_filters.create!(phrase: 'filter1', context: %w(home), action: :hide, keywords_attributes: [{ keyword: 'banned' }, { keyword: 'irrelevant' }])
         end
 
@@ -42,11 +41,11 @@ describe StatusCacheHydrator do
       end
 
       context 'when handling a reblog' do
-        let(:reblog) { Fabricate(:status) }
-        let(:status) { Fabricate(:status, reblog: reblog) }
+        let_it_be(:reblog) { Fabricate(:status) }
+        let_it_be(:status) { Fabricate(:status, reblog: reblog) }
 
         context 'when it has been favourited' do
-          before do
+          before_all do
             FavouriteService.new.call(account, reblog)
           end
 
@@ -56,7 +55,7 @@ describe StatusCacheHydrator do
         end
 
         context 'when it has been reblogged' do
-          before do
+          before_all do
             ReblogService.new.call(account, reblog)
           end
 
@@ -66,9 +65,9 @@ describe StatusCacheHydrator do
         end
 
         context 'when it has been pinned' do
-          let(:reblog) { Fabricate(:status, account: account) }
+          let_it_be(:reblog) { Fabricate(:status, account: account) }
 
-          before do
+          before_all do
             StatusPin.create!(account: account, status: reblog)
           end
 
@@ -78,9 +77,9 @@ describe StatusCacheHydrator do
         end
 
         context 'when it has been followed tags' do
-          let(:followed_tag) { Fabricate(:tag) }
+          let_it_be(:followed_tag) { Fabricate(:tag) }
 
-          before do
+          before_all do
             reblog.tags << Fabricate(:tag)
             reblog.tags << followed_tag
             TagFollow.create!(tag: followed_tag, account: account, rate_limit: false)
@@ -92,8 +91,8 @@ describe StatusCacheHydrator do
         end
 
         context 'when it has a poll authored by the user' do
-          let(:poll) { Fabricate(:poll, account: account) }
-          let(:reblog) { Fabricate(:status, poll: poll, account: account) }
+          let_it_be(:poll) { Fabricate(:poll, account: account) }
+          let_it_be(:reblog) { Fabricate(:status, poll: poll, account: account) }
 
           it 'renders the same attributes as a full render' do
             expect(subject).to eql(compare_to_hash)
@@ -101,10 +100,10 @@ describe StatusCacheHydrator do
         end
 
         context 'when it has been voted in' do
-          let(:poll) { Fabricate(:poll, options: %w(Yellow Blue)) }
-          let(:reblog) { Fabricate(:status, poll: poll) }
+          let_it_be(:poll) { Fabricate(:poll, options: %w(Yellow Blue)) }
+          let_it_be(:reblog) { Fabricate(:status, poll: poll) }
 
-          before do
+          before_all do
             VoteService.new.call(account, poll, [0])
           end
 
@@ -114,9 +113,9 @@ describe StatusCacheHydrator do
         end
 
         context 'when it matches account filters' do
-          let(:reblog) { Fabricate(:status, text: 'this toot is about that banned word') }
+          let_it_be(:reblog) { Fabricate(:status, text: 'this toot is about that banned word') }
 
-          before do
+          before_all do
             account.custom_filters.create!(phrase: 'filter1', context: %w(home), action: :hide, keywords_attributes: [{ keyword: 'banned' }, { keyword: 'irrelevant' }])
           end
 
