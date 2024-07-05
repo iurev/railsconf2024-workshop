@@ -11,11 +11,11 @@ RSpec.describe Vacuum::PreviewCardsVacuum do
     let_it_be(:old_preview_card) { Fabricate(:preview_card, updated_at: 8.days.ago) }
     let_it_be(:new_preview_card) { Fabricate(:preview_card) }
 
-    before do
+    before_all do
       old_preview_card.statuses << Fabricate(:status)
       new_preview_card.statuses << Fabricate(:status)
 
-      subject.perform
+      described_class.new(7.days).perform
     end
 
     it 'deletes cache of preview cards last updated before the retention period' do
