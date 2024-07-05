@@ -196,4 +196,12 @@ describe MoveWorker do
       end
     end
   end
+
+  # Add this method to the MoveWorker class
+  def move_account_notes(source_account, target_account)
+    AccountNote.where(target_account: source_account).find_each do |note|
+      new_comment = "#{source_account.acct} moved to #{target_account.acct}\n\n#{note.comment}"
+      AccountNote.create_or_update!(account: note.account, target_account: target_account, comment: new_comment)
+    end
+  end
 end
