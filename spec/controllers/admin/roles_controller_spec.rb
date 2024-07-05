@@ -14,21 +14,23 @@ describe Admin::RolesController do
   end
 
   describe 'GET #index' do
-    before do
-      get :index
-    end
-
     context 'when user does not have permission to manage roles' do
+      before do
+        get :index
+      end
+
       it 'returns http forbidden' do
         expect(response).to have_http_status(403)
       end
     end
 
     context 'when user has permission to manage roles' do
-      before { current_role.update!(permissions: UserRole::FLAGS[:manage_roles]) }
+      before do
+        current_role.update!(permissions: UserRole::FLAGS[:manage_roles])
+        get :index
+      end
 
       it 'returns http success' do
-        get :index
         expect(response).to have_http_status(:success)
       end
     end
