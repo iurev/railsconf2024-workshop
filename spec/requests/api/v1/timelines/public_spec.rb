@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Public' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   shared_examples 'a successful request to the public timeline' do
@@ -23,12 +22,12 @@ describe 'Public' do
       get '/api/v1/timelines/public', headers: headers, params: params
     end
 
-    let!(:local_status)   { Fabricate(:status, account: Fabricate.build(:account, domain: nil)) }
-    let!(:remote_status)  { Fabricate(:status, account: Fabricate.build(:account, domain: 'example.com')) }
-    let!(:media_status)   { Fabricate(:status, media_attachments: [Fabricate.build(:media_attachment)]) }
+    let_it_be(:local_status)   { Fabricate(:status, account: Fabricate(:account, domain: nil)) }
+    let_it_be(:remote_status)  { Fabricate(:status, account: Fabricate(:account, domain: 'example.com')) }
+    let_it_be(:media_status)   { Fabricate(:status, media_attachments: [Fabricate(:media_attachment)]) }
     let(:params) { {} }
 
-    before do
+    before_all do
       Fabricate(:status, visibility: :private)
     end
 
