@@ -1,17 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::RepliesController do
-  let(:status) { Fabricate(:status, visibility: parent_visibility) }
-  let(:remote_account)  { Fabricate(:account, domain: 'foobar.com') }
+  let_it_be(:status) { Fabricate(:status, visibility: :public) }
+  let_it_be(:remote_account)  { Fabricate(:account, domain: 'foobar.com') }
   let(:remote_reply_id) { 'https://foobar.com/statuses/1234' }
   let(:remote_querier) { nil }
 
   shared_examples 'common behavior' do
     context 'when status is private' do
-      let(:parent_visibility) { :private }
+      before { status.update!(visibility: :private) }
 
       it 'returns http not found' do
         expect(response).to have_http_status(404)
@@ -19,7 +18,7 @@ RSpec.describe ActivityPub::RepliesController do
     end
 
     context 'when status is direct' do
-      let(:parent_visibility) { :direct }
+      before { status.update!(visibility: :direct) }
 
       it 'returns http not found' do
         expect(response).to have_http_status(404)
@@ -29,8 +28,6 @@ RSpec.describe ActivityPub::RepliesController do
 
   shared_examples 'disallowed access' do
     context 'when status is public' do
-      let(:parent_visibility) { :public }
-
       it 'returns http not found' do
         expect(response).to have_http_status(404)
       end
@@ -41,8 +38,6 @@ RSpec.describe ActivityPub::RepliesController do
 
   shared_examples 'allowed access' do
     context 'when account is permanently suspended' do
-      let(:parent_visibility) { :public }
-
       before do
         status.account.suspend!
         status.account.deletion_request.destroy
@@ -54,8 +49,6 @@ RSpec.describe ActivityPub::RepliesController do
     end
 
     context 'when account is temporarily suspended' do
-      let(:parent_visibility) { :public }
-
       before do
         status.account.suspend!
       end
@@ -66,7 +59,6 @@ RSpec.describe ActivityPub::RepliesController do
     end
 
     context 'when status is public' do
-      let(:parent_visibility) { :public }
       let(:json) { body_as_json }
       let(:page_json) { json[:first] }
 
@@ -150,9 +142,8 @@ RSpec.describe ActivityPub::RepliesController do
     it_behaves_like 'common behavior'
   end
 
-  before do
+  before_all do
     stub_const 'ActivityPub::RepliesController::DESCENDANTS_LIMIT', 5
-    allow(controller).to receive(:signed_request_actor).and_return(remote_querier)
 
     Fabricate(:status, thread: status, visibility: :public)
     Fabricate(:status, thread: status, visibility: :public)
@@ -167,6 +158,10 @@ RSpec.describe ActivityPub::RepliesController do
     subject(:response) { get :index, params: { account_username: status.account.username, status_id: status.id, only_other_accounts: only_other_accounts } }
 
     let(:only_other_accounts) { nil }
+
+    before do
+      allow(controller).to receive(:signed_request_actor).and_return(remote_querier)
+    end
 
     context 'with no signature' do
       it_behaves_like 'allowed access'
