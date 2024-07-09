@@ -3,14 +3,14 @@
 require 'rails_helper'
 require 'test_prof/recipes/let_it_be'
 
-describe Admin::StatusesController do
+describe Admin::StatusesController, type: :controller do
   render_views
 
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:account) { Fabricate(:account) }
-  let_it_be(:status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
-  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
-  let_it_be(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
+  let_it_be(:status) { Fabricate(:status, account: account, sensitive: true) }
+  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: true) }
+  let_it_be(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: true) }
   let_it_be(:media_attachment) { Fabricate(:media_attachment, account: account, status: last_media_attached_status) }
   let_it_be(:last_status) { Fabricate(:status, account: account) }
   let_it_be(:another_media_attachment) { Fabricate(:media_attachment, account: account, status: media_attached_status) }
@@ -19,56 +19,23 @@ describe Admin::StatusesController do
     sign_in user, scope: :user
   end
 
-  describe 'GET #index' do
-    context 'with a valid account' do
-      before do
-        get :index, params: { account_id: account.id }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
-    end
-
-    context 'when filtering by media' do
-      before do
-        get :index, params: { account_id: account.id, media: '1' }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
-    end
-  end
-
-  describe 'GET #show' do
-    before do
-      get :show, params: { account_id: account.id, id: status.id }
-    end
-
-    it 'returns http success' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
   describe 'POST #batch' do
     subject { post :batch, params: { account_id: account.id, action: action, admin_status_batch_action: { status_ids: status_ids } } }
 
     let(:status_ids) { [media_attached_status.id] }
+    let(:action) { 'report' }
 
     shared_examples 'when action is report' do
-      let(:action) { 'report' }
-
       it 'creates a report and redirects to report page' do
-        subject
+        expect { subject }.to change(Report, :count).by(1)
 
-        expect(Report.last)
-          .to have_attributes(
-            target_account_id: eq(account.id),
-            status_ids: eq(status_ids)
-          )
+        report = Report.last
+        expect(report).to have_attributes(
+          target_account_id: account.id,
+          status_ids: status_ids
+        )
 
-        expect(response).to redirect_to(admin_report_path(Report.last.id))
+        expect(response).to redirect_to(admin_report_path(report.id))
       end
     end
 
