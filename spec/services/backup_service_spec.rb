@@ -1,28 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
-
-require 'rails_helper'
 
 RSpec.describe BackupService do
   subject(:service_call) { described_class.new.call(backup) }
 
-  let!(:user)           { Fabricate(:user) }
-  let!(:attachment)     { Fabricate(:media_attachment, account: user.account) }
-  let!(:status)         { Fabricate(:status, account: user.account, text: 'Hello', visibility: :public, media_attachments: [attachment]) }
-  let!(:private_status) { Fabricate(:status, account: user.account, text: 'secret', visibility: :private) }
-  let!(:favourite)      { Fabricate(:favourite, account: user.account) }
-  let!(:bookmark)       { Fabricate(:bookmark, account: user.account) }
-  let!(:backup)         { Fabricate(:backup, user: user) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:attachment) { Fabricate(:media_attachment, account: user.account) }
+  let_it_be(:status) { Fabricate(:status, account: user.account, text: 'Hello', visibility: :public, media_attachments: [attachment]) }
+  let_it_be(:private_status) { Fabricate(:status, account: user.account, text: 'secret', visibility: :private) }
+  let_it_be(:favourite) { Fabricate(:favourite, account: user.account) }
+  let_it_be(:bookmark) { Fabricate(:bookmark, account: user.account) }
+  let_it_be(:backup) { Fabricate(:backup, user: user) }
 
-  def read_zip_file(backup, filename)
-    file = Paperclip.io_adapters.for(backup.dump)
-    Zip::File.open(file) do |zipfile|
-      entry = zipfile.glob(filename).first
-      return entry.get_input_stream.read
-    end
-  end
-
-  context 'when the user has an avatar and header' do
+  describe 'when the user has an avatar and header' do
     before do
       user.account.update!(avatar: attachment_fixture('avatar.gif'))
       user.account.update!(header: attachment_fixture('emojo.png'))
@@ -44,7 +33,7 @@ RSpec.describe BackupService do
   end
 
   it 'marks the backup as processed and exports files' do
-    expect { service_call }.to process_backup
+    expect { service_call }.to change(backup, :processed).from(false).to(true)
 
     expect_outbox_export
     expect_likes_export
@@ -57,37 +46,28 @@ RSpec.describe BackupService do
 
   def expect_outbox_export
     json = export_json(:outbox)
-
-    aggregate_failures do
-      expect(json['@context']).to_not be_nil
-      expect(json['type']).to eq 'OrderedCollection'
-      expect(json['totalItems']).to eq 2
-      expect(json['orderedItems'][0]['@context']).to be_nil
-      expect(json['orderedItems'][0]).to include_create_item(status)
-      expect(json['orderedItems'][1]).to include_create_item(private_status)
-    end
+    expect(json['@context']).to_not be_nil
+    expect(json['type']).to eq 'OrderedCollection'
+    expect(json['totalItems']).to eq 2
+    expect(json['orderedItems'][0]['@context']).to be_nil
+    expect(json['orderedItems'][0]).to include_create_item(status)
+    expect(json['orderedItems'][1]).to include_create_item(private_status)
   end
 
   def expect_likes_export
     json = export_json(:likes)
-
-    aggregate_failures do
-      expect(json['type']).to eq 'OrderedCollection'
-      expect(json['orderedItems']).to eq [ActivityPub::TagManager.instance.uri_for(favourite.status)]
-    end
+    expect(json['type']).to eq 'OrderedCollection'
+    expect(json['orderedItems']).to eq [ActivityPub::TagManager.instance.uri_for(favourite.status)]
   end
 
   def expect_bookmarks_export
     json = export_json(:bookmarks)
-
-    aggregate_failures do
-      expect(json['type']).to eq 'OrderedCollection'
-      expect(json['orderedItems']).to eq [ActivityPub::TagManager.instance.uri_for(bookmark.status)]
-    end
+    expect(json['type']).to eq 'OrderedCollection'
+    expect(json['orderedItems']).to eq [ActivityPub::TagManager.instance.uri_for(bookmark.status)]
   end
 
-  def export_json(type)
-    Oj.load(read_zip_file(backup, "#{type}.json"))
+  def export_json(filename)
+    Oj.load(read_zip_file(backup, "#{filename}.json"))
   end
 
   def include_create_item(status)
@@ -98,5 +78,13 @@ RSpec.describe BackupService do
         'content' => "<p>#{status.text}</p>",
       }),
     })
+  end
+
+  def read_zip_file(backup, filename)
+    file = Paperclip.io_adapters.for(backup.dump)
+    Zip::File.open(file) do |zipfile|
+      entry = zipfile.glob(filename).first
+      entry.get_input_stream.read
+    end
   end
 end
