@@ -8,10 +8,9 @@ describe Admin::StatusesController do
 
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:account) { Fabricate(:account) }
-  let_it_be(:status) { Fabricate(:status, account: account) }
-  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: sensitive) }
-  let_it_be(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: sensitive) }
-  let_it_be(:sensitive) { true }
+  let_it_be(:status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
+  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
+  let_it_be(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: true) } # Explicitly set sensitive
   let_it_be(:media_attachment) { Fabricate(:media_attachment, account: account, status: last_media_attached_status) }
   let_it_be(:last_status) { Fabricate(:status, account: account) }
   let_it_be(:another_media_attachment) { Fabricate(:media_attachment, account: account, status: media_attached_status) }
