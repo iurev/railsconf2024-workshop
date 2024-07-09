@@ -1,1 +1,1 @@
-require 'rails_helper'
+   config.include RSpec::Rails::RequestExampleGroup, type: :service
