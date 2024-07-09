@@ -49,15 +49,36 @@ x-backend: &backend
     IRB_HISTFILE: /usr/local/hist/.irb_history
     EDITOR: vi
   depends_on:
+    # ollama:
+    #   condition: service_healthy
     postgres:
       condition: service_healthy
     redis:
       condition: service_healthy
 
+# x-ollama: &ollama
+#   image: ollama/ollama
+#   volumes:
+#     - ollama:/root/.ollama
+
+
 services:
   rails:
     <<: *backend
     command: bundle exec rails
+
+  # ollama:
+  #   <<: *ollama
+  #   ports:
+  #     - '11434:11434'
+  #   command: start
+  #   environment:
+  #     - MODEL_NAME=wizardlm2:b7
+  #   healthcheck:
+  #     test: ["curl", "localhost:11434"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
 
   web:
     <<: *backend
@@ -111,3 +132,4 @@ volumes:
   postgres:
   redis:
   storage:
+  # ollama:

@@ -2,8 +2,13 @@
 
 require 'octokit'
 require 'base64'
+require 'open3'
 
 MAIN_BRANCH = "workshop"
+# MODEL = "qwen/qwen-2-72b-instruct" # never returns full file :(
+MODEL = "deepseek/deepseek-coder" # GOOD; GOOD;
+# MODEL = "microsoft/wizardlm-2-8x22b" # GOOD; it can't really fix mistakes it makes (((
+# MODEL = "databricks/dbrx-instruct" # nah;;; it tries to `let_it_be!!!`
 
 issue_number = ARGV[0].to_i
 @repo = ENV['GITHUB_REPOSITORY']
@@ -16,7 +21,8 @@ issue_body = issue.body
 path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.strip
 agent_prompt = issue_body.match(/### prompt\n\n(.+)/m)&.[](1)&.strip
 
-branch_name = "optimize-#{issue_number}"
+bn = MODEL.gsub(/[^a-zA-Z0-9]/, '_')
+branch_name = "optimize-#{issue_number}-#{bn}"
 
 
 # remove branch and PR if they exist
@@ -59,7 +65,7 @@ old_code = new_code
   MAIN_BRANCH,
   branch_name,
   "Optimize: #{issue.title}",
-  "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{agent_prompt}",
+  "Optimizations for ##{issue_number} using #{MODEL}\n\nPath: #{path}\nRequests: #{agent_prompt}",
   draft: true
 )
 
@@ -83,9 +89,10 @@ require "faraday"
 
 API_KEY = ENV['CLAUDE_API_KEY']
 PIPE_KEY = ENV['OPENPIPE_API_KEY']
+ROUTER_KEY = ENV['OPENROUTER_KEY']
 
 ROOT = File.expand_path('..', __dir__)
-MODEL = "anthropic/claude-3.5-sonnet"
+# MODEL = "anthropic/claude-3.5-sonnet"
 MAX_TOKENS = 4096
 
 
@@ -102,6 +109,16 @@ target_file_path = path
 output = `FPROF=1 RD_PROF=1 bundle exec rspec #{target_file_path}`
 
 prompt = agent_prompt % {example_rspec_files: example_original_files, example_git_diff: example_patch, fprof: output}
+prompt = <<-EOS
+  You're an excellent Ruby developer. Please, refactor the rspec file I send to you by using let_it_be
+
+  let_it_be is a let alternative from the test-prof gem.
+  It only creates a record ONCE. It uses before(:all) under the hood.
+  So, it's basically a syntastic sugar for it.
+
+
+  You MUST always respond with the full file!
+EOS
 
 messages = []
 
@@ -164,23 +181,32 @@ loop do
 
   custom_print "RUN_ID: #{run_id}"
 
-  url = 'https://api.anthropic.com/v1/messages'
+  # conn = Faraday.new(url: 'http://172.18.0.1:11434') do |conn|
+  #   conn.options.open_timeout = 300 # Set the open timeout to 300 seconds (5 minutes)
+  #   conn.options.timeout = 300      # Set the read timeout to 300 seconds (5 minutes)
 
-  payload = {
-    model: 'claude-3-5-sonnet-20240620',
-    max_tokens: MAX_TOKENS,
-    messages: messages,
-  }
+  #   # Use default middleware stack or customize as needed
+  #   conn.adapter Faraday.default_adapter
+  # end
 
-  headers = {
-    "x-api-key" => API_KEY,
-    "anthropic-version" => "2023-06-01",
-    "content-type" => "application/json"
-  }
+  # Define the request payload
+  # payload = {
+  #   model: 'eramax/nxcode-cq-7b-orpo:q6',
+  #   messages: messages,
+  #   stream: false
+  # }.to_json
 
-  response = Faraday.post(url) do |req|
-    req.headers = headers
-    req.body = payload.to_json
+  # Send POST request to Ollama
+  # response = conn.post('/api/chat', payload, { 'Content-Type' => 'application/json' })
+
+  response = Faraday.post('https://openrouter.ai/api/v1/chat/completions') do |req|
+    req.headers['Content-Type'] = 'application/json'
+    req.headers['Authorization'] = "Bearer #{ENV['OPENROUTER_KEY']}"
+    req.body = {
+      model: MODEL,
+      messages: messages,
+      max_tokens: MAX_TOKENS,
+    }.to_json
   end
 
   unless response.success?
@@ -192,7 +218,7 @@ loop do
 
   result = nil
   begin
-    result = JSON.parse(response.env.response_body)["content"][0]["text"]
+    result = JSON.parse(response.env.response_body)["choices"][0]["message"]["content"]
   rescue
     @client.add_labels_to_an_issue(@repo, @pr.number, ['failed'])
     custom_print("Something went wrong\n\n#{response.status}\n\n#{response.env.response_body}")
@@ -202,32 +228,26 @@ loop do
 
   messages << { role: "assistant", content: result }
 
-  save_request(JSON.parse(response.env.response_body), messages)
+  # save_request(JSON.parse(response.env.response_body), messages)
 
   lines = result.split("\n")
 
-  action_index = lines.find_index { _1 =~ /^Action: (\w+)$/ }
+  # action_index = lines.find_index { _1 =~ /^Action: (\w+)$/ }
+  action_index = 1
 
   if action_index
-    action = Regexp.last_match[1]
-    last_comment = lines[0..action_index].join("\n")
+    action = "run_rspec"
+    last_comment = ""
     custom_print "\n\nAction: #{action} (at line #{action_index + 1})\n#{last_comment}"
 
     if action == "run_rspec"
-      code_end_index = lines[action_index..].find_index { _1 =~ /__END__/ }
-
-      unless code_end_index
-        puts "\n\nNo code end found, looks like a partial file...\n\n"
-        return custom_print(" Stopping.") if source_file_too_long
-
-        messages << { role: "user", content: "Observation: This doesn't look like a full Ruby/RSpec file, you must provide a full version" }
-        source_file_too_long = true
-        next
-      end
+      binding.irb
+      code_begin_index = lines.find_index { _1 =~ /```/ } + 1
+      code_end_index = code_begin_index + lines[code_begin_index..].find_index { _1 =~ /```/ }
 
       source_file_too_long = false
 
-      new_code = lines[action_index + 1..action_index + code_end_index - 1].join("\n")
+      new_code = result.split("\n")[code_begin_index...code_end_index].join("\n")
 
       new_spec_path = target_file_path.sub(/_spec\.rb$/, "_ai_suggest_#{run_id}_spec.rb")
 
@@ -246,11 +266,17 @@ loop do
       custom_print "\n\nNew spec file saved at #{new_spec_path}\n"
 
       # execute bundle exec rspec new_spec_path with clean bundle env and capture the output
-      output = `FPROF=1 RD_PROF=1 bundle exec rspec #{new_spec_path}`
+      command = "FPROF=1 RD_PROF=1 bundle exec rspec #{new_spec_path}"
 
-      custom_print output
+      stdout, stderr, status = Open3.capture3(command)
 
-      messages << { role: "user", content: "Observation:\n\n#{output}" }
+      if status.success?
+        custom_print "Success: #{stdout}"
+        break
+      else
+        custom_print "Errors:\n\n#{stdout}"
+        messages << { role: "user", content: "I got these errors after running bundle exec rspec. Please fix them:\n\n#{stdout}" }
+      end
     else
       custom_print "Unknown action: #{action}\n\n#{result}"
       break
