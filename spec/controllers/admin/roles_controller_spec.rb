@@ -1,14 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::RolesController do
   render_views
 
-  let(:permissions)  { UserRole::Flags::NONE }
-  let(:current_role) { UserRole.create(name: 'Foo', permissions: permissions, position: 10) }
-  let(:current_user) { Fabricate(:user, role: current_role) }
+  let_it_be(:permissions) { UserRole::Flags::NONE }
+  let_it_be(:current_role) { UserRole.create(name: 'Foo', permissions: permissions, position: 10) }
+  let_it_be(:current_user) { Fabricate(:user, role: current_role) }
 
   before do
     sign_in current_user, scope: :user
@@ -26,7 +25,7 @@ describe Admin::RolesController do
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       it 'returns http success' do
         expect(response).to have_http_status(:success)
@@ -46,7 +45,7 @@ describe Admin::RolesController do
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       it 'returns http success' do
         expect(response).to have_http_status(:success)
@@ -55,19 +54,19 @@ describe Admin::RolesController do
   end
 
   describe 'POST #create' do
-    let(:selected_position) { 1 }
-    let(:selected_permissions_as_keys) { %w(manage_roles) }
+    let_it_be(:selected_position) { 1 }
+    let_it_be(:selected_permissions_as_keys) { %w(manage_roles) }
 
     before do
       post :create, params: { user_role: { name: 'Bar', position: selected_position, permissions_as_keys: selected_permissions_as_keys } }
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       context 'when new role\'s does not elevate above the user\'s role' do
-        let(:selected_position) { 1 }
-        let(:selected_permissions_as_keys) { %w(manage_roles) }
+        let_it_be(:selected_position) { 1 }
+        let_it_be(:selected_permissions_as_keys) { %w(manage_roles) }
 
         it 'redirects to roles page' do
           expect(response).to redirect_to(admin_roles_path)
@@ -79,8 +78,8 @@ describe Admin::RolesController do
       end
 
       context 'when new role\'s position is higher than user\'s role' do
-        let(:selected_position) { 100 }
-        let(:selected_permissions_as_keys) { %w(manage_roles) }
+        let_it_be(:selected_position) { 100 }
+        let_it_be(:selected_permissions_as_keys) { %w(manage_roles) }
 
         it 'renders new template' do
           expect(response).to render_template(:new)
@@ -92,8 +91,8 @@ describe Admin::RolesController do
       end
 
       context 'when new role has permissions the user does not have' do
-        let(:selected_position) { 1 }
-        let(:selected_permissions_as_keys) { %w(manage_roles manage_users manage_reports) }
+        let_it_be(:selected_position) { 1 }
+        let_it_be(:selected_permissions_as_keys) { %w(manage_roles manage_users manage_reports) }
 
         it 'renders new template' do
           expect(response).to render_template(:new)
@@ -105,10 +104,10 @@ describe Admin::RolesController do
       end
 
       context 'when user has administrator permission' do
-        let(:permissions) { UserRole::FLAGS[:administrator] }
+        let_it_be(:permissions) { UserRole::FLAGS[:administrator] }
 
-        let(:selected_position) { 1 }
-        let(:selected_permissions_as_keys) { %w(manage_roles manage_users manage_reports) }
+        let_it_be(:selected_position) { 1 }
+        let_it_be(:selected_permissions_as_keys) { %w(manage_roles manage_users manage_reports) }
 
         it 'redirects to roles page' do
           expect(response).to redirect_to(admin_roles_path)
@@ -122,8 +121,8 @@ describe Admin::RolesController do
   end
 
   describe 'GET #edit' do
-    let(:role_position) { 8 }
-    let(:role) { UserRole.create(name: 'Bar', permissions: UserRole::FLAGS[:manage_users], position: role_position) }
+    let_it_be(:role_position) { 8 }
+    let_it_be(:role) { UserRole.create(name: 'Bar', permissions: UserRole::FLAGS[:manage_users], position: role_position) }
 
     before do
       get :edit, params: { id: role.id }
@@ -136,7 +135,7 @@ describe Admin::RolesController do
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       context 'when user outranks the role' do
         it 'returns http success' do
@@ -145,7 +144,7 @@ describe Admin::RolesController do
       end
 
       context 'when role outranks user' do
-        let(:role_position) { current_role.position + 1 }
+        let_it_be(:role_position) { current_role.position + 1 }
 
         it 'returns http forbidden' do
           expect(response).to have_http_status(403)
@@ -155,12 +154,12 @@ describe Admin::RolesController do
   end
 
   describe 'PUT #update' do
-    let(:role_position) { 8 }
-    let(:role_permissions) { UserRole::FLAGS[:manage_users] }
-    let(:role) { UserRole.create(name: 'Bar', permissions: role_permissions, position: role_position) }
+    let_it_be(:role_position) { 8 }
+    let_it_be(:role_permissions) { UserRole::FLAGS[:manage_users] }
+    let_it_be(:role) { UserRole.create(name: 'Bar', permissions: role_permissions, position: role_position) }
 
-    let(:selected_position) { 8 }
-    let(:selected_permissions_as_keys) { %w(manage_users) }
+    let_it_be(:selected_position) { 8 }
+    let_it_be(:selected_permissions_as_keys) { %w(manage_users) }
 
     before do
       put :update, params: { id: role.id, user_role: { name: 'Baz', position: selected_position, permissions_as_keys: selected_permissions_as_keys } }
@@ -177,7 +176,7 @@ describe Admin::RolesController do
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       context 'when role has permissions the user doesn\'t' do
         it 'renders edit template' do
@@ -190,7 +189,7 @@ describe Admin::RolesController do
       end
 
       context 'when user has all permissions of the role' do
-        let(:permissions) { UserRole::FLAGS[:manage_roles] | UserRole::FLAGS[:manage_users] }
+        let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] | UserRole::FLAGS[:manage_users] }
 
         context 'when user outranks the role' do
           it 'redirects to roles page' do
@@ -203,7 +202,7 @@ describe Admin::RolesController do
         end
 
         context 'when role outranks user' do
-          let(:role_position) { current_role.position + 1 }
+          let_it_be(:role_position) { current_role.position + 1 }
 
           it 'returns http forbidden' do
             expect(response).to have_http_status(403)
@@ -218,8 +217,8 @@ describe Admin::RolesController do
   end
 
   describe 'DELETE #destroy' do
-    let(:role_position) { 8 }
-    let(:role) { UserRole.create(name: 'Bar', permissions: UserRole::FLAGS[:manage_users], position: role_position) }
+    let_it_be(:role_position) { 8 }
+    let_it_be(:role) { UserRole.create(name: 'Bar', permissions: UserRole::FLAGS[:manage_users], position: role_position) }
 
     before do
       delete :destroy, params: { id: role.id }
@@ -232,7 +231,7 @@ describe Admin::RolesController do
     end
 
     context 'when user has permission to manage roles' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
+      let_it_be(:permissions) { UserRole::FLAGS[:manage_roles] }
 
       context 'when user outranks the role' do
         it 'redirects to roles page' do
@@ -241,7 +240,7 @@ describe Admin::RolesController do
       end
 
       context 'when role outranks user' do
-        let(:role_position) { current_role.position + 1 }
+        let_it_be(:role_position) { current_role.position + 1 }
 
         it 'returns http forbidden' do
           expect(response).to have_http_status(403)
