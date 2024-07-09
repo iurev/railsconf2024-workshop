@@ -1,17 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::StatusesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:account) { Fabricate(:account) }
-  let!(:status) { Fabricate(:status, account: account) }
-  let(:media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
-  let(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
-  let(:sensitive) { true }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be!(:status) { Fabricate(:status, account: account) }
+  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
+  let_it_be!(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
+  let_it_be(:sensitive) { true }
 
   before do
     _last_media_attachment = Fabricate(:media_attachment, account: account, status: last_media_attached_status)
@@ -56,7 +55,7 @@ describe Admin::StatusesController do
   describe 'POST #batch' do
     subject { post :batch, params: { :account_id => account.id, action => '', :admin_status_batch_action => { status_ids: status_ids } } }
 
-    let(:status_ids) { [media_attached_status.id] }
+    let_it_be(:status_ids) { [media_attached_status.id] }
 
     shared_examples 'when action is report' do
       let(:action) { 'report' }
