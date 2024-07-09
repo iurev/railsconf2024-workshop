@@ -1,36 +1,34 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe BackupService do
   subject(:service_call) { described_class.new.call(backup) }
 
-  let!(:user)           { Fabricate(:user) }
-  let!(:attachment)     { Fabricate(:media_attachment, account: user.account) }
-  let!(:status)         { Fabricate(:status, account: user.account, text: 'Hello', visibility: :public, media_attachments: [attachment]) }
-  let!(:private_status) { Fabricate(:status, account: user.account, text: 'secret', visibility: :private) }
-  let!(:favourite)      { Fabricate(:favourite, account: user.account) }
-  let!(:bookmark)       { Fabricate(:bookmark, account: user.account) }
-  let!(:backup)         { Fabricate(:backup, user: user) }
+  let_it_be(:user)           { Fabricate(:user) }
+  let_it_be(:attachment)     { Fabricate(:media_attachment, account: user.account) }
+  let_it_be(:status)         { Fabricate(:status, account: user.account, text: 'Hello', visibility: :public, media_attachments: [attachment]) }
+  let_it_be(:private_status) { Fabricate(:status, account: user.account, text: 'secret', visibility: :private) }
+  let_it_be(:favourite)      { Fabricate(:favourite, account: user.account) }
+  let_it_be(:bookmark)       { Fabricate(:bookmark, account: user.account) }
+  let_it_be(:backup)         { Fabricate(:backup, user: user) }
 
-  def read_zip_file(backup, filename)
+  def read_zip_file(filename)
     file = Paperclip.io_adapters.for(backup.dump)
     Zip::File.open(file) do |zipfile|
       entry = zipfile.glob(filename).first
-      return entry.get_input_stream.read
+      entry.get_input_stream.read
     end
   end
 
   context 'when the user has an avatar and header' do
-    before do
+    before(:all) do
       user.account.update!(avatar: attachment_fixture('avatar.gif'))
       user.account.update!(header: attachment_fixture('emojo.png'))
     end
 
     it 'stores them as expected' do
-      service_call
-
+      expect(service_call).to change { backup.reload.processed }
       json = export_json(:actor)
       avatar_path = json.dig('icon', 'url')
       header_path = json.dig('image', 'url')
@@ -38,8 +36,8 @@ RSpec.describe BackupService do
       expect(avatar_path).to_not be_nil
       expect(header_path).to_not be_nil
 
-      expect(read_zip_file(backup, avatar_path)).to be_present
-      expect(read_zip_file(backup, header_path)).to be_present
+      expect(read_zip_file(avatar_path)).to be_present
+      expect(read_zip_file(header_path)).to be_present
     end
   end
 
@@ -87,16 +85,11 @@ RSpec.describe BackupService do
   end
 
   def export_json(type)
-    Oj.load(read_zip_file(backup, "#{type}.json"))
+    Oj.load(read_zip_file("#{type}.json"))
   end
 
   def include_create_item(status)
     include({
       'type' => 'Create',
       'object' => include({
-        'id' => ActivityPub::TagManager.instance.uri_for(status),
-        'content' => "<p>#{status.text}</p>",
-      }),
-    })
-  end
-end
+        'id' => ActivityPub::TagManager
