@@ -9,12 +9,16 @@ describe Import::RowWorker do
   let_it_be(:row) { Fabricate(:bulk_import_row, bulk_import: import) }
 
   describe '#perform' do
-    before_all do
+    let(:service_double) { instance_double(BulkImportRowService) }
+
+    before do
       allow(BulkImportRowService).to receive(:new).and_return(service_double)
     end
 
     shared_examples 'clean failure' do
-      let(:service_double) { instance_double(BulkImportRowService, call: false) }
+      before do
+        allow(service_double).to receive(:call).and_return(false)
+      end
 
       it 'calls BulkImportRowService' do
         subject.perform(row.id)
@@ -36,8 +40,6 @@ describe Import::RowWorker do
     end
 
     shared_examples 'unclean failure' do
-      let(:service_double) { instance_double(BulkImportRowService) }
-
       before do
         allow(service_double).to receive(:call) do
           raise 'dummy error'
@@ -54,7 +56,9 @@ describe Import::RowWorker do
     end
 
     shared_examples 'clean success' do
-      let(:service_double) { instance_double(BulkImportRowService, call: true) }
+      before do
+        allow(service_double).to receive(:call).and_return(true)
+      end
 
       it 'calls BulkImportRowService' do
         subject.perform(row.id)
