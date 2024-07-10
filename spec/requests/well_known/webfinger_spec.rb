@@ -7,6 +7,7 @@ describe 'The /.well-known/webfinger endpoint' do
 
   let(:alternate_domains) { [] }
   let_it_be(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}") }
+  let_it_be(:alice_with_avatar) { Fabricate(:account, username: "alice_avatar_#{SecureRandom.hex(8)}", avatar: attachment_fixture('attachment.jpg')) }
   let(:resource) { nil }
 
   around do |example|
@@ -160,7 +161,6 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account has an avatar' do
-    let_it_be(:alice_with_avatar) { Fabricate(:account, username: "alice_avatar_#{SecureRandom.hex(8)}", avatar: attachment_fixture('attachment.jpg')) }
     let(:resource) { alice_with_avatar.to_webfinger_s }
 
     it 'returns avatar in response' do
