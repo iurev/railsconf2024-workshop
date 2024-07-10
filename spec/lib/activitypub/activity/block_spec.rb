@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
+require 'test_prof/recipes/rspec/let_it_be'
 
 RSpec.describe ActivityPub::Activity::Block do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
 
   let(:json) do
     {
