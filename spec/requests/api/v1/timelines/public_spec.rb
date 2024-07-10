@@ -3,10 +3,10 @@
 require 'rails_helper'
 
 describe 'Public' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   shared_examples 'a successful request to the public timeline' do
     it 'returns the expected statuses successfully', :aggregate_failures do
@@ -22,17 +22,17 @@ describe 'Public' do
       get '/api/v1/timelines/public', headers: headers, params: params
     end
 
-    let!(:local_status)   { Fabricate(:status, account: Fabricate.build(:account, domain: nil)) }
-    let!(:remote_status)  { Fabricate(:status, account: Fabricate.build(:account, domain: 'example.com')) }
-    let!(:media_status)   { Fabricate(:status, media_attachments: [Fabricate.build(:media_attachment)]) }
-    let(:params) { {} }
+    let_it_be(:local_status)   { Fabricate(:status, account: Fabricate(:account, domain: nil)) }
+    let_it_be(:remote_status)  { Fabricate(:status, account: Fabricate(:account, domain: 'example.com')) }
+    let_it_be(:media_status)   { Fabricate(:status, media_attachments: [Fabricate(:media_attachment)]) }
+    let_it_be(:params) { {} }
 
-    before do
+    before_all do
       Fabricate(:status, visibility: :private)
     end
 
     context 'when the instance allows public preview' do
-      let(:expected_statuses) { [local_status, remote_status, media_status] }
+      let_it_be(:expected_statuses) { [local_status, remote_status, media_status] }
 
       context 'with an authorized user' do
         it_behaves_like 'a successful request to the public timeline'
