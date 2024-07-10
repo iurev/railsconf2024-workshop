@@ -1,19 +1,24 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'API V2 Filters Statuses' do
-  let(:user)         { Fabricate(:user) }
-  let(:token)        { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:filter)       { Fabricate(:custom_filter, account: user.account) }
-  let(:other_user)   { Fabricate(:user) }
-  let(:other_filter) { Fabricate(:custom_filter, account: other_user.account) }
+  let_it_be(:user)         { Fabricate(:user) }
+  let_it_be(:other_user)   { Fabricate(:user) }
+  let_it_be(:filter)       { Fabricate(:custom_filter, account: user.account) }
+  let_it_be(:other_filter) { Fabricate(:custom_filter, account: other_user.account) }
+
+  let(:scopes) { 'read:filters' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
+  before_all do
+    @token = Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write:filters read:filters')
+  end
+
+  let(:token) { @token }
+
   describe 'GET /api/v2/filters/:filter_id/statuses' do
-    let(:scopes) { 'read:filters' }
-    let!(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
+    let_it_be(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
 
     it 'returns http success' do
       get "/api/v2/filters/#{filter.id}/statuses", headers: headers
@@ -33,9 +38,8 @@ RSpec.describe 'API V2 Filters Statuses' do
   end
 
   describe 'POST #create' do
-    let(:scopes)    { 'write:filters' }
     let(:filter_id) { filter.id }
-    let!(:status)   { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     before do
       post "/api/v2/filters/#{filter_id}/statuses", headers: headers, params: { status_id: status.id }
@@ -62,8 +66,7 @@ RSpec.describe 'API V2 Filters Statuses' do
   end
 
   describe 'GET /api/v2/filters/statuses/:id' do
-    let(:scopes) { 'read:filters' }
-    let!(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
+    let_it_be(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
 
     before do
       get "/api/v2/filters/statuses/#{status_filter.id}", headers: headers
@@ -86,8 +89,7 @@ RSpec.describe 'API V2 Filters Statuses' do
   end
 
   describe 'DELETE /api/v2/filters/statuses/:id' do
-    let(:scopes) { 'write:filters' }
-    let(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
+    let_it_be(:status_filter) { Fabricate(:custom_filter_status, custom_filter: filter) }
 
     before do
       delete "/api/v2/filters/statuses/#{status_filter.id}", headers: headers
