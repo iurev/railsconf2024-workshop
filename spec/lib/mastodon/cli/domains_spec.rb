@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/domains'
@@ -35,7 +34,7 @@ describe Mastodon::CLI::Domains do
 
     context 'with accounts from the domain' do
       let(:domain) { 'host.example' }
-      let!(:account) { Fabricate(:account, domain: domain) }
+      let_it_be(:account) { Fabricate(:account, domain: domain) }
       let(:arguments) { [domain] }
 
       it 'removes the account' do
@@ -53,8 +52,9 @@ describe Mastodon::CLI::Domains do
     context 'with accounts from the domain' do
       let(:domain) { 'host.example' }
 
+      let_it_be(:account) { Fabricate(:account, domain: domain) }
+
       before do
-        Fabricate(:account, domain: domain)
         stub_request(:get, 'https://host.example/api/v1/instance').to_return(status: 200, body: {}.to_json)
         stub_request(:get, 'https://host.example/api/v1/instance/peers').to_return(status: 200, body: {}.to_json)
         stub_request(:get, 'https://host.example/api/v1/instance/activity').to_return(status: 200, body: {}.to_json)
