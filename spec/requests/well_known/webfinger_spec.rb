@@ -6,7 +6,7 @@ describe 'The /.well-known/webfinger endpoint' do
   subject(:perform_request!) { get webfinger_url(resource: resource) }
 
   let(:alternate_domains) { [] }
-  let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}") }
+  let_it_be(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}") }
   let(:resource) { nil }
 
   around do |example|
@@ -160,16 +160,16 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account has an avatar' do
-    let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}", avatar: attachment_fixture('attachment.jpg')) }
-    let(:resource) { alice.to_webfinger_s }
+    let_it_be(:alice_with_avatar) { Fabricate(:account, username: "alice_avatar_#{SecureRandom.hex(8)}", avatar: attachment_fixture('attachment.jpg')) }
+    let(:resource) { alice_with_avatar.to_webfinger_s }
 
     it 'returns avatar in response' do
       perform_request!
 
       avatar_link = get_avatar_link(body_as_json)
       expect(avatar_link).to_not be_nil
-      expect(avatar_link[:type]).to eq alice.avatar.content_type
-      expect(avatar_link[:href]).to eq Addressable::URI.new(host: Rails.configuration.x.local_domain, path: alice.avatar.to_s, scheme: 'https').to_s
+      expect(avatar_link[:type]).to eq alice_with_avatar.avatar.content_type
+      expect(avatar_link[:href]).to eq Addressable::URI.new(host: Rails.configuration.x.local_domain, path: alice_with_avatar.avatar.to_s, scheme: 'https').to_s
     end
 
     context 'with limited federation mode' do
@@ -202,7 +202,6 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account does not have an avatar' do
-    let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}", avatar: nil) }
     let(:resource) { alice.to_webfinger_s }
 
     before do
