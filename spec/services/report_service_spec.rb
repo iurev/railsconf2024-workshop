@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ReportService do
   subject { described_class.new }
 
-  let(:source_account) { Fabricate(:account) }
-  let(:target_account) { Fabricate(:account) }
+  let_it_be(:source_account) { Fabricate(:account) }
+  let_it_be(:target_account) { Fabricate(:account) }
 
   context 'with a local account' do
     it 'has a uri' do
@@ -17,7 +16,7 @@ RSpec.describe ReportService do
   end
 
   context 'with a remote account' do
-    let(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
+    let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
     let(:forward) { false }
 
     before do
@@ -38,8 +37,8 @@ RSpec.describe ReportService do
       end
 
       context 'when reporting a reply on a different remote server' do
-        let(:remote_thread_account) { Fabricate(:account, domain: 'foo.com', protocol: :activitypub, inbox_url: 'http://foo.com/inbox') }
-        let(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
+        let_it_be(:remote_thread_account) { Fabricate(:account, domain: 'foo.com', protocol: :activitypub, inbox_url: 'http://foo.com/inbox') }
+        let_it_be(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
 
         before do
           stub_request(:post, 'http://foo.com/inbox').to_return(status: 200)
@@ -70,8 +69,8 @@ RSpec.describe ReportService do
       end
 
       context 'when reporting a reply on the same remote server as the person being replied-to' do
-        let(:remote_thread_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
-        let(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
+        let_it_be(:remote_thread_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
+        let_it_be(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
 
         context 'when forward_to_domains includes both the replied-to domain and the origin domain' do
           it 'sends ActivityPub payload only once', sidekiq: :inline do
@@ -102,7 +101,7 @@ RSpec.describe ReportService do
       -> { described_class.new.call(source_account, target_account, status_ids: [status.id]) }
     end
 
-    let(:status) { Fabricate(:status, account: target_account, visibility: :direct) }
+    let_it_be(:status) { Fabricate(:status, account: target_account, visibility: :direct) }
 
     context 'when it is addressed to the reporter' do
       before do
@@ -126,7 +125,7 @@ RSpec.describe ReportService do
     end
 
     context 'when the reporter is remote' do
-      let(:source_account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/1') }
+      let_it_be(:source_account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/1') }
 
       context 'when it is addressed to the reporter' do
         before do
