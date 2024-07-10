@@ -6,6 +6,10 @@ RSpec.describe Admin::ExportDomainBlocksController do
   render_views
 
   let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:block1) { Fabricate(:domain_block, domain: 'bad.domain', severity: 'silence', public_comment: 'bad server') }
+  let_it_be(:block2) { Fabricate(:domain_block, domain: 'worse.domain', severity: 'suspend', reject_media: true, reject_reports: true, public_comment: 'worse server', obfuscate: true) }
+  let_it_be(:block3) { Fabricate(:domain_block, domain: 'reject.media', severity: 'noop', reject_media: true, public_comment: 'reject media and test unicode characters ♥') }
+  let_it_be(:block4) { Fabricate(:domain_block, domain: 'no.op', severity: 'noop', public_comment: 'noop') }
 
   before do
     sign_in admin, scope: :user
@@ -14,17 +18,11 @@ RSpec.describe Admin::ExportDomainBlocksController do
   describe 'GET #new' do
     it 'returns http success' do
       get :new
-
       expect(response).to have_http_status(200)
     end
   end
 
   describe 'GET #export' do
-    let_it_be(:block1) { Fabricate(:domain_block, domain: 'bad.domain', severity: 'silence', public_comment: 'bad server') }
-    let_it_be(:block2) { Fabricate(:domain_block, domain: 'worse.domain', severity: 'suspend', reject_media: true, reject_reports: true, public_comment: 'worse server', obfuscate: true) }
-    let_it_be(:block3) { Fabricate(:domain_block, domain: 'reject.media', severity: 'noop', reject_media: true, public_comment: 'reject media and test unicode characters ♥') }
-    let_it_be(:block4) { Fabricate(:domain_block, domain: 'no.op', severity: 'noop', public_comment: 'noop') }
-
     it 'renders instances' do
       get :export, params: { format: :csv }
       expect(response).to have_http_status(200)
