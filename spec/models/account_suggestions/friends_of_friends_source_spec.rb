@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,18 +6,18 @@ RSpec.describe AccountSuggestions::FriendsOfFriendsSource do
   describe '#get' do
     subject { described_class.new }
 
-    let!(:bob) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:alice) { Fabricate(:account, discoverable: true, hide_collections: true) }
-    let!(:eve) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:mallory) { Fabricate(:account, discoverable: false, hide_collections: false) }
-    let!(:eugen) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:neil) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:john) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:jerk) { Fabricate(:account, discoverable: true, hide_collections: false) }
-    let!(:larry) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:bob) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:alice) { Fabricate(:account, discoverable: true, hide_collections: true) }
+    let_it_be(:eve) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:mallory) { Fabricate(:account, discoverable: false, hide_collections: false) }
+    let_it_be(:eugen) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:neil) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:john) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:jerk) { Fabricate(:account, discoverable: true, hide_collections: false) }
+    let_it_be(:larry) { Fabricate(:account, discoverable: true, hide_collections: false) }
 
     context 'with follows and blocks' do
-      before do
+      before_all do
         bob.block!(jerk)
         FollowRecommendationMute.create!(account: bob, target_account: neil)
 
@@ -56,7 +55,7 @@ RSpec.describe AccountSuggestions::FriendsOfFriendsSource do
     end
 
     context 'with deterministic order' do
-      before do
+      before_all do
         # bob follows eve and mallory
         [eve, mallory].each { |account| bob.follow!(account) }
 
