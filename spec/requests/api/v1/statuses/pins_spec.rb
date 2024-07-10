@@ -4,9 +4,9 @@ require 'rails_helper'
 
 describe 'Pins' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:scopes)  { 'write:accounts' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:scopes)  { 'write:accounts' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/statuses/:status_id/pin' do
     subject do
