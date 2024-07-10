@@ -1,12 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'MailSubscriptionsController' do
-  let(:user) { Fabricate(:user) }
-  let(:token) { user.to_sgid(for: 'unsubscribe').to_s }
-  let(:type) { 'follow' }
+  let_it_be(:user) { Fabricate(:user) }
+
+  before_all do
+    @token = user.to_sgid(for: 'unsubscribe').to_s
+    @type = 'follow'
+  end
 
   shared_examples 'not found with invalid token' do
     context 'with invalid token' do
@@ -30,7 +32,7 @@ RSpec.describe 'MailSubscriptionsController' do
 
   describe 'on the unsubscribe confirmation page' do
     before do
-      get unsubscribe_url(token: token, type: type)
+      get unsubscribe_url(token: @token, type: @type)
     end
 
     it_behaves_like 'not found with invalid token'
@@ -51,7 +53,7 @@ RSpec.describe 'MailSubscriptionsController' do
       user.settings.update('notification_emails.follow': true)
       user.save!
 
-      post unsubscribe_url, params: { token: token, type: type }
+      post unsubscribe_url, params: { token: @token, type: @type }
     end
 
     it_behaves_like 'not found with invalid token'
@@ -86,7 +88,7 @@ RSpec.describe 'MailSubscriptionsController' do
       user.settings.update('notification_emails.follow': true)
       user.save!
 
-      post unsubscribe_url(token: token, type: type), params: { 'List-Unsubscribe' => 'One-Click' }
+      post unsubscribe_url(token: @token, type: @type), params: { 'List-Unsubscribe' => 'One-Click' }
     end
 
     it_behaves_like 'not found with invalid token'
