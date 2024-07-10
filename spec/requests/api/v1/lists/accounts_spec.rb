@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Accounts' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)  { 'read:lists write:lists' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
@@ -15,8 +14,8 @@ RSpec.describe 'Accounts' do
     end
 
     let(:params)   { { limit: 0 } }
-    let(:list)     { Fabricate(:list, account: user.account) }
-    let(:accounts) { Fabricate.times(2, :account) }
+    let_it_be(:list)     { Fabricate(:list, account: user.account) }
+    let_it_be(:accounts) { Fabricate.times(2, :account) }
 
     let(:expected_response) do
       accounts.map do |account|
@@ -54,8 +53,8 @@ RSpec.describe 'Accounts' do
       post "/api/v1/lists/#{list.id}/accounts", headers: headers, params: params
     end
 
-    let(:list)   { Fabricate(:list, account: user.account) }
-    let(:bob)    { Fabricate(:account, username: 'bob') }
+    let_it_be(:list)   { Fabricate(:list, account: user.account) }
+    let_it_be(:bob)    { Fabricate(:account, username: 'bob') }
     let(:params) { { account_ids: [bob.id] } }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:lists'
@@ -129,9 +128,9 @@ RSpec.describe 'Accounts' do
     end
 
     context 'when the list is owned by the requesting user' do
-      let(:list)   { Fabricate(:list, account: user.account) }
-      let(:bob)    { Fabricate(:account, username: 'bob') }
-      let(:peter)  { Fabricate(:account, username: 'peter') }
+      let_it_be(:list)   { Fabricate(:list, account: user.account) }
+      let_it_be(:bob)    { Fabricate(:account, username: 'bob') }
+      let_it_be(:peter)  { Fabricate(:account, username: 'peter') }
       let(:params) { { account_ids: [bob.id] } }
 
       before do
