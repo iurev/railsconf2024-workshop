@@ -1,20 +1,21 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::CollectionsController do
-  let!(:account) { Fabricate(:account) }
-  let!(:private_pinned) { Fabricate(:status, account: account, text: 'secret private stuff', visibility: :private) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:private_pinned) { Fabricate(:status, account: account, text: 'secret private stuff', visibility: :private) }
   let(:remote_account) { nil }
 
-  before do
-    allow(controller).to receive(:signed_request_actor).and_return(remote_account)
-
+  before_all do
     Fabricate(:status_pin, account: account)
     Fabricate(:status_pin, account: account)
     Fabricate(:status_pin, account: account, status: private_pinned)
     Fabricate(:status, account: account, visibility: :private)
+  end
+
+  before do
+    allow(controller).to receive(:signed_request_actor).and_return(remote_account)
   end
 
   describe 'GET #show' do
