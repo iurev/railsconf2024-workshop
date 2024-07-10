@@ -17,7 +17,7 @@ RSpec.describe AccountSuggestions::FriendsOfFriendsSource do
     let_it_be(:larry) { Fabricate(:account, discoverable: true, hide_collections: false) }
 
     context 'with follows and blocks' do
-      before_all do
+      before do
         bob.block!(jerk)
         FollowRecommendationMute.create!(account: bob, target_account: neil)
 
@@ -55,7 +55,7 @@ RSpec.describe AccountSuggestions::FriendsOfFriendsSource do
     end
 
     context 'with deterministic order' do
-      before_all do
+      before do
         # bob follows eve and mallory
         [eve, mallory].each { |account| bob.follow!(account) }
 
