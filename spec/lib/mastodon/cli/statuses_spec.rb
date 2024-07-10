@@ -4,11 +4,11 @@ require 'rails_helper'
 require 'mastodon/cli/statuses'
 
 describe Mastodon::CLI::Statuses do
-  let_it_be(:cli) { described_class.new }
-  let_it_be(:arguments) { [] }
-  let_it_be(:options) { {} }
-
   subject { cli.invoke(action, arguments, options) }
+
+  let(:cli) { described_class.new }
+  let(:arguments) { [] }
+  let(:options) { {} }
 
   it_behaves_like 'CLI Command'
 
@@ -20,14 +20,15 @@ describe Mastodon::CLI::Statuses do
 
       it 'exits with error message' do
         expect { subject }
-          .to raise_error(Thor::Error, /Cannot run/)
+          .to output(/Cannot run/).to_stderr
+          .and raise_error(SystemExit)
       end
     end
 
     context 'with default batch size' do
       it 'removes unreferenced statuses' do
         expect { subject }
-          .to output_results('Done after')
+          .to output(/Done after/).to_stdout
       end
     end
   end
