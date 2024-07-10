@@ -6,13 +6,13 @@ RSpec.describe BulkImportRowService do
   subject { described_class.new }
 
   let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:target_account) { Fabricate(:account) }
   let(:import_row) { Fabricate(:bulk_import_row, bulk_import: import, data: data) }
 
   describe '#call' do
     context 'when importing a follow' do
-      let(:import_type)    { 'following' }
-      let(:import)         { Fabricate(:bulk_import, account: account, type: import_type) }
-      let(:target_account) { Fabricate(:account) }
+      let(:import_type) { 'following' }
+      let(:import) { Fabricate(:bulk_import, account: account, type: import_type) }
       let(:service_double) { instance_double(FollowService, call: nil) }
       let(:data) do
         { 'acct' => target_account.acct }
@@ -30,9 +30,8 @@ RSpec.describe BulkImportRowService do
     end
 
     context 'when importing a block' do
-      let(:import_type)    { 'blocking' }
-      let(:import)         { Fabricate(:bulk_import, account: account, type: import_type) }
-      let(:target_account) { Fabricate(:account) }
+      let(:import_type) { 'blocking' }
+      let(:import) { Fabricate(:bulk_import, account: account, type: import_type) }
       let(:service_double) { instance_double(BlockService, call: nil) }
       let(:data) do
         { 'acct' => target_account.acct }
@@ -50,9 +49,8 @@ RSpec.describe BulkImportRowService do
     end
 
     context 'when importing a mute' do
-      let(:import_type)    { 'muting' }
-      let(:import)         { Fabricate(:bulk_import, account: account, type: import_type) }
-      let(:target_account) { Fabricate(:account) }
+      let(:import_type) { 'muting' }
+      let(:import) { Fabricate(:bulk_import, account: account, type: import_type) }
       let(:service_double) { instance_double(MuteService, call: nil) }
       let(:data) do
         { 'acct' => target_account.acct }
@@ -71,7 +69,7 @@ RSpec.describe BulkImportRowService do
 
     context 'when importing a bookmark' do
       let(:import_type) { 'bookmarks' }
-      let(:import)      { Fabricate(:bulk_import, account: account, type: import_type) }
+      let(:import) { Fabricate(:bulk_import, account: account, type: import_type) }
       let(:data) do
         { 'uri' => ActivityPub::TagManager.instance.uri_for(target_status) }
       end
@@ -97,9 +95,8 @@ RSpec.describe BulkImportRowService do
 
     context 'when importing a list row' do
       let(:import_type) { 'lists' }
-      let(:import)      { Fabricate(:bulk_import, account: account, type: import_type) }
-      let(:target_account) { Fabricate(:account) }
-      let(:list_name) { 'my list' }
+      let(:import) { Fabricate(:bulk_import, account: account, type: import_type) }
+      let_it_be(:list_name) { 'my list' }
       let(:data) do
         { 'acct' => target_account.acct, 'list_name' => list_name }
       end
