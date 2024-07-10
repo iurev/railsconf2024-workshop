@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe StatusFilter do
   describe '#filtered?' do
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
+    let_it_be(:account) { Fabricate(:account) }
 
     context 'without an account' do
       subject(:filter) { described_class.new(status, nil) }
@@ -34,8 +34,6 @@ describe StatusFilter do
 
     context 'with real account' do
       subject(:filter) { described_class.new(status, account) }
-
-      let(:account) { Fabricate(:account) }
 
       context 'when there are no connections' do
         it { is_expected.to_not be_filtered }
