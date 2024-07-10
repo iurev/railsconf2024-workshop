@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Blocks' do
-  let(:user)    { Fabricate(:user) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:blocks)  { Fabricate.times(3, :block, account: user.account) }
+
   let(:scopes)  { 'read:blocks' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
@@ -13,7 +15,6 @@ RSpec.describe 'Blocks' do
       get '/api/v1/blocks', headers: headers, params: params
     end
 
-    let!(:blocks) { Fabricate.times(3, :block, account: user.account) }
     let(:params)  { {} }
 
     let(:expected_response) do
