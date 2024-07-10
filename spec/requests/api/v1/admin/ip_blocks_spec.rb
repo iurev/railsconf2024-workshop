@@ -3,14 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'IP Blocks' do
-  let_it_be(:admin_role) { UserRole.find_by(name: 'Admin') }
-  let_it_be(:admin_user) { Fabricate(:user, role: admin_role) }
-  let_it_be(:admin_token) { Fabricate(:accessible_access_token, resource_owner_id: admin_user.id, scopes: 'admin:read:ip_blocks admin:write:ip_blocks') }
-  
-  let(:headers) { { 'Authorization' => "Bearer #{admin_token.token}" } }
-  let(:scopes)  { 'admin:read:ip_blocks admin:write:ip_blocks' }
-  let(:user)    { admin_user }
-  let(:token)   { admin_token }
+  let(:admin_role) { UserRole.find_by(name: 'Admin') }
+  let(:user_role) { UserRole.find_by(name: 'User') }
+  let(:user) { Fabricate(:user, role: admin_role) }
+  let(:scopes) { 'admin:read:ip_blocks admin:write:ip_blocks' }
+  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/ip_blocks' do
     subject do
@@ -19,9 +17,17 @@ RSpec.describe 'IP Blocks' do
 
     let(:params) { {} }
 
-    it_behaves_like 'forbidden for wrong scope', 'admin:write:ip_blocks'
-    it_behaves_like 'forbidden for wrong role', ''
-    it_behaves_like 'forbidden for wrong role', 'Moderator'
+    it_behaves_like 'forbidden for wrong scope', 'admin:write:ip_blocks' do
+      let(:scopes) { 'admin:write:ip_blocks' }
+    end
+
+    it_behaves_like 'forbidden for wrong role', '' do
+      let(:user) { Fabricate(:user, role: user_role) }
+    end
+
+    it_behaves_like 'forbidden for wrong role', 'Moderator' do
+      let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Moderator')) }
+    end
 
     it 'returns http success' do
       subject
@@ -83,9 +89,17 @@ RSpec.describe 'IP Blocks' do
 
     let!(:ip_block) { IpBlock.create(ip: '192.0.2.0/24', severity: :no_access) }
 
-    it_behaves_like 'forbidden for wrong scope', 'admin:write:ip_blocks'
-    it_behaves_like 'forbidden for wrong role', ''
-    it_behaves_like 'forbidden for wrong role', 'Moderator'
+    it_behaves_like 'forbidden for wrong scope', 'admin:write:ip_blocks' do
+      let(:scopes) { 'admin:write:ip_blocks' }
+    end
+
+    it_behaves_like 'forbidden for wrong role', '' do
+      let(:user) { Fabricate(:user, role: user_role) }
+    end
+
+    it_behaves_like 'forbidden for wrong role', 'Moderator' do
+      let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Moderator')) }
+    end
 
     it 'returns the correct ip block', :aggregate_failures do
       subject
@@ -113,9 +127,17 @@ RSpec.describe 'IP Blocks' do
 
     let(:params) { { ip: '151.0.32.55', severity: 'no_access', comment: 'Spam' } }
 
-    it_behaves_like 'forbidden for wrong scope', 'admin:read:ip_blocks'
-    it_behaves_like 'forbidden for wrong role', ''
-    it_behaves_like 'forbidden for wrong role', 'Moderator'
+    it_behaves_like 'forbidden for wrong scope', 'admin:read:ip_blocks' do
+      let(:scopes) { 'admin:read:ip_blocks' }
+    end
+
+    it_behaves_like 'forbidden for wrong role', '' do
+      let(:user) { Fabricate(:user, role: user_role) }
+    end
+
+    it_behaves_like 'forbidden for wrong role', 'Moderator' do
+      let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Moderator')) }
+    end
 
     it 'returns the correct ip block', :aggregate_failures do
       subject
