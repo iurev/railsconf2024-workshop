@@ -1,18 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'IP Blocks' do
-  let(:role)    { UserRole.find_by(name: 'Admin') }
-  let(:user)    { Fabricate(:user, role: role) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'admin:read:ip_blocks admin:write:ip_blocks' }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
+  let_it_be(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'admin:read:ip_blocks admin:write:ip_blocks') }
+  
+  before_all do
+    @headers = { 'Authorization' => "Bearer #{token.token}" }
+  end
 
   describe 'GET /api/v1/admin/ip_blocks' do
     subject do
-      get '/api/v1/admin/ip_blocks', headers: headers, params: params
+      get '/api/v1/admin/ip_blocks', headers: @headers, params: params
     end
 
     let(:params) { {} }
@@ -76,7 +77,7 @@ RSpec.describe 'IP Blocks' do
 
   describe 'GET /api/v1/admin/ip_blocks/:id' do
     subject do
-      get "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: headers
+      get "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: @headers
     end
 
     let!(:ip_block) { IpBlock.create(ip: '192.0.2.0/24', severity: :no_access) }
@@ -97,7 +98,7 @@ RSpec.describe 'IP Blocks' do
 
     context 'when ip block does not exist' do
       it 'returns http not found' do
-        get '/api/v1/admin/ip_blocks/-1', headers: headers
+        get '/api/v1/admin/ip_blocks/-1', headers: @headers
 
         expect(response).to have_http_status(404)
       end
@@ -106,7 +107,7 @@ RSpec.describe 'IP Blocks' do
 
   describe 'POST /api/v1/admin/ip_blocks' do
     subject do
-      post '/api/v1/admin/ip_blocks', headers: headers, params: params
+      post '/api/v1/admin/ip_blocks', headers: @headers, params: params
     end
 
     let(:params) { { ip: '151.0.32.55', severity: 'no_access', comment: 'Spam' } }
@@ -171,7 +172,7 @@ RSpec.describe 'IP Blocks' do
 
   describe 'PUT /api/v1/admin/ip_blocks/:id' do
     subject do
-      put "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: headers, params: params
+      put "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: @headers, params: params
     end
 
     let!(:ip_block) { IpBlock.create(ip: '185.200.13.3', severity: 'no_access', comment: 'Spam', expires_in: 48.hours) }
@@ -200,7 +201,7 @@ RSpec.describe 'IP Blocks' do
 
     context 'when ip block does not exist' do
       it 'returns http not found' do
-        put '/api/v1/admin/ip_blocks/-1', headers: headers, params: params
+        put '/api/v1/admin/ip_blocks/-1', headers: @headers, params: params
 
         expect(response).to have_http_status(404)
       end
@@ -209,7 +210,7 @@ RSpec.describe 'IP Blocks' do
 
   describe 'DELETE /api/v1/admin/ip_blocks/:id' do
     subject do
-      delete "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: headers
+      delete "/api/v1/admin/ip_blocks/#{ip_block.id}", headers: @headers
     end
 
     let!(:ip_block) { IpBlock.create(ip: '185.200.13.3', severity: 'no_access') }
@@ -224,7 +225,7 @@ RSpec.describe 'IP Blocks' do
 
     context 'when ip block does not exist' do
       it 'returns http not found' do
-        delete '/api/v1/admin/ip_blocks/-1', headers: headers
+        delete '/api/v1/admin/ip_blocks/-1', headers: @headers
 
         expect(response).to have_http_status(404)
       end
