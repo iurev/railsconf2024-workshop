@@ -7,7 +7,7 @@ RSpec.describe Admin::ExportDomainBlocksController do
 
   let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
-  before_all do
+  before do
     sign_in admin, scope: :user
   end
 
