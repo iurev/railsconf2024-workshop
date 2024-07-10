@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,7 +6,7 @@ describe 'The /.well-known/webfinger endpoint' do
   subject(:perform_request!) { get webfinger_url(resource: resource) }
 
   let(:alternate_domains) { [] }
-  let(:alice) { Fabricate(:account, username: 'alice') }
+  let_it_be(:alice) { Fabricate(:account, username: 'alice') }
   let(:resource) { nil }
 
   around do |example|
@@ -161,7 +160,7 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account has an avatar' do
-    let(:alice) { Fabricate(:account, username: 'alice', avatar: attachment_fixture('attachment.jpg')) }
+    let_it_be(:alice) { Fabricate(:account, username: 'alice', avatar: attachment_fixture('attachment.jpg')) }
     let(:resource) { alice.to_webfinger_s }
 
     it 'returns avatar in response' do
@@ -203,7 +202,7 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account does not have an avatar' do
-    let(:alice) { Fabricate(:account, username: 'alice', avatar: nil) }
+    let_it_be(:alice) { Fabricate(:account, username: 'alice', avatar: nil) }
     let(:resource) { alice.to_webfinger_s }
 
     before do
