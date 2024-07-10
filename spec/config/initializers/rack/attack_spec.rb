@@ -7,9 +7,9 @@ describe Rack::Attack, type: :request do
     Rails.application
   end
 
-  shared_examples 'throttled endpoint' do
-    let_it_be(:remote_ip) { '1.2.3.5' }
+  let_it_be(:remote_ip) { '1.2.3.5' }
 
+  shared_examples 'throttled endpoint' do
     before_all do
       travel_to Time.zone.at(counter_prefix * period.seconds)
     end
