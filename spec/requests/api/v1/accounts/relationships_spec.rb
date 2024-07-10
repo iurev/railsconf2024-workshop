@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,16 +7,16 @@ describe 'GET /api/v1/accounts/relationships' do
     get '/api/v1/accounts/relationships', headers: headers, params: params
   end
 
-  let(:user)    { Fabricate(:user) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:simon)   { Fabricate(:account) }
+  let_it_be(:lewis)   { Fabricate(:account) }
+  let_it_be(:bob)     { Fabricate(:account, suspended: true) }
+
   let(:scopes)  { 'read:follows' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
-  let(:simon) { Fabricate(:account) }
-  let(:lewis) { Fabricate(:account) }
-  let(:bob)   { Fabricate(:account, suspended: true) }
-
-  before do
+  before_all do
     user.account.follow!(simon)
     lewis.follow!(user.account)
   end
