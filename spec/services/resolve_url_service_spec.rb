@@ -33,11 +33,11 @@ describe ResolveURLService do
     shared_context 'with remote private status' do
       let_it_be(:account) { Fabricate(:account) }
       let_it_be(:poster)  { Fabricate(:account, domain: 'example.com') }
-      let_it_be(:status)  { Fabricate(:status, url: url, uri: uri, account: poster, visibility: :private) }
+      let_it_be(:status)  { Fabricate(:status, account: poster, visibility: :private) }
 
       before do
-        stub_request(:get, url).to_return(status: 404) if url.present?
-        stub_request(:get, uri).to_return(status: 404)
+        stub_request(:get, url).to_return(status: 404) if defined?(url)
+        stub_request(:get, uri).to_return(status: 404) if defined?(uri)
       end
     end
 
@@ -54,19 +54,21 @@ describe ResolveURLService do
           let(:uri) { 'https://example.com/users/foo/statuses/42' }
 
           it 'returns status by url' do
+            status.update!(url: url, uri: uri)
             expect(subject.call(url, on_behalf_of: account)).to eq(status)
           end
 
           it 'returns status by uri' do
+            status.update!(url: url, uri: uri)
             expect(subject.call(uri, on_behalf_of: account)).to eq(status)
           end
         end
 
         context 'when the status uses pleroma-style URLs' do
-          let(:url) { nil }
           let(:uri) { 'https://example.com/objects/0123-456-789-abc-def' }
 
           it 'returns status by uri' do
+            status.update!(url: nil, uri: uri)
             expect(subject.call(uri, on_behalf_of: account)).to eq(status)
           end
         end
@@ -78,19 +80,21 @@ describe ResolveURLService do
           let(:uri) { 'https://example.com/users/foo/statuses/42' }
 
           it 'does not return the status by url' do
+            status.update!(url: url, uri: uri)
             expect(subject.call(url, on_behalf_of: account)).to be_nil
           end
 
           it 'does not return the status by uri' do
+            status.update!(url: url, uri: uri)
             expect(subject.call(uri, on_behalf_of: account)).to be_nil
           end
         end
 
         context 'when the status uses pleroma-style URLs' do
-          let(:url) { nil }
           let(:uri) { 'https://example.com/objects/0123-456-789-abc-def' }
 
           it 'returns status by uri' do
+            status.update!(url: nil, uri: uri)
             expect(subject.call(uri, on_behalf_of: account)).to be_nil
           end
         end
@@ -152,10 +156,13 @@ describe ResolveURLService do
     context 'when searching for a local link of a remote private status' do
       include_context 'with remote private status'
 
-      let(:poster)     { Fabricate(:account, username: 'foo', domain: 'example.com') }
       let(:url)        { 'https://example.com/@foo/42' }
       let(:uri)        { 'https://example.com/users/foo/statuses/42' }
       let(:search_url) { "https://#{Rails.configuration.x.local_domain}/@foo@example.com/#{status.id}" }
+
+      before do
+        status.update!(url: url, uri: uri)
+      end
 
       context 'when the account follows the poster' do
         before do
