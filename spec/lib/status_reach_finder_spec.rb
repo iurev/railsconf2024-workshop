@@ -9,10 +9,13 @@ describe StatusReachFinder do
 
       let_it_be(:alice) { Fabricate(:account, username: 'alice') }
       let_it_be(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
+      let_it_be(:status) { Fabricate(:status, account: alice, visibility: :public) }
 
-      let(:parent_status) { nil }
       let(:visibility) { :public }
-      let(:status) { Fabricate(:status, account: alice, thread: parent_status, visibility: visibility) }
+
+      before do
+        status.update!(visibility: visibility) if visibility != :public
+      end
 
       context 'when it contains mentions of remote accounts' do
         before do
@@ -79,7 +82,11 @@ describe StatusReachFinder do
       end
 
       context 'when it is a reply to a remote account' do
-        let(:parent_status) { Fabricate(:status, account: bob) }
+        let_it_be(:parent_status) { Fabricate(:status, account: bob) }
+        
+        before do
+          status.update!(thread: parent_status)
+        end
 
         it 'includes the inbox of the replied-to account' do
           expect(subject.inboxes).to include 'https://foo.bar/inbox'
