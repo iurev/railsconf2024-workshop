@@ -1,11 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Reject do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
+  
   let(:object_json) do
     {
       id: 'bar',
@@ -28,19 +28,23 @@ RSpec.describe ActivityPub::Activity::Reject do
   describe '#perform' do
     subject { described_class.new(json, sender) }
 
-    context 'when rejecting a pending follow request by target' do
+    shared_examples 'rejects follow request or relationship' do
+      it 'does not create a follow relationship' do
+        expect(recipient.following?(sender)).to be false
+      end
+
+      it 'removes the follow request or relationship' do
+        expect(recipient.requested?(sender)).to be false
+      end
+    end
+
+    context 'when rejecting a pending follow request' do
       before do
         Fabricate(:follow_request, account: recipient, target_account: sender)
         subject.perform
       end
 
-      it 'does not create a follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'removes the follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
 
     context 'when rejecting a pending follow request by uri' do
@@ -49,13 +53,7 @@ RSpec.describe ActivityPub::Activity::Reject do
         subject.perform
       end
 
-      it 'does not create a follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'removes the follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
 
     context 'when rejecting a pending follow request by uri only' do
@@ -66,28 +64,16 @@ RSpec.describe ActivityPub::Activity::Reject do
         subject.perform
       end
 
-      it 'does not create a follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'removes the follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
 
-    context 'when rejecting an existing follow relationship by target' do
+    context 'when rejecting an existing follow relationship' do
       before do
         Fabricate(:follow, account: recipient, target_account: sender)
         subject.perform
       end
 
-      it 'removes the follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'does not create a follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
 
     context 'when rejecting an existing follow relationship by uri' do
@@ -96,13 +82,7 @@ RSpec.describe ActivityPub::Activity::Reject do
         subject.perform
       end
 
-      it 'removes the follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'does not create a follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
 
     context 'when rejecting an existing follow relationship by uri only' do
@@ -113,20 +93,14 @@ RSpec.describe ActivityPub::Activity::Reject do
         subject.perform
       end
 
-      it 'removes the follow relationship' do
-        expect(recipient.following?(sender)).to be false
-      end
-
-      it 'does not create a follow request' do
-        expect(recipient.requested?(sender)).to be false
-      end
+      it_behaves_like 'rejects follow request or relationship'
     end
   end
 
   context 'when given a relay' do
     subject { described_class.new(json, sender) }
 
-    let!(:relay) { Fabricate(:relay, state: :pending, follow_activity_id: 'https://abc-123/456') }
+    let_it_be(:relay) { Fabricate(:relay, state: :pending, follow_activity_id: 'https://abc-123/456') }
 
     let(:json) do
       {
