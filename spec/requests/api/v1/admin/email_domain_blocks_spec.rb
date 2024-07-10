@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Email Domain Blocks' do
-  let(:role)    { UserRole.find_by(name: 'Admin') }
-  let(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
+  let_it_be(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:scopes)  { 'admin:read:email_domain_blocks admin:write:email_domain_blocks' }
+  
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:account) { Fabricate(:account) }
-  let(:scopes)  { 'admin:read:email_domain_blocks admin:write:email_domain_blocks' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/email_domain_blocks' do
@@ -37,7 +37,7 @@ RSpec.describe 'Email Domain Blocks' do
     end
 
     context 'when there are email domain blocks' do
-      let!(:email_domain_blocks)  { Fabricate.times(5, :email_domain_block) }
+      let_it_be(:email_domain_blocks)  { Fabricate.times(5, :email_domain_block) }
       let(:blocked_email_domains) { email_domain_blocks.pluck(:domain) }
 
       it 'return the correct blocked email domains' do
@@ -83,11 +83,11 @@ RSpec.describe 'Email Domain Blocks' do
   end
 
   describe 'GET /api/v1/admin/email_domain_blocks/:id' do
+    let_it_be(:email_domain_block) { Fabricate(:email_domain_block) }
+
     subject do
       get "/api/v1/admin/email_domain_blocks/#{email_domain_block.id}", headers: headers
     end
-
-    let!(:email_domain_block) { Fabricate(:email_domain_block) }
 
     it_behaves_like 'forbidden for wrong scope', 'read:statuses'
     it_behaves_like 'forbidden for wrong role', ''
@@ -163,11 +163,11 @@ RSpec.describe 'Email Domain Blocks' do
   end
 
   describe 'DELETE /api/v1/admin/email_domain_blocks' do
+    let_it_be(:email_domain_block) { Fabricate(:email_domain_block) }
+
     subject do
       delete "/api/v1/admin/email_domain_blocks/#{email_domain_block.id}", headers: headers
     end
-
-    let!(:email_domain_block) { Fabricate(:email_domain_block) }
 
     it_behaves_like 'forbidden for wrong scope', 'read:statuses'
     it_behaves_like 'forbidden for wrong role', ''
