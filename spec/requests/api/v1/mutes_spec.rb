@@ -1,20 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Mutes' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:mutes' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:mutes' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:mutes)   { Fabricate.times(2, :mute, account: user.account) }
 
   describe 'GET /api/v1/mutes' do
     subject do
       get '/api/v1/mutes', headers: headers, params: params
     end
 
-    let!(:mutes) { Fabricate.times(2, :mute, account: user.account) }
     let(:params) { {} }
 
     it_behaves_like 'forbidden for wrong scope', 'write write:mutes'
