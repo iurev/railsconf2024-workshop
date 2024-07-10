@@ -5,6 +5,9 @@ require 'rails_helper'
 RSpec.describe '/api/web/embed' do
   subject { get "/api/web/embeds/#{id}", headers: headers }
 
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+
   context 'when accessed anonymously' do
     let(:headers) { {} }
 
@@ -12,7 +15,7 @@ RSpec.describe '/api/web/embed' do
       let(:id) { status.id }
 
       context 'when the requested status is public' do
-        let(:status) { Fabricate(:status, visibility: :public) }
+        let_it_be(:status) { Fabricate(:status, visibility: :public) }
 
         it 'returns JSON with an html attribute' do
           subject
@@ -23,7 +26,7 @@ RSpec.describe '/api/web/embed' do
       end
 
       context 'when the requested status is private' do
-        let(:status) { Fabricate(:status, visibility: :private) }
+        let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
         it 'returns http not found' do
           subject
@@ -34,9 +37,9 @@ RSpec.describe '/api/web/embed' do
     end
 
     context 'when the requested status is remote' do
-      let(:remote_account) { Fabricate(:account, domain: 'example.com') }
-      let(:status)         { Fabricate(:status, visibility: :public, account: remote_account, url: 'https://example.com/statuses/1') }
-      let(:id)             { status.id }
+      let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
+      let_it_be(:status) { Fabricate(:status, visibility: :public, account: remote_account, url: 'https://example.com/statuses/1') }
+      let(:id) { status.id }
 
       it 'returns http not found' do
         subject
@@ -57,15 +60,13 @@ RSpec.describe '/api/web/embed' do
   end
 
   context 'with an API token' do
-    let(:user)    { Fabricate(:user) }
-    let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
     let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
     context 'when the requested status is local' do
       let(:id) { status.id }
 
       context 'when the requested status is public' do
-        let(:status) { Fabricate(:status, visibility: :public) }
+        let_it_be(:status) { Fabricate(:status, visibility: :public) }
 
         it 'returns JSON with an html attribute' do
           subject
@@ -75,7 +76,7 @@ RSpec.describe '/api/web/embed' do
         end
 
         context 'when the requesting user is blocked' do
-          before do
+          before_all do
             status.account.block!(user.account)
           end
 
@@ -88,9 +89,9 @@ RSpec.describe '/api/web/embed' do
       end
 
       context 'when the requested status is private' do
-        let(:status) { Fabricate(:status, visibility: :private) }
+        let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
-        before do
+        before_all do
           user.account.follow!(status.account)
         end
 
@@ -103,9 +104,9 @@ RSpec.describe '/api/web/embed' do
     end
 
     context 'when the requested status is remote' do
-      let(:remote_account) { Fabricate(:account, domain: 'example.com') }
-      let(:status)         { Fabricate(:status, visibility: :public, account: remote_account, url: 'https://example.com/statuses/1') }
-      let(:id)             { status.id }
+      let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
+      let_it_be(:status) { Fabricate(:status, visibility: :public, account: remote_account, url: 'https://example.com/statuses/1') }
+      let(:id) { status.id }
 
       let(:service_instance) { instance_double(FetchOEmbedService) }
 
@@ -115,7 +116,7 @@ RSpec.describe '/api/web/embed' do
       end
 
       context 'when the requesting user is blocked' do
-        before do
+        before_all do
           status.account.block!(user.account)
         end
 

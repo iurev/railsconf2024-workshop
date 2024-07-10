@@ -5,14 +5,14 @@ require 'rails_helper'
 describe ActivityPub::DistributionWorker do
   subject { described_class.new }
 
-  let(:status)   { Fabricate(:status) }
-  let(:follower) { Fabricate(:account, protocol: :activitypub, inbox_url: 'http://example.com', domain: 'example.com') }
+  let_it_be(:status)   { Fabricate(:status) }
+  let_it_be(:follower) { Fabricate(:account, protocol: :activitypub, inbox_url: 'http://example.com', domain: 'example.com') }
+
+  before_all do
+    follower.follow!(status.account)
+  end
 
   describe '#perform' do
-    before do
-      follower.follow!(status.account)
-    end
-
     context 'with public status' do
       before do
         status.update(visibility: :public)
@@ -38,7 +38,7 @@ describe ActivityPub::DistributionWorker do
     end
 
     context 'with direct status' do
-      let(:mentioned_account) { Fabricate(:account, protocol: :activitypub, inbox_url: 'https://foo.bar/inbox', domain: 'foo.bar') }
+      let_it_be(:mentioned_account) { Fabricate(:account, protocol: :activitypub, inbox_url: 'https://foo.bar/inbox', domain: 'foo.bar') }
 
       before do
         status.update(visibility: :direct)

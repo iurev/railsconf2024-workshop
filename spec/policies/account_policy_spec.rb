@@ -6,9 +6,9 @@ require 'pundit/rspec'
 RSpec.describe AccountPolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
-  let(:alice)   { Fabricate(:account) }
+  let_it_be(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)    { Fabricate(:account) }
+  let_it_be(:alice)   { Fabricate(:account) }
 
   permissions :index? do
     context 'when staff' do
@@ -39,9 +39,7 @@ RSpec.describe AccountPolicy do
   end
 
   permissions :unsuspend?, :unblock_email? do
-    before do
-      alice.suspend!
-    end
+    before_all { alice.suspend! }
 
     context 'when staff' do
       it 'permits' do
@@ -71,7 +69,7 @@ RSpec.describe AccountPolicy do
   end
 
   permissions :suspend?, :silence? do
-    let(:staff) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+    let_it_be(:staff) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
 
     context 'when staff' do
       context 'when record is staff' do
@@ -95,7 +93,7 @@ RSpec.describe AccountPolicy do
   end
 
   permissions :memorialize? do
-    let(:other_admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+    let_it_be(:other_admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
 
     context 'when admin' do
       context 'when record is admin' do

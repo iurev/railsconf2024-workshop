@@ -3,14 +3,13 @@
 require 'rails_helper'
 
 describe 'API V1 Statuses Reblogs' do
-  let(:user)  { Fabricate(:user) }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'write:statuses' }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)  { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write:statuses') }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   context 'with an oauth token' do
     describe 'POST /api/v1/statuses/:status_id/reblog' do
-      let(:status) { Fabricate(:status, account: user.account) }
+      let_it_be(:status) { Fabricate(:status, account: user.account) }
 
       before do
         post "/api/v1/statuses/#{status.id}/reblog", headers: headers
@@ -33,7 +32,7 @@ describe 'API V1 Statuses Reblogs' do
       end
 
       context 'with private status of not-followed account' do
-        let(:status) { Fabricate(:status, visibility: :private) }
+        let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
         it 'returns http not found' do
           expect(response).to have_http_status(404)
@@ -43,7 +42,7 @@ describe 'API V1 Statuses Reblogs' do
 
     describe 'POST /api/v1/statuses/:status_id/unreblog' do
       context 'with public status' do
-        let(:status) { Fabricate(:status, account: user.account) }
+        let_it_be(:status) { Fabricate(:status, account: user.account) }
 
         before do
           ReblogService.new.call(user.account, status)
@@ -66,7 +65,7 @@ describe 'API V1 Statuses Reblogs' do
       end
 
       context 'with public status when blocked by its author' do
-        let(:status) { Fabricate(:status, account: user.account) }
+        let_it_be(:status) { Fabricate(:status, account: user.account) }
 
         before do
           ReblogService.new.call(user.account, status)
@@ -90,7 +89,7 @@ describe 'API V1 Statuses Reblogs' do
       end
 
       context 'with private status that was not reblogged' do
-        let(:status) { Fabricate(:status, visibility: :private) }
+        let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
         before do
           post "/api/v1/statuses/#{status.id}/unreblog", headers: headers
