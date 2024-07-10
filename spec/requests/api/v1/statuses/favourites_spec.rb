@@ -15,7 +15,10 @@ RSpec.describe 'Favourites' do
 
     let_it_be(:status) { Fabricate(:status) }
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:favourites'
+    it_behaves_like 'forbidden for wrong scope', 'read read:favourites' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read read:favourites') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+    end
 
     context 'with public status' do
       it 'favourites the status successfully', :aggregate_failures do
@@ -76,7 +79,10 @@ RSpec.describe 'Favourites' do
 
     let_it_be(:status) { Fabricate(:status) }
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:favourites'
+    it_behaves_like 'forbidden for wrong scope', 'read read:favourites' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read read:favourites') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+    end
 
     context 'with public status' do
       before do
