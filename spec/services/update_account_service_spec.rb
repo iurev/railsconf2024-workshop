@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,19 +6,21 @@ RSpec.describe UpdateAccountService do
   subject { described_class.new }
 
   describe 'switching form locked to unlocked accounts' do
-    let(:account) { Fabricate(:account, locked: true) }
-    let(:alice)   { Fabricate(:account) }
-    let(:bob)     { Fabricate(:account) }
-    let(:eve)     { Fabricate(:account) }
+    let_it_be(:account) { Fabricate(:account, locked: true) }
+    let_it_be(:alice)   { Fabricate(:account) }
+    let_it_be(:bob)     { Fabricate(:account) }
+    let_it_be(:eve)     { Fabricate(:account) }
 
-    before do
+    before_all do
       bob.touch(:silenced_at)
       account.mute!(eve)
 
       FollowService.new.call(alice, account)
       FollowService.new.call(bob, account)
       FollowService.new.call(eve, account)
+    end
 
+    before do
       subject.call(account, { locked: false })
     end
 
