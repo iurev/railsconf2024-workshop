@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Tags' do
   let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let(:user)    { Fabricate(:user, role: role) }
-  let(:scopes)  { 'admin:read admin:write' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:scopes)  { 'admin:read admin:write' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
   let_it_be(:tag)     { Fabricate(:tag) }
 
   describe 'GET /api/v1/admin/tags' do
@@ -38,12 +38,7 @@ RSpec.describe 'Tags' do
 
     context 'when there are tags' do
       let_it_be(:tags) do
-        [
-          Fabricate(:tag),
-          Fabricate(:tag),
-          Fabricate(:tag),
-          Fabricate(:tag),
-        ]
+        Fabricate.times(4, :tag)
       end
 
       it 'returns the expected tags' do
