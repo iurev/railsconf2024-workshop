@@ -34,8 +34,8 @@ describe Mastodon::CLI::Domains do
 
     context 'with accounts from the domain' do
       let(:domain) { 'host.example' }
-      let_it_be(:account) { Fabricate(:account, domain: domain) }
       let(:arguments) { [domain] }
+      let!(:account) { Fabricate(:account, domain: domain) }
 
       it 'removes the account' do
         expect { subject }
@@ -51,8 +51,7 @@ describe Mastodon::CLI::Domains do
 
     context 'with accounts from the domain' do
       let(:domain) { 'host.example' }
-
-      let_it_be(:account) { Fabricate(:account, domain: domain) }
+      let!(:account) { Fabricate(:account, domain: domain) }
 
       before do
         stub_request(:get, 'https://host.example/api/v1/instance').to_return(status: 200, body: {}.to_json)
