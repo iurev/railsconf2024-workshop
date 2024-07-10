@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Tags' do
-  let(:role)    { UserRole.find_by(name: 'Admin') }
-  let(:user)    { Fabricate(:user, role: role) }
-  let(:scopes)  { 'admin:read admin:write' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:tag)     { Fabricate(:tag) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
+  let_it_be(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:scopes)  { 'admin:read admin:write' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:tag)     { Fabricate(:tag) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/tags' do
     subject do
@@ -35,8 +34,8 @@ RSpec.describe 'Tags' do
       end
     end
 
-    context 'when there are tagss' do
-      let!(:tags) do
+    context 'when there are tags' do
+      let_it_be(:tags) do
         [
           Fabricate(:tag),
           Fabricate(:tag),
@@ -69,8 +68,6 @@ RSpec.describe 'Tags' do
       get "/api/v1/admin/tags/#{tag.id}", headers: headers
     end
 
-    let!(:tag) { Fabricate(:tag) }
-
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
     it_behaves_like 'forbidden for wrong role', ''
 
@@ -101,7 +98,6 @@ RSpec.describe 'Tags' do
       put "/api/v1/admin/tags/#{tag.id}", headers: headers, params: params
     end
 
-    let!(:tag)   { Fabricate(:tag) }
     let(:params) { { display_name: tag.name.upcase } }
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
