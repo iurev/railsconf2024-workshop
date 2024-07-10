@@ -3,23 +3,24 @@
 require 'rails_helper'
 
 RSpec.describe 'Suggestions' do
-  let(:user)    { Fabricate(:user) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:bob)     { Fabricate(:account) }
+  let_it_be(:jeff)    { Fabricate(:account) }
+  
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)  { 'read' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+  before_all do
+    Setting.bootstrap_timeline_accounts = [bob, jeff].map(&:acct).join(',')
+  end
 
   describe 'GET /api/v1/suggestions' do
     subject do
       get '/api/v1/suggestions', headers: headers, params: params
     end
 
-    let(:bob) { Fabricate(:account) }
-    let(:jeff) { Fabricate(:account) }
     let(:params) { {} }
-
-    before do
-      Setting.bootstrap_timeline_accounts = [bob, jeff].map(&:acct).join(',')
-    end
 
     it_behaves_like 'forbidden for wrong scope', 'write'
 
@@ -64,13 +65,7 @@ RSpec.describe 'Suggestions' do
       delete "/api/v1/suggestions/#{jeff.id}", headers: headers
     end
 
-    let(:bob) { Fabricate(:account) }
-    let(:jeff) { Fabricate(:account) }
     let(:scopes) { 'write' }
-
-    before do
-      Setting.bootstrap_timeline_accounts = [bob, jeff].map(&:acct).join(',')
-    end
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
