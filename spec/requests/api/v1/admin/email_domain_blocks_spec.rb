@@ -3,11 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Email Domain Blocks' do
-  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let_it_be(:user)    { Fabricate(:user, role: role) }
-  let_it_be(:account) { Fabricate(:account) }
-  let_it_be(:scopes)  { 'admin:read:email_domain_blocks admin:write:email_domain_blocks' }
+  let_it_be(:admin_role) { UserRole.find_by(name: 'Admin') }
+  let_it_be(:admin_user) { Fabricate(:user, role: admin_role) }
+  let_it_be(:account)    { Fabricate(:account) }
+  let_it_be(:scopes)     { 'admin:read:email_domain_blocks admin:write:email_domain_blocks' }
   
+  let(:user)    { admin_user }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
