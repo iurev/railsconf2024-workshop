@@ -69,7 +69,12 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
           end
         end
 
-        context 'when user does not has webauthn enabled' do
+        context 'when user does not have webauthn enabled' do
+          before do
+            user.update(webauthn_id: nil)
+            user.webauthn_credentials.destroy_all
+          end
+
           it 'redirects to 2FA methods list page' do
             get :index
             expect(response).to redirect_to settings_two_factor_authentication_methods_path
@@ -89,7 +94,7 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
 
     context 'when not signed in' do
       it 'redirects to login' do
-        delete :index
+        get :index
         expect(response).to redirect_to new_user_session_path
       end
     end
