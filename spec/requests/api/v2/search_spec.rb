@@ -9,9 +9,8 @@ describe 'Search API' do
   let_it_be(:tom)     { Fabricate(:account, username: 'tom_test') }
 
   context 'with token' do
-    let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-    let(:scopes)  { 'read:search' }
-    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:search') }
+    let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
     describe 'GET /api/v2/search' do
       let(:params) { { q: 'test' } }
