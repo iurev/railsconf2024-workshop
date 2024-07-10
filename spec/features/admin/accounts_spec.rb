@@ -1,26 +1,23 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Admin::Accounts' do
-  let(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:unapproved_user_account) { Fabricate(:account) }
+  let_it_be(:approved_user_account) { Fabricate(:account) }
+
+  before(:all) do
+    unapproved_user_account.user.update(approved: false)
+    approved_user_account.user.update(approved: true)
+  end
 
   before do
     sign_in current_user
+    visit admin_accounts_path
   end
 
   describe 'Performing batch updates' do
-    let(:unapproved_user_account) { Fabricate(:account) }
-    let(:approved_user_account) { Fabricate(:account) }
-
-    before do
-      unapproved_user_account.user.update(approved: false)
-      approved_user_account.user.update(approved: true)
-
-      visit admin_accounts_path
-    end
-
     context 'without selecting any accounts' do
       it 'displays a notice about account selection' do
         click_on button_for_suspend
