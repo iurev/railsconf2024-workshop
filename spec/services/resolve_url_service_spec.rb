@@ -36,8 +36,8 @@ describe ResolveURLService do
 
     shared_examples 'remote private status' do
       before do
-        stub_request(:get, url).to_return(status: 404) if defined?(url)
-        stub_request(:get, uri).to_return(status: 404) if defined?(uri)
+        stub_request(:get, url).to_return(status: 404) if defined?(url) && url
+        stub_request(:get, uri).to_return(status: 404) if defined?(uri) && uri
       end
 
       context 'when the account follows the poster' do
@@ -46,7 +46,7 @@ describe ResolveURLService do
         end
 
         it 'returns status by url' do
-          expect(subject.call(url, on_behalf_of: account)).to eq(status)
+          expect(subject.call(url, on_behalf_of: account)).to eq(status) if defined?(url) && url
         end
 
         it 'returns status by uri' do
@@ -56,7 +56,7 @@ describe ResolveURLService do
 
       context 'when the account does not follow the poster' do
         it 'does not return the status by url' do
-          expect(subject.call(url, on_behalf_of: account)).to be_nil
+          expect(subject.call(url, on_behalf_of: account)).to be_nil if defined?(url) && url
         end
 
         it 'does not return the status by uri' do
