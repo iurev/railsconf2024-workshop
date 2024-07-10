@@ -7,6 +7,12 @@ RSpec.describe ReportService do
 
   let_it_be(:source_account) { Fabricate(:account) }
   let_it_be(:target_account) { Fabricate(:account) }
+  let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
+
+  before_all do
+    stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
+    stub_request(:post, 'http://foo.com/inbox').to_return(status: 200)
+  end
 
   context 'with a local account' do
     it 'has a uri' do
@@ -16,12 +22,7 @@ RSpec.describe ReportService do
   end
 
   context 'with a remote account' do
-    let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
     let(:forward) { false }
-
-    before do
-      stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
-    end
 
     context 'when forward is true' do
       let(:forward) { true }
@@ -39,10 +40,6 @@ RSpec.describe ReportService do
       context 'when reporting a reply on a different remote server' do
         let_it_be(:remote_thread_account) { Fabricate(:account, domain: 'foo.com', protocol: :activitypub, inbox_url: 'http://foo.com/inbox') }
         let_it_be(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
-
-        before do
-          stub_request(:post, 'http://foo.com/inbox').to_return(status: 200)
-        end
 
         context 'when forward_to_domains includes both the replied-to domain and the origin domain' do
           it 'sends ActivityPub payload to both the author of the replied-to post and the reported user', sidekiq: :inline do
@@ -125,26 +122,26 @@ RSpec.describe ReportService do
     end
 
     context 'when the reporter is remote' do
-      let_it_be(:source_account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/1') }
+      let_it_be(:remote_source_account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/1') }
 
       context 'when it is addressed to the reporter' do
         before do
-          status.mentions.create(account: source_account)
+          status.mentions.create(account: remote_source_account)
         end
 
         it 'creates a report' do
-          expect { subject.call }.to change { target_account.targeted_reports.count }.from(0).to(1)
+          expect { described_class.new.call(remote_source_account, target_account, status_ids: [status.id]) }.to change { target_account.targeted_reports.count }.from(0).to(1)
         end
 
         it 'attaches the DM to the report' do
-          subject.call
+          described_class.new.call(remote_source_account, target_account, status_ids: [status.id])
           expect(target_account.targeted_reports.pluck(:status_ids)).to eq [[status.id]]
         end
       end
 
       context 'when it is not addressed to the reporter' do
         it 'does not add the DM to the report' do
-          subject.call
+          described_class.new.call(remote_source_account, target_account, status_ids: [status.id])
           expect(target_account.targeted_reports.pluck(:status_ids)).to eq [[]]
         end
       end
@@ -153,7 +150,7 @@ RSpec.describe ReportService do
 
   context 'when other reports already exist for the same target' do
     subject do
-      -> {  described_class.new.call(source_account, target_account) }
+      -> { described_class.new.call(source_account, target_account) }
     end
 
     before do
