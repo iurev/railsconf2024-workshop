@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe ActivityPub::ClaimsController do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
 
   describe 'POST #create' do
     context 'without signature' do
