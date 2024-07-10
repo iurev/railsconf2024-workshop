@@ -1,18 +1,18 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::InboxesController, :account do
-  let(:remote_account) { nil }
+  let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub) }
+  let(:signed_request_actor) { nil }
 
   before do
-    allow(controller).to receive(:signed_request_actor).and_return(remote_account)
+    allow(controller).to receive(:signed_request_actor).and_return(signed_request_actor)
   end
 
   describe 'POST #create' do
     context 'with signature' do
-      let(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub) }
+      let(:signed_request_actor) { remote_account }
 
       before do
         post :create, body: '{}'
@@ -49,7 +49,7 @@ RSpec.describe ActivityPub::InboxesController, :account do
     end
 
     context 'with Collection-Synchronization header' do
-      let(:remote_account)             { Fabricate(:account, followers_url: 'https://example.com/followers', domain: 'example.com', uri: 'https://example.com/actor', protocol: :activitypub) }
+      let(:signed_request_actor) { remote_account }
       let(:synchronization_collection) { remote_account.followers_url }
       let(:synchronization_url)        { 'https://example.com/followers-for-domain' }
       let(:synchronization_hash)       { 'somehash' }
@@ -58,6 +58,7 @@ RSpec.describe ActivityPub::InboxesController, :account do
       before do
         allow(ActivityPub::FollowersSynchronizationWorker).to receive(:perform_async).and_return(nil)
         allow(remote_account).to receive(:local_followers_hash).and_return('somehash')
+        remote_account.update(followers_url: 'https://example.com/followers', uri: 'https://example.com/actor')
 
         request.headers['Collection-Synchronization'] = synchronization_header
         post :create, body: '{}'
