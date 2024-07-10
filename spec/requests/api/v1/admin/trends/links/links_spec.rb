@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Links' do
-  let(:role)    { UserRole.find_by(name: 'Admin') }
-  let(:user)    { Fabricate(:user, role: role) }
-  let(:scopes)  { 'admin:read admin:write' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
+  let_it_be(:user)    { Fabricate(:user, role: role) }
+  let_it_be(:scopes)  { 'admin:read admin:write' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:preview_card) { Fabricate(:preview_card, trendable: false) }
 
   describe 'GET /api/v1/admin/trends/links' do
     subject do
@@ -26,8 +26,6 @@ describe 'Links' do
     subject do
       post "/api/v1/admin/trends/links/#{preview_card.id}/approve", headers: headers
     end
-
-    let(:preview_card) { Fabricate(:preview_card, trendable: false) }
 
     it_behaves_like 'forbidden for wrong scope', 'read write'
     it_behaves_like 'forbidden for wrong role', ''
@@ -79,8 +77,6 @@ describe 'Links' do
     subject do
       post "/api/v1/admin/trends/links/#{preview_card.id}/reject", headers: headers
     end
-
-    let(:preview_card) { Fabricate(:preview_card, trendable: false) }
 
     it_behaves_like 'forbidden for wrong scope', 'read write'
     it_behaves_like 'forbidden for wrong role', ''
