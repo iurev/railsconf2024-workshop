@@ -5,18 +5,18 @@ require 'rails_helper'
 describe Admin::ActionLogsController do
   render_views
 
-  # Action logs typically cause issues when their targets are not in the database
-  let!(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
-  before do
-    orphaned_log_types.map do |type|
+  before_all do
+    orphaned_log_types.each do |type|
       Fabricate(:action_log, account: account, action: 'destroy', target_type: type, target_id: 1312)
     end
   end
 
   describe 'GET #index' do
     it 'returns 200' do
-      sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin'))
+      sign_in admin
       get :index, params: { page: 1 }
 
       expect(response).to have_http_status(200)
