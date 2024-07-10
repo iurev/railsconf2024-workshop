@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe ActivityPub::ProcessCollectionService do
   subject { described_class.new }
 
-  let(:actor) { Fabricate(:account, domain: 'example.com', uri: 'http://example.com/account') }
+  let_it_be(:actor) { Fabricate(:account, domain: 'example.com', uri: 'http://example.com/account') }
 
   let(:payload) do
     {
@@ -73,7 +73,7 @@ RSpec.describe ActivityPub::ProcessCollectionService do
     end
 
     context 'when actor differs from sender' do
-      let(:forwarder) { Fabricate(:account, domain: 'example.com', uri: 'http://example.com/other_account') }
+      let_it_be(:forwarder) { Fabricate(:account, domain: 'example.com', uri: 'http://example.com/other_account') }
 
       it 'does not process payload if no signature exists' do
         signature_double = instance_double(ActivityPub::LinkedDataSignature, verify_actor!: nil)
@@ -110,7 +110,7 @@ RSpec.describe ActivityPub::ProcessCollectionService do
       end
 
       context 'when receiving a fabricated status' do
-        let!(:actor) do
+        let_it_be(:actor) do
           Fabricate(:account,
                     username: 'bob',
                     domain: 'example.com',
