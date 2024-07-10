@@ -17,17 +17,21 @@ RSpec.describe ActivityPub::Activity::Block do
     }.with_indifferent_access
   end
 
+  let(:subject) { described_class.new(json, sender) }
+
+  shared_examples 'performs block' do
+    before do
+      subject.perform
+    end
+
+    it 'creates a block from sender to recipient' do
+      expect(sender.blocking?(recipient)).to be true
+    end
+  end
+
   context 'when the recipient does not follow the sender' do
     describe '#perform' do
-      subject { described_class.new(json, sender) }
-
-      before do
-        subject.perform
-      end
-
-      it 'creates a block from sender to recipient' do
-        expect(sender.blocking?(recipient)).to be true
-      end
+      include_examples 'performs block'
     end
   end
 
@@ -37,15 +41,7 @@ RSpec.describe ActivityPub::Activity::Block do
     end
 
     describe '#perform' do
-      subject { described_class.new(json, sender) }
-
-      before do
-        subject.perform
-      end
-
-      it 'creates a block from sender to recipient' do
-        expect(sender.blocking?(recipient)).to be true
-      end
+      include_examples 'performs block'
 
       it 'sets the uri to that of last received block activity' do
         expect(sender.block_relationships.find_by(target_account: recipient).uri).to eq 'foo'
@@ -59,15 +55,7 @@ RSpec.describe ActivityPub::Activity::Block do
     end
 
     describe '#perform' do
-      subject { described_class.new(json, sender) }
-
-      before do
-        subject.perform
-      end
-
-      it 'creates a block from sender to recipient' do
-        expect(sender.blocking?(recipient)).to be true
-      end
+      include_examples 'performs block'
 
       it 'ensures recipient is not following sender' do
         expect(recipient.following?(sender)).to be false
@@ -92,8 +80,6 @@ RSpec.describe ActivityPub::Activity::Block do
     end
 
     describe '#perform' do
-      subject { described_class.new(json, sender) }
-
       before do
         subject.perform
       end
