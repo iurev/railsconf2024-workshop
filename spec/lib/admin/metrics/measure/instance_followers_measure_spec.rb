@@ -5,14 +5,14 @@ require 'rails_helper'
 describe Admin::Metrics::Measure::InstanceFollowersMeasure do
   subject { described_class.new(start_at, end_at, params) }
 
-  let(:domain) { 'example.com' }
+  let_it_be(:domain) { 'example.com' }
 
   let(:start_at) { 2.days.ago }
   let(:end_at)   { Time.now.utc }
 
   let(:params) { ActionController::Parameters.new(domain: domain) }
 
-  before do
+  before_all do
     local_account = Fabricate(:account)
 
     Fabricate(:account, domain: domain).follow!(local_account)

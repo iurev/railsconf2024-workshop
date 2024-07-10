@@ -6,9 +6,9 @@ RSpec.describe FamiliarFollowersPresenter do
   describe '#accounts' do
     subject { described_class.new(requested_accounts, account.id) }
 
-    let(:account) { Fabricate(:account) }
-    let(:familiar_follower) { Fabricate(:account) }
-    let(:requested_accounts) { Fabricate.times(2, :account) }
+    let_it_be(:account) { Fabricate(:account) }
+    let_it_be(:familiar_follower) { Fabricate(:account) }
+    let_it_be(:requested_accounts) { Fabricate.times(2, :account) }
 
     before do
       familiar_follower.follow!(requested_accounts.first)

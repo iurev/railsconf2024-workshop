@@ -16,11 +16,16 @@ prompt = data.dig("body", 1, "attributes", "value")
 
 
 
-spec_text = File.read(File.join(ROOT, 'ai/rd_prof_top.txt'))
-already_created = File.read(File.join(ROOT, 'ai/already_created.txt'))
-
 spec_file_regex = /\((\.\/spec\/.*?\/.*?)\)/
-file_matches = spec_text.scan(spec_file_regex).flatten
+
+
+already_created = File.read(File.join(ROOT, 'ai/rd_prof_top.txt')) + File.read(File.join(ROOT, 'ai/rd_prof_top_2.txt'))
+already_created = already_created.scan(spec_file_regex).flatten
+already_created.map! { |fm| fm.split(":").first }
+already_created.uniq!
+
+file_matches = File.read(File.join(ROOT, 'ai/rd_prof_top_3.txt'))
+file_matches = file_matches.scan(spec_file_regex).flatten
 file_matches.map! { |fm| fm.split(":").first }
 file_matches.reject! { |fm| fm.include? "ai_suggest" }
 file_matches.reject! { |fm| fm.include? "maintenance_spec" }
@@ -32,6 +37,8 @@ end
 
 file_matches.each.with_index do |file_match, index|
   puts "#{index} / #{file_matches.length}"
+  next if index <= 79
+
   issue_title = "auto_issue N2: #{File.basename(file_match)}"
   issue_body = "### relative path to the spec file\n\n#{file_match}\n\n### prompt\n\n#{prompt}"
   issue = client.create_issue(REPO, issue_title, issue_body)
@@ -44,5 +51,5 @@ file_matches.each.with_index do |file_match, index|
     puts e
   end
 
-  sleep 10
+  sleep 30
 end

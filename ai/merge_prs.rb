@@ -10,7 +10,7 @@ LOCAL_BASE_PATH = File.expand_path('..', __dir__)
 client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
 
 # Search for PRs in the repository
-prs = client.pull_requests(REPO, state: 'opened')
+prs = client.pull_requests(REPO, state: 'opened', per_page: 100)
   .select { |pr| pr.title.include?(SEARCH_TERM) }
   .select { |pr| LABELS == pr.labels.map(&:name).sort }
 

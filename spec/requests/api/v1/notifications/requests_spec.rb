@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Requests' do
-  let(:user)    { Fabricate(:user, account_attributes: { username: 'alice' }) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user, account_attributes: { username: 'alice' }) }
   let(:scopes)  { 'read:notifications write:notifications' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/notifications/requests' do
@@ -15,7 +15,7 @@ RSpec.describe 'Requests' do
 
     let(:params) { {} }
 
-    before do
+    before_all do
       Fabricate(:notification_request, account: user.account)
       Fabricate(:notification_request, account: user.account, dismissed: true)
     end
@@ -46,7 +46,7 @@ RSpec.describe 'Requests' do
       post "/api/v1/notifications/requests/#{notification_request.id}/accept", headers: headers
     end
 
-    let(:notification_request) { Fabricate(:notification_request, account: user.account) }
+    let_it_be(:notification_request) { Fabricate(:notification_request, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:notifications'
 
@@ -63,7 +63,7 @@ RSpec.describe 'Requests' do
     end
 
     context 'when notification request belongs to someone else' do
-      let(:notification_request) { Fabricate(:notification_request) }
+      let_it_be(:notification_request) { Fabricate(:notification_request) }
 
       it 'returns http not found' do
         subject
@@ -78,7 +78,7 @@ RSpec.describe 'Requests' do
       post "/api/v1/notifications/requests/#{notification_request.id}/dismiss", headers: headers
     end
 
-    let(:notification_request) { Fabricate(:notification_request, account: user.account) }
+    let_it_be(:notification_request) { Fabricate(:notification_request, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:notifications'
 
@@ -90,7 +90,7 @@ RSpec.describe 'Requests' do
     end
 
     context 'when notification request belongs to someone else' do
-      let(:notification_request) { Fabricate(:notification_request) }
+      let_it_be(:notification_request) { Fabricate(:notification_request) }
 
       it 'returns http not found' do
         subject

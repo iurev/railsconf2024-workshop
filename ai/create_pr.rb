@@ -5,18 +5,18 @@ require 'base64'
 
 MAIN_BRANCH = "workshop"
 
-issue_number = ARGV[0].to_i
+@issue_number = ARGV[0].to_i
 @repo = ENV['GITHUB_REPOSITORY']
 
 @client = Octokit::Client.new(access_token: ENV['GITHUB_TOKEN'])
 
-issue = @client.issue(@repo, issue_number)
+issue = @client.issue(@repo, @issue_number)
 issue_body = issue.body
 
-path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.strip
+@path = issue_body.match(/### relative path to the spec file\n\n(.+)/)&.[](1)&.strip
 agent_prompt = issue_body.match(/### prompt\n\n(.+)/m)&.[](1)&.strip
 
-branch_name = "optimize-#{issue_number}"
+branch_name = "optimize-#{@issue_number}"
 
 
 # remove branch and PR if they exist
@@ -38,13 +38,13 @@ end
 @client.create_ref(@repo, "refs/heads/#{branch_name}", @client.ref(@repo, "heads/#{MAIN_BRANCH}").object.sha)
 
 # Edit the file
-old_code = @client.contents(@repo, path: path, ref: branch_name)
+old_code = @client.contents(@repo, path: @path, ref: branch_name)
 decoded_content = Base64.decode64(old_code.content)
 new_code = decoded_content.lines.insert(1, "# aiptimize started\n").join
 
 @client.update_contents(
   @repo,
-  path,
+  @path,
   "Add aiptimize comment",
   old_code.sha,
   new_code,
@@ -59,7 +59,7 @@ old_code = new_code
   MAIN_BRANCH,
   branch_name,
   "Optimize: #{issue.title}",
-  "Optimizations for ##{issue_number}\n\nPath: #{path}\nRequests: #{agent_prompt}",
+  "Optimizations for ##{@issue_number}\n\nPath: #{@path}\nRequests: #{agent_prompt}",
   draft: true
 )
 
@@ -98,7 +98,7 @@ example_original_files =
 
 example_patch = File.read(File.join(ROOT, "ai", ENV.fetch("PATCH_EXAMPLE", "sample.patch")))
 
-target_file_path = path
+target_file_path = @path
 output = `FPROF=1 RD_PROF=1 bundle exec rspec #{target_file_path}`
 
 prompt = agent_prompt % {example_rspec_files: example_original_files, example_git_diff: example_patch, fprof: output}
@@ -122,7 +122,7 @@ def custom_print(text)
 end
 
 def save_request(response, messages)
-  return # temp disable openpipe
+  return false # becase I'll use openrouter.ai now to get Claude responses
 
   url = "https://app.openpipe.ai/api/v1/report-anthropic"
 
@@ -137,7 +137,7 @@ def save_request(response, messages)
     },
     respPayload: JSON.parse(response.to_json),
     statusCode: 200,
-    tags: { aaa: "123" }
+    tags: { step: "step-2", issue_number: @issue_number, path: @path }
   }
 
   headers = {
@@ -145,9 +145,13 @@ def save_request(response, messages)
     "Content-Type" => "application/json"
   }
 
-  Faraday.post(url) do |req|
-    req.headers = headers
-    req.body = payload.to_json
+  begin
+    Faraday.post(url) do |req|
+      req.headers = headers
+      req.body = payload.to_json
+    end
+  rescue => e
+    puts e
   end
 end
 
@@ -162,25 +166,35 @@ loop do
 
   run_id += 1
 
-  custom_print "RUN_ID: #{run_id}"
+  # custom_print "RUN_ID: #{run_id}"
 
-  url = 'https://api.anthropic.com/v1/messages'
+  # url = 'https://api.anthropic.com/v1/messages'
 
-  payload = {
-    model: 'claude-3-5-sonnet-20240620',
-    max_tokens: MAX_TOKENS,
-    messages: messages,
-  }
+  # payload = {
+  #   model: MODEL,
+  #   max_tokens: MAX_TOKENS,
+  #   messages: messages,
+  # }
 
-  headers = {
-    "x-api-key" => API_KEY,
-    "anthropic-version" => "2023-06-01",
-    "content-type" => "application/json"
-  }
+  # headers = {
+  #   "x-api-key" => API_KEY,
+  #   "anthropic-version" => "2023-06-01",
+  #   "content-type" => "application/json"
+  # }
 
-  response = Faraday.post(url) do |req|
-    req.headers = headers
-    req.body = payload.to_json
+  # response = Faraday.post(url) do |req|
+  #   req.headers = headers
+  #   req.body = payload.to_json
+  # end
+
+  response = Faraday.post('https://openrouter.ai/api/v1/chat/completions') do |req|
+    req.headers['Content-Type'] = 'application/json'
+    req.headers['Authorization'] = "Bearer #{ENV['OPENROUTER_KEY']}"
+    req.body = {
+      model: "anthropic/claude-3.5-sonnet",
+      messages: messages,
+      max_tokens: MAX_TOKENS,
+    }.to_json
   end
 
   unless response.success?
@@ -192,7 +206,7 @@ loop do
 
   result = nil
   begin
-    result = JSON.parse(response.env.response_body)["content"][0]["text"]
+    result = JSON.parse(response.env.response_body).dig("choices", 0, "message", "content")
   rescue
     @client.add_labels_to_an_issue(@repo, @pr.number, ['failed'])
     custom_print("Something went wrong\n\n#{response.status}\n\n#{response.env.response_body}")
@@ -211,14 +225,14 @@ loop do
   if action_index
     action = Regexp.last_match[1]
     last_comment = lines[0..action_index].join("\n")
-    custom_print "\n\nAction: #{action} (at line #{action_index + 1})\n#{last_comment}"
+    # custom_print "\n\nAction: #{action} (at line #{action_index + 1})\n#{last_comment}"
 
     if action == "run_rspec"
       code_end_index = lines[action_index..].find_index { _1 =~ /__END__/ }
 
       unless code_end_index
         puts "\n\nNo code end found, looks like a partial file...\n\n"
-        return custom_print(" Stopping.") if source_file_too_long
+        # return custom_print(" Stopping.") if source_file_too_long
 
         messages << { role: "user", content: "Observation: This doesn't look like a full Ruby/RSpec file, you must provide a full version" }
         source_file_too_long = true
@@ -235,7 +249,7 @@ loop do
 
       @client.update_contents(
         @repo,
-        path,
+        @path,
         "RUN_ID: #{run_id}",
         Digest::SHA1.hexdigest("blob #{old_code.bytesize}\0#{old_code}"),
         new_code,
@@ -243,12 +257,12 @@ loop do
       )
       old_code = new_code
 
-      custom_print "\n\nNew spec file saved at #{new_spec_path}\n"
+      # custom_print "\n\nNew spec file saved at #{new_spec_path}\n"
 
       # execute bundle exec rspec new_spec_path with clean bundle env and capture the output
       output = `FPROF=1 RD_PROF=1 bundle exec rspec #{new_spec_path}`
 
-      custom_print output
+      # custom_print output
 
       messages << { role: "user", content: "Observation:\n\n#{output}" }
     else
@@ -260,3 +274,22 @@ loop do
     break
   end
 end
+
+
+### STEP 3: attach `messages` to the PR
+file_content = messages.to_json
+file_basename = "messages.json"
+
+gist = @client.create_gist({
+  "description" => "",
+  "public" => true,
+  "files" => {
+    :"#{file_basename}" => {
+      "content" => file_content
+    }
+  }
+})
+
+gist_url = gist[:html_url]
+
+@client.add_comment(@repo, @pr.number, gist_url)
