@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Confirmations' do
-  let(:confirmed_at) { nil }
-  let(:user)         { Fabricate(:user, confirmed_at: confirmed_at) }
-  let(:token)        { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)       { 'read:accounts write:accounts' }
-  let(:headers)      { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user) { Fabricate(:user, confirmed_at: nil) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts write:accounts') }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/emails/confirmations' do
     subject do
@@ -16,11 +14,18 @@ RSpec.describe 'Confirmations' do
 
     let(:params) { {} }
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:accounts'
+    context 'with wrong scope' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read read:accounts') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+
+      it_behaves_like 'forbidden for wrong scope', 'read read:accounts'
+    end
 
     context 'with an oauth token' do
       context 'when user was created by a different application' do
-        let(:user) { Fabricate(:user, confirmed_at: confirmed_at, created_by_application: Fabricate(:application)) }
+        let(:different_app_user) { Fabricate(:user, confirmed_at: nil, created_by_application: Fabricate(:application)) }
+        let(:different_app_token) { Fabricate(:accessible_access_token, resource_owner_id: different_app_user.id, scopes: 'read:accounts write:accounts') }
+        let(:headers) { { 'Authorization' => "Bearer #{different_app_token.token}" } }
 
         it 'returns http forbidden' do
           subject
@@ -35,7 +40,7 @@ RSpec.describe 'Confirmations' do
         end
 
         context 'when the account is already confirmed' do
-          let(:confirmed_at) { Time.now.utc }
+          before { user.update(confirmed_at: Time.now.utc) }
 
           it 'returns http forbidden' do
             subject
@@ -103,7 +108,12 @@ RSpec.describe 'Confirmations' do
       get '/api/v1/emails/check_confirmation', headers: headers
     end
 
-    it_behaves_like 'forbidden for wrong scope', 'write'
+    context 'with wrong scope' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+
+      it_behaves_like 'forbidden for wrong scope', 'write'
+    end
 
     context 'with an oauth token' do
       context 'when the account is not confirmed' do
@@ -116,7 +126,7 @@ RSpec.describe 'Confirmations' do
       end
 
       context 'when the account is confirmed' do
-        let(:confirmed_at) { Time.now.utc }
+        before { user.update(confirmed_at: Time.now.utc) }
 
         it 'returns the confirmation status successfully', :aggregate_failures do
           subject
@@ -144,7 +154,7 @@ RSpec.describe 'Confirmations' do
       end
 
       context 'when the account is confirmed' do
-        let(:confirmed_at) { Time.now.utc }
+        before { user.update(confirmed_at: Time.now.utc) }
 
         it 'returns the confirmation status successfully', :aggregate_failures do
           subject
