@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:bookmarks' }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:scopes)  { 'read:bookmarks' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/bookmarks' do
@@ -15,7 +14,7 @@ RSpec.describe 'Bookmarks' do
     end
 
     let(:params)     { {} }
-    let!(:bookmarks) { Fabricate.times(2, :bookmark, account: user.account) }
+    let_it_be(:bookmarks) { Fabricate.times(2, :bookmark, account: user.account) }
 
     let(:expected_response) do
       bookmarks.map do |bookmark|
