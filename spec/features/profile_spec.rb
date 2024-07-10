@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,7 @@ describe 'Profile' do
 
   subject { page }
 
-  let(:local_domain) { ENV['LOCAL_DOMAIN'] }
+  let_it_be(:local_domain) { ENV['LOCAL_DOMAIN'] }
 
   before do
     as_a_logged_in_user
