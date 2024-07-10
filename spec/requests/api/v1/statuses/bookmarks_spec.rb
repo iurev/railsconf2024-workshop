@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
   let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:status)  { Fabricate(:status) }
   let(:scopes)  { 'write:bookmarks' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
@@ -12,8 +13,6 @@ RSpec.describe 'Bookmarks' do
     subject do
       post "/api/v1/statuses/#{status.id}/bookmark", headers: headers
     end
-
-    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
@@ -35,27 +34,28 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'with private status of not-followed account' do
-      let_it_be(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:private_status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/bookmark", headers: headers
 
         expect(response).to have_http_status(404)
       end
     end
 
     context 'with private status of followed account' do
-      let_it_be(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:followed_account) { Fabricate(:account) }
+      let_it_be(:private_status) { Fabricate(:status, account: followed_account, visibility: :private) }
 
       before do
-        user.account.follow!(status.account)
+        user.account.follow!(followed_account)
       end
 
       it 'bookmarks the status successfully', :aggregate_failures do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/bookmark", headers: headers
 
         expect(response).to have_http_status(200)
-        expect(user.account.bookmarked?(status)).to be true
+        expect(user.account.bookmarked?(private_status)).to be true
       end
     end
 
@@ -68,10 +68,8 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'without an authorization header' do
-      let(:headers) { {} }
-
       it 'returns http unauthorized' do
-        subject
+        post "/api/v1/statuses/#{status.id}/bookmark", headers: {}
 
         expect(response).to have_http_status(401)
       end
@@ -82,8 +80,6 @@ RSpec.describe 'Bookmarks' do
     subject do
       post "/api/v1/statuses/#{status.id}/unbookmark", headers: headers
     end
-
-    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
@@ -141,10 +137,10 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'with private status that was not bookmarked' do
-      let_it_be(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:private_status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/unbookmark", headers: headers
 
         expect(response).to have_http_status(404)
       end
