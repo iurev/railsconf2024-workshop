@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -31,17 +30,19 @@ describe ResolveURLService do
       expect(subject.call(url)).to eq known_account
     end
 
-    context 'when searching for a remote private status' do
-      let(:account)  { Fabricate(:account) }
-      let(:poster)   { Fabricate(:account, domain: 'example.com') }
-      let(:url)      { 'https://example.com/@foo/42' }
-      let(:uri)      { 'https://example.com/users/foo/statuses/42' }
-      let!(:status)  { Fabricate(:status, url: url, uri: uri, account: poster, visibility: :private) }
+    shared_context 'with remote private status' do
+      let_it_be(:account) { Fabricate(:account) }
+      let_it_be(:poster)  { Fabricate(:account, domain: 'example.com') }
+      let_it_be(:status)  { Fabricate(:status, url: url, uri: uri, account: poster, visibility: :private) }
 
       before do
         stub_request(:get, url).to_return(status: 404) if url.present?
         stub_request(:get, uri).to_return(status: 404)
       end
+    end
+
+    context 'when searching for a remote private status' do
+      include_context 'with remote private status'
 
       context 'when the account follows the poster' do
         before do
@@ -97,9 +98,9 @@ describe ResolveURLService do
     end
 
     context 'when searching for a local private status' do
-      let(:account) { Fabricate(:account) }
-      let(:poster)  { Fabricate(:account) }
-      let!(:status) { Fabricate(:status, account: poster, visibility: :private) }
+      let_it_be(:account) { Fabricate(:account) }
+      let_it_be(:poster)  { Fabricate(:account) }
+      let_it_be(:status)  { Fabricate(:status, account: poster, visibility: :private) }
       let(:url)     { ActivityPub::TagManager.instance.url_for(status) }
       let(:uri)     { ActivityPub::TagManager.instance.uri_for(status) }
 
@@ -129,9 +130,9 @@ describe ResolveURLService do
     end
 
     context 'when searching for a link that redirects to a local public status' do
-      let(:account) { Fabricate(:account) }
-      let(:poster)  { Fabricate(:account) }
-      let!(:status) { Fabricate(:status, account: poster, visibility: :public) }
+      let_it_be(:account) { Fabricate(:account) }
+      let_it_be(:poster)  { Fabricate(:account) }
+      let_it_be(:status)  { Fabricate(:status, account: poster, visibility: :public) }
       let(:url)     { 'https://link.to/foobar' }
       let(:status_url) { ActivityPub::TagManager.instance.url_for(status) }
       let(:uri) { ActivityPub::TagManager.instance.uri_for(status) }
@@ -149,17 +150,12 @@ describe ResolveURLService do
     end
 
     context 'when searching for a local link of a remote private status' do
-      let(:account)    { Fabricate(:account) }
+      include_context 'with remote private status'
+
       let(:poster)     { Fabricate(:account, username: 'foo', domain: 'example.com') }
       let(:url)        { 'https://example.com/@foo/42' }
       let(:uri)        { 'https://example.com/users/foo/statuses/42' }
-      let!(:status)    { Fabricate(:status, url: url, uri: uri, account: poster, visibility: :private) }
       let(:search_url) { "https://#{Rails.configuration.x.local_domain}/@foo@example.com/#{status.id}" }
-
-      before do
-        stub_request(:get, url).to_return(status: 404) if url.present?
-        stub_request(:get, uri).to_return(status: 404)
-      end
 
       context 'when the account follows the poster' do
         before do
