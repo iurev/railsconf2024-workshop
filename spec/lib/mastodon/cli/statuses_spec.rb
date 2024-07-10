@@ -20,14 +20,14 @@ describe Mastodon::CLI::Statuses do
 
       it 'exits with error message' do
         expect { subject }
-          .to raise_error(Thor::Error, /Cannot run/)
+          .to raise_error(Thor::Error, /Cannot run with this batch_size setting, must be at least 1/)
       end
     end
 
     context 'with default batch size' do
       it 'removes unreferenced statuses' do
         expect { subject }
-          .to output_results('Done after')
+          .to output(/Done after/).to_stdout
       end
     end
   end
