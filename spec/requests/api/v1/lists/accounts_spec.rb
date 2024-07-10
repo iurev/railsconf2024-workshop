@@ -8,14 +8,17 @@ RSpec.describe 'Accounts' do
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
+  let_it_be(:list)     { Fabricate(:list, account: user.account) }
+  let_it_be(:accounts) { Fabricate.times(2, :account) }
+  let_it_be(:bob)      { Fabricate(:account, username: 'bob') }
+  let_it_be(:peter)    { Fabricate(:account, username: 'peter') }
+
   describe 'GET /api/v1/lists/:id/accounts' do
     subject do
       get "/api/v1/lists/#{list.id}/accounts", headers: headers, params: params
     end
 
-    let(:params)   { { limit: 0 } }
-    let_it_be(:list)     { Fabricate(:list, account: user.account) }
-    let_it_be(:accounts) { Fabricate.times(2, :account) }
+    let(:params) { { limit: 0 } }
 
     let(:expected_response) do
       accounts.map do |account|
@@ -53,8 +56,6 @@ RSpec.describe 'Accounts' do
       post "/api/v1/lists/#{list.id}/accounts", headers: headers, params: params
     end
 
-    let_it_be(:list)   { Fabricate(:list, account: user.account) }
-    let_it_be(:bob)    { Fabricate(:account, username: 'bob') }
     let(:params) { { account_ids: [bob.id] } }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:lists'
@@ -128,9 +129,6 @@ RSpec.describe 'Accounts' do
     end
 
     context 'when the list is owned by the requesting user' do
-      let_it_be(:list)   { Fabricate(:list, account: user.account) }
-      let_it_be(:bob)    { Fabricate(:account, username: 'bob') }
-      let_it_be(:peter)  { Fabricate(:account, username: 'peter') }
       let(:params) { { account_ids: [bob.id] } }
 
       before do
