@@ -1,10 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Notifications' do
   let_it_be(:user)    { Fabricate(:user, account_attributes: { username: 'alice' }) }
+  let_it_be(:bob)    { Fabricate(:user) }
+  let_it_be(:tom)    { Fabricate(:user) }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)  { 'read:notifications write:notifications' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
@@ -14,8 +15,6 @@ RSpec.describe 'Notifications' do
       get '/api/v1/notifications', headers: headers, params: params
     end
 
-    let_it_be(:bob)    { Fabricate(:user) }
-    let_it_be(:tom)    { Fabricate(:user) }
     let(:params) { {} }
 
     before_all do
