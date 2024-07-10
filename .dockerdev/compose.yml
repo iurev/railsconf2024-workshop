@@ -10,6 +10,9 @@ x-app: &app
   environment: &env
     NODE_ENV: ${NODE_ENV:-development}
     RAILS_ENV: ${RAILS_ENV:-development}
+  networks:
+    - second_internal_network
+    - second_external_network
   tmpfs:
     - /tmp
     - /app/tmp/pids
@@ -20,25 +23,24 @@ x-backend: &backend
   tty: true
   volumes:
     - ..:/app:cached
-    - rails_cache:/app/tmp/cache
-    - rails_logs:/app/log
-    - node_modules:/app/node_modules
-    - history:/usr/local/hist
-    - storage:/app/public/system
+    - second_rails_cache:/app/tmp/cache
+    - second_rails_logs:/app/log
+    - second_node_modules:/app/node_modules
+    - second_history:/usr/local/hist
+    - second_storage:/app/public/system
     - ./.psqlrc:/root/.psqlrc:ro
     - ./.bashrc:/root/.bashrc:ro
   environment: &backend_environment
     <<: *env
     BIND: 0.0.0.0
-    REDIS_HOST: redis
+    REDIS_HOST: second_redis
     REDIS_PORT: '6379'
-    DB_HOST: postgres
+    DB_HOST: second_postgres
     DB_USER: postgres
     DB_PASS: postgres
     DB_PORT: '5432'
     ES_ENABLED: 'false'
-    REDIS_URL: redis://redis:6379/
-    DATABASE_URL: postgres://postgres:postgres@postgres:5432
+    REDIS_URL: redis://second_redis:6379/
     MALLOC_ARENA_MAX: 2
     WEB_CONCURRENCY: ${WEB_CONCURRENCY:-1}
     BOOTSNAP_CACHE_DIR: /app/tmp/cache/bootsnap
@@ -48,36 +50,39 @@ x-backend: &backend
     PSQL_HISTFILE: /usr/local/hist/.psql_history
     IRB_HISTFILE: /usr/local/hist/.irb_history
     EDITOR: vi
+  networks:
+    - second_internal_network
+    - second_external_network
   depends_on:
-    postgres:
+    second_postgres:
       condition: service_healthy
-    redis:
+    second_redis:
       condition: service_healthy
 
 services:
-  rails:
+  second_rails:
     <<: *backend
     command: bundle exec rails
 
-  web:
+  second_web:
     <<: *backend
     command: bundle exec rails server -b 0.0.0.0
     ports:
       - '3000:3000'
     depends_on:
-      sidekiq:
+      second_sidekiq:
         condition: service_started
 
-  sidekiq:
+  second_sidekiq:
     <<: *backend
     command: bundle exec sidekiq
 
-  postgres:
+  second_postgres:
     image: postgres:14
     volumes:
       - .psqlrc:/root/.psqlrc:ro
-      - postgres:/var/lib/postgresql/data
-      - history:/usr/local/hist
+      - second_postgres:/var/lib/postgresql/data
+      - second_history:/usr/local/hist
     environment:
       PSQL_HISTFILE: /usr/local/hist/.psql_history
       POSTGRES_USER: postgres
@@ -89,11 +94,14 @@ services:
     healthcheck:
       test: pg_isready -U postgres -h 127.0.0.1
       interval: 5s
+    networks:
+      - second_internal_network
+      - second_external_network
 
-  redis:
+  second_redis:
     image: redis:7.0-alpine
     volumes:
-      - redis:/data
+      - second_redis:/data
     ports:
       - 6379
     healthcheck:
@@ -101,13 +109,21 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
+    networks:
+      - second_internal_network
+      - second_external_network
 
 volumes:
-  bundle:
-  node_modules:
-  history:
-  rails_cache:
-  rails_logs:
-  postgres:
-  redis:
-  storage:
+  second_bundle:
+  second_node_modules:
+  second_history:
+  second_rails_cache:
+  second_rails_logs:
+  second_postgres:
+  second_redis:
+  second_storage:
+
+networks:
+  second_external_network:
+  second_internal_network:
+    internal: true

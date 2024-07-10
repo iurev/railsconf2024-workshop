@@ -5,7 +5,7 @@ services:
     image: postgres:14-alpine
     shm_size: 256mb
     networks:
-      - internal_network
+      - second_internal_network
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', 'postgres']
     volumes:
@@ -17,7 +17,7 @@ services:
     restart: always
     image: redis:7-alpine
     networks:
-      - internal_network
+      - second_internal_network
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
     volumes:
@@ -38,8 +38,8 @@ services:
   #     - "discovery.type=single-node"
   #     - "thread_pool.write.queue_size=1000"
   #   networks:
-  #      - external_network
-  #      - internal_network
+  #      - second_external_network
+  #      - second_internal_network
   #   healthcheck:
   #      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
   #   volumes:
@@ -61,8 +61,8 @@ services:
     env_file: .env.production
     command: bundle exec puma -C config/puma.rb
     networks:
-      - external_network
-      - internal_network
+      - second_external_network
+      - second_internal_network
     healthcheck:
       # prettier-ignore
       test: ['CMD-SHELL', 'wget -q --spider --proxy=off localhost:3000/health || exit 1']
@@ -82,8 +82,8 @@ services:
     env_file: .env.production
     command: node ./streaming
     networks:
-      - external_network
-      - internal_network
+      - second_external_network
+      - second_internal_network
     healthcheck:
       # prettier-ignore
       test: ['CMD-SHELL', 'wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1']
@@ -103,8 +103,8 @@ services:
       - db
       - redis
     networks:
-      - external_network
-      - internal_network
+      - second_external_network
+      - second_internal_network
     volumes:
       - ./public/system:/mastodon/public/system
     healthcheck:
@@ -116,18 +116,18 @@ services:
   # tor:
   #   image: sirboops/tor
   #   networks:
-  #      - external_network
-  #      - internal_network
+  #      - second_external_network
+  #      - second_internal_network
   #
   # privoxy:
   #   image: sirboops/privoxy
   #   volumes:
   #     - ./priv-config:/opt/config
   #   networks:
-  #     - external_network
-  #     - internal_network
+  #     - second_external_network
+  #     - second_internal_network
 
 networks:
-  external_network:
-  internal_network:
+  second_external_network:
+  second_internal_network:
     internal: true

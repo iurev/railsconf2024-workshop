@@ -15,36 +15,36 @@ interaction:
   # and opens a terminal within it.
   runner:
     description: Open a Bash shell within a Rails container (with dependencies up)
-    service: rails
+    service: second_rails
     command: /bin/bash
 
   # Run a Rails container without any dependent services (useful for non-Rails scripts)
   bash:
     description: Run an arbitrary script within a container (or open a shell without deps)
-    service: rails
+    service: second_rails
     command: /bin/bash
     compose_run_options: [ no-deps ]
 
   # A shortcut to run Bundler commands
   bundle:
     description: Run Bundler commands
-    service: rails
+    service: second_rails
     command: bundle
     compose_run_options: [ no-deps ]
 
   rails:
     description: Run Rails commands
-    service: rails
+    service: second_rails
     command: bundle exec rails
     subcommands:
       s:
         description: Run Rails server at http://localhost:3000
-        service: web
+        service: second_web
         compose:
           run_options: [ service-ports, use-aliases ]
   rspec: &rspec
     description: Run unit tests
-    service: rails
+    service: second_rails
     command: bundle exec rspec
     environment:
       RAILS_ENV: test
@@ -60,18 +60,19 @@ interaction:
 
   psql:
     description: Run Postgres psql console
-    service: postgres
+    service: second_postgres
     default_args: mastodon_development
     command: psql -h postgres -U postgres
 
   'redis-cli':
     description: Run Redis console
-    service: redis
+    service: second_redis
     command: redis-cli -h redis
 
 provision:
   - '[[ "$RESET_DOCKER" == "true" ]] && echo "Re-creating the Docker env from scratch..." && dip compose down --volumes || echo "Re-provisioning the Docker env..."'
-  - dip compose up -d postgres redis
+  - echo $DATABASE_URL
+  - dip compose up -d second_postgres second_redis
   - dip bundle check || dip bundle install
   - dip rails db:prepare
   - dip rails db:test:prepare
