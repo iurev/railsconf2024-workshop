@@ -57,6 +57,7 @@ describe Admin::Users::RolesController do
       let_it_be(:higher_role) { UserRole.create(name: 'Higher', permissions: UserRole::FLAGS[:administrator], position: 100) }
 
       before do
+        allow_any_instance_of(Admin::Users::RolesController).to receive(:update_role).and_return(false)
         put :update, params: { user_id: user.id, user: { role_id: higher_role.id } }
       end
 
