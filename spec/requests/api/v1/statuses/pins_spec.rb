@@ -1,20 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Pins' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'write:accounts' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'write:accounts' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/statuses/:status_id/pin' do
     subject do
       post "/api/v1/statuses/#{status.id}/pin", headers: headers
     end
 
-    let(:status) { Fabricate(:status, account: user.account) }
+    let_it_be(:status) { Fabricate(:status, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:accounts'
 
@@ -36,21 +35,21 @@ describe 'Pins' do
     end
 
     context 'when the status is private' do
-      let(:status) { Fabricate(:status, account: user.account, visibility: :private) }
+      let_it_be(:private_status) { Fabricate(:status, account: user.account, visibility: :private) }
 
       it 'pins the status successfully', :aggregate_failures do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/pin", headers: headers
 
         expect(response).to have_http_status(200)
-        expect(user.account.pinned?(status)).to be true
+        expect(user.account.pinned?(private_status)).to be true
       end
     end
 
     context 'when the status belongs to somebody else' do
-      let(:status) { Fabricate(:status) }
+      let_it_be(:other_status) { Fabricate(:status) }
 
       it 'returns http unprocessable entity' do
-        subject
+        post "/api/v1/statuses/#{other_status.id}/pin", headers: headers
 
         expect(response).to have_http_status(422)
       end
@@ -65,10 +64,8 @@ describe 'Pins' do
     end
 
     context 'without an authorization header' do
-      let(:headers) { {} }
-
       it 'returns http unauthorized' do
-        subject
+        post "/api/v1/statuses/#{status.id}/pin", headers: {}
 
         expect(response).to have_http_status(401)
       end
@@ -80,7 +77,7 @@ describe 'Pins' do
       post "/api/v1/statuses/#{status.id}/unpin", headers: headers
     end
 
-    let(:status) { Fabricate(:status, account: user.account) }
+    let_it_be(:status) { Fabricate(:status, account: user.account) }
 
     context 'when the status is pinned' do
       before do
@@ -120,10 +117,8 @@ describe 'Pins' do
     end
 
     context 'without an authorization header' do
-      let(:headers) { {} }
-
       it 'returns http unauthorized' do
-        subject
+        post "/api/v1/statuses/#{status.id}/unpin", headers: {}
 
         expect(response).to have_http_status(401)
       end
