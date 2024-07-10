@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'write:bookmarks' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'write:bookmarks' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/statuses/:status_id/bookmark' do
@@ -14,7 +13,7 @@ RSpec.describe 'Bookmarks' do
       post "/api/v1/statuses/#{status.id}/bookmark", headers: headers
     end
 
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
@@ -36,7 +35,7 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'with private status of not-followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
         subject
@@ -46,7 +45,7 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'with private status of followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
       before do
         user.account.follow!(status.account)
@@ -84,13 +83,13 @@ RSpec.describe 'Bookmarks' do
       post "/api/v1/statuses/#{status.id}/unbookmark", headers: headers
     end
 
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read'
 
     context 'with public status' do
       context 'when the status was previously bookmarked' do
-        before do
+        before_all do
           Bookmark.find_or_create_by!(account: user.account, status: status)
         end
 
@@ -111,9 +110,7 @@ RSpec.describe 'Bookmarks' do
       end
 
       context 'when the requesting user was blocked by the status author' do
-        let(:status) { Fabricate(:status) }
-
-        before do
+        before_all do
           Bookmark.find_or_create_by!(account: user.account, status: status)
           status.account.block!(user.account)
         end
@@ -144,7 +141,7 @@ RSpec.describe 'Bookmarks' do
     end
 
     context 'with private status that was not bookmarked' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
         subject
