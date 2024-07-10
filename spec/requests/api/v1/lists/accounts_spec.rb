@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Accounts' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)  { 'read:lists write:lists' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/lists/:id/accounts' do
