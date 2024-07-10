@@ -7,10 +7,8 @@ describe Admin::ReportNotesController do
 
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
-  before_all do
-    RSpec::Mocks.with_temporary_scope do
-      sign_in user, scope: :user
-    end
+  before do
+    sign_in user, scope: :user
   end
 
   describe 'POST #create' do
