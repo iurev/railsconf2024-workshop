@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Admin::ReportNotesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
@@ -14,12 +14,11 @@ describe Admin::ReportNotesController do
   describe 'POST #create' do
     subject { post :create, params: params }
 
-    let(:report) { Fabricate(:report, action_taken_at: action_taken, action_taken_by_account_id: account_id) }
+    let_it_be(:report) { Fabricate(:report) }
 
     context 'when parameter is valid' do
       context 'when report is unsolved' do
-        let(:action_taken) { nil }
-        let(:account_id) { nil }
+        before { report.update(action_taken_at: nil, action_taken_by_account_id: nil) }
 
         context 'when create_and_resolve flag is on' do
           let(:params) { { report_note: { content: 'test content', report_id: report.id }, create_and_resolve: nil } }
@@ -43,8 +42,7 @@ describe Admin::ReportNotesController do
       end
 
       context 'when report is resolved' do
-        let(:action_taken) { Time.now.utc }
-        let(:account_id) { user.account.id }
+        before { report.update(action_taken_at: Time.now.utc, action_taken_by_account_id: user.account.id) }
 
         context 'when create_and_unresolve flag is on' do
           let(:params) { { report_note: { content: 'test content', report_id: report.id }, create_and_unresolve: nil } }
@@ -70,8 +68,6 @@ describe Admin::ReportNotesController do
 
     context 'when parameter is invalid' do
       let(:params) { { report_note: { content: '', report_id: report.id } } }
-      let(:action_taken) { nil }
-      let(:account_id) { nil }
 
       it 'renders admin/reports/show' do
         expect(subject).to render_template 'admin/reports/show'
@@ -82,7 +78,7 @@ describe Admin::ReportNotesController do
   describe 'DELETE #destroy' do
     subject { delete :destroy, params: { id: report_note.id } }
 
-    let!(:report_note) { Fabricate(:report_note) }
+    let_it_be(:report_note) { Fabricate(:report_note) }
 
     it 'deletes note' do
       expect { subject }.to change(ReportNote, :count).by(-1)
