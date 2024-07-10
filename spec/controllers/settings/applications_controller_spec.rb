@@ -8,8 +8,8 @@ describe Settings::ApplicationsController do
   let_it_be(:user) { Fabricate(:user) }
   let_it_be(:app) { Fabricate(:application, owner: user) }
 
-  before_all do
-    RSpec.current_example.example_group_instance.sign_in user, scope: :user
+  before do
+    sign_in user, scope: :user
   end
 
   describe 'GET #index' do
