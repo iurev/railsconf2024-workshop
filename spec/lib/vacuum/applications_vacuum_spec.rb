@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,19 +6,19 @@ RSpec.describe Vacuum::ApplicationsVacuum do
   subject { described_class.new }
 
   describe '#perform' do
-    let!(:app_with_token)  { Fabricate(:application, created_at: 1.month.ago) }
-    let!(:app_with_grant)  { Fabricate(:application, created_at: 1.month.ago) }
-    let!(:app_with_signup) { Fabricate(:application, created_at: 1.month.ago) }
-    let!(:app_with_owner)  { Fabricate(:application, created_at: 1.month.ago, owner: Fabricate(:user)) }
-    let!(:unused_app)      { Fabricate(:application, created_at: 1.month.ago) }
-    let!(:recent_app)      { Fabricate(:application, created_at: 1.hour.ago) }
+    let_it_be(:app_with_token)  { Fabricate(:application, created_at: 1.month.ago) }
+    let_it_be(:app_with_grant)  { Fabricate(:application, created_at: 1.month.ago) }
+    let_it_be(:app_with_signup) { Fabricate(:application, created_at: 1.month.ago) }
+    let_it_be(:app_with_owner)  { Fabricate(:application, created_at: 1.month.ago, owner: Fabricate(:user)) }
+    let_it_be(:unused_app)      { Fabricate(:application, created_at: 1.month.ago) }
+    let_it_be(:recent_app)      { Fabricate(:application, created_at: 1.hour.ago) }
 
-    before do
+    before_all do
       Fabricate(:access_token, application: app_with_token)
       Fabricate(:access_grant, application: app_with_grant)
       Fabricate(:user, created_by_application: app_with_signup)
 
-      subject.perform
+      described_class.new.perform
     end
 
     it 'does not delete applications with valid access tokens' do
