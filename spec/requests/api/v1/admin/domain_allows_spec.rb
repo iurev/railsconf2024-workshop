@@ -3,11 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Domain Allows' do
-  let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let_it_be(:user)    { Fabricate(:user, role: role) }
-  let_it_be(:scopes)  { 'admin:read admin:write' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:role)    { UserRole.find_by(name: 'Admin') }
+  let(:user)    { Fabricate(:user, role: role) }
+  let(:scopes)  { 'admin:read admin:write' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/domain_allows' do
     subject do
@@ -35,7 +35,7 @@ RSpec.describe 'Domain Allows' do
     end
 
     context 'when there are allowed domains' do
-      let_it_be(:domain_allows) { Fabricate.times(2, :domain_allow) }
+      let!(:domain_allows) { Fabricate.times(2, :domain_allow) }
       let(:expected_response) do
         domain_allows.map do |domain_allow|
           {
@@ -69,7 +69,7 @@ RSpec.describe 'Domain Allows' do
       get "/api/v1/admin/domain_allows/#{domain_allow.id}", headers: headers
     end
 
-    let_it_be(:domain_allow) { Fabricate(:domain_allow) }
+    let!(:domain_allow) { Fabricate(:domain_allow) }
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
     it_behaves_like 'forbidden for wrong role', ''
@@ -150,7 +150,7 @@ RSpec.describe 'Domain Allows' do
       delete "/api/v1/admin/domain_allows/#{domain_allow.id}", headers: headers
     end
 
-    let_it_be(:domain_allow) { Fabricate(:domain_allow) }
+    let!(:domain_allow) { Fabricate(:domain_allow) }
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
     it_behaves_like 'forbidden for wrong role', ''
