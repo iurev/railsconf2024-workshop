@@ -1,10 +1,25 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe AccountRelationshipsPresenter do
   describe '.initialize' do
+    let_it_be(:current_account) { Fabricate(:account) }
+    let_it_be(:account) { Fabricate(:account) }
+    let_it_be(:accounts) { [account] }
+    let(:current_account_id) { current_account.id }
+    let(:default_map) { { account.id => true } }
+    let(:presenter) { described_class.new(accounts, current_account_id, **options) }
+
+    before_all do
+      Account.stub(:following_map).and_return({})
+      Account.stub(:followed_by_map).and_return({})
+      Account.stub(:blocking_map).and_return({})
+      Account.stub(:muting_map).and_return({})
+      Account.stub(:requested_map).and_return({})
+      Account.stub(:requested_by_map).and_return({})
+    end
+
     before do
       allow(Account).to receive(:following_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
       allow(Account).to receive(:followed_by_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
@@ -13,11 +28,6 @@ RSpec.describe AccountRelationshipsPresenter do
       allow(Account).to receive(:requested_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
       allow(Account).to receive(:requested_by_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
     end
-
-    let(:presenter)          { described_class.new(accounts, current_account_id, **options) }
-    let(:current_account_id) { Fabricate(:account).id }
-    let(:accounts)           { [Fabricate(:account)] }
-    let(:default_map)        { { accounts[0].id => true } }
 
     context 'when options are not set' do
       let(:options) { {} }
@@ -29,7 +39,7 @@ RSpec.describe AccountRelationshipsPresenter do
           blocking: default_map,
           muting: default_map,
           requested: default_map,
-          domain_blocking: { accounts[0].id => nil }
+          domain_blocking: { account.id => nil }
         )
       end
     end
@@ -55,7 +65,7 @@ RSpec.describe AccountRelationshipsPresenter do
           blocking: default_map,
           muting: default_map,
           requested: default_map,
-          domain_blocking: { accounts[0].id => nil }
+          domain_blocking: { account.id => nil }
         )
       end
     end
@@ -112,7 +122,7 @@ RSpec.describe AccountRelationshipsPresenter do
       let(:options) { { domain_blocking_map: { 7 => true } } }
 
       it 'sets @domain_blocking merged with default_map and options[:domain_blocking_map]' do
-        expect(presenter.domain_blocking).to eq({ accounts[0].id => nil }.merge(options[:domain_blocking_map]))
+        expect(presenter.domain_blocking).to eq({ account.id => nil }.merge(options[:domain_blocking_map]))
       end
     end
   end
