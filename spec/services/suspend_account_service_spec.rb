@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,18 +6,18 @@ RSpec.describe SuspendAccountService do
   shared_examples 'common behavior' do
     subject { described_class.new.call(account) }
 
-    let!(:local_follower) { Fabricate(:user, current_sign_in_at: 1.hour.ago).account }
-    let!(:list)           { Fabricate(:list, account: local_follower) }
+    let_it_be(:local_follower) { Fabricate(:user, current_sign_in_at: 1.hour.ago).account }
+    let_it_be(:list)           { Fabricate(:list, account: local_follower) }
+
+    before_all do
+      local_follower.follow!(account)
+      list.accounts << account
+      account.suspend!
+      Fabricate(:media_attachment, file: attachment_fixture('boop.ogg'), account: account)
+    end
 
     before do
       allow(FeedManager.instance).to receive_messages(unmerge_from_home: nil, unmerge_from_list: nil)
-
-      local_follower.follow!(account)
-      list.accounts << account
-
-      account.suspend!
-
-      Fabricate(:media_attachment, file: attachment_fixture('boop.ogg'), account: account)
     end
 
     it 'unmerges from feeds of local followers and changes file mode and preserves suspended flag' do
@@ -51,11 +50,11 @@ RSpec.describe SuspendAccountService do
     end
 
     include_examples 'common behavior' do
-      let!(:account)         { Fabricate(:account) }
-      let!(:remote_follower) { Fabricate(:account, uri: 'https://alice.com', inbox_url: 'https://alice.com/inbox', protocol: :activitypub, domain: 'alice.com') }
-      let!(:remote_reporter) { Fabricate(:account, uri: 'https://bob.com', inbox_url: 'https://bob.com/inbox', protocol: :activitypub, domain: 'bob.com') }
+      let_it_be(:account)         { Fabricate(:account) }
+      let_it_be(:remote_follower) { Fabricate(:account, uri: 'https://alice.com', inbox_url: 'https://alice.com/inbox', protocol: :activitypub, domain: 'alice.com') }
+      let_it_be(:remote_reporter) { Fabricate(:account, uri: 'https://bob.com', inbox_url: 'https://bob.com/inbox', protocol: :activitypub, domain: 'bob.com') }
 
-      before do
+      before_all do
         Fabricate(:report, account: remote_reporter, target_account: account)
         remote_follower.follow!(account)
       end
@@ -79,10 +78,10 @@ RSpec.describe SuspendAccountService do
     end
 
     include_examples 'common behavior' do
-      let!(:account)        { Fabricate(:account, domain: 'bob.com', uri: 'https://bob.com', inbox_url: 'https://bob.com/inbox', protocol: :activitypub) }
-      let!(:local_followee) { Fabricate(:account) }
+      let_it_be(:account)        { Fabricate(:account, domain: 'bob.com', uri: 'https://bob.com', inbox_url: 'https://bob.com/inbox', protocol: :activitypub) }
+      let_it_be(:local_followee) { Fabricate(:account) }
 
-      before do
+      before_all do
         account.follow!(local_followee)
       end
 
