@@ -10,13 +10,11 @@ describe 'API V1 Admin Trends Statuses' do
   let_it_be(:account) { Fabricate(:account) }
   let_it_be(:status)  { Fabricate(:status) }
 
-  before_all do
-    @headers = { 'Authorization' => "Bearer #{token.token}" }
-  end
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/trends/statuses' do
     it 'returns http success' do
-      get '/api/v1/admin/trends/statuses', params: { account_id: account.id, limit: 2 }, headers: @headers
+      get '/api/v1/admin/trends/statuses', params: { account_id: account.id, limit: 2 }, headers: headers
 
       expect(response).to have_http_status(200)
     end
@@ -24,7 +22,7 @@ describe 'API V1 Admin Trends Statuses' do
 
   describe 'POST /api/v1/admin/trends/statuses/:id/approve' do
     before do
-      post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: @headers
+      post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: headers
     end
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
@@ -37,7 +35,7 @@ describe 'API V1 Admin Trends Statuses' do
 
   describe 'POST /api/v1/admin/trends/statuses/:id/unapprove' do
     before do
-      post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: @headers
+      post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: headers
     end
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
