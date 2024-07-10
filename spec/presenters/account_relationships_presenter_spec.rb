@@ -4,29 +4,20 @@ require 'rails_helper'
 
 RSpec.describe AccountRelationshipsPresenter do
   describe '.initialize' do
-    let_it_be(:current_account) { Fabricate(:account) }
-    let_it_be(:account) { Fabricate(:account) }
-    let_it_be(:accounts) { [account] }
+    let(:current_account) { double('Account', id: 1) }
+    let(:account) { double('Account', id: 2) }
+    let(:accounts) { [account] }
     let(:current_account_id) { current_account.id }
     let(:default_map) { { account.id => true } }
     let(:presenter) { described_class.new(accounts, current_account_id, **options) }
 
-    before_all do
-      Account.stub(:following_map).and_return({})
-      Account.stub(:followed_by_map).and_return({})
-      Account.stub(:blocking_map).and_return({})
-      Account.stub(:muting_map).and_return({})
-      Account.stub(:requested_map).and_return({})
-      Account.stub(:requested_by_map).and_return({})
-    end
-
     before do
-      allow(Account).to receive(:following_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
-      allow(Account).to receive(:followed_by_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
-      allow(Account).to receive(:blocking_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
-      allow(Account).to receive(:muting_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
-      allow(Account).to receive(:requested_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
-      allow(Account).to receive(:requested_by_map).with(accounts.pluck(:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:following_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:followed_by_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:blocking_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:muting_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:requested_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
+      allow(Account).to receive(:requested_by_map).with(accounts.map(&:id), current_account_id).and_return(default_map)
     end
 
     context 'when options are not set' do
