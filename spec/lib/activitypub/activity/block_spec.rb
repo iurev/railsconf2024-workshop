@@ -2,7 +2,6 @@
 
 require 'rails_helper'
 require 'test_prof/recipes/rspec/let_it_be'
-require 'test_prof/recipes/rspec/before_all'
 
 RSpec.describe ActivityPub::Activity::Block do
   let_it_be(:sender)    { Fabricate(:account) }
@@ -21,7 +20,7 @@ RSpec.describe ActivityPub::Activity::Block do
   let(:subject) { described_class.new(json, sender) }
 
   shared_examples 'performs block' do
-    before_all do
+    before do
       subject.perform
     end
 
@@ -37,7 +36,7 @@ RSpec.describe ActivityPub::Activity::Block do
   end
 
   context 'when the recipient is already blocked' do
-    before_all do
+    before do
       sender.block!(recipient, uri: 'old')
     end
 
@@ -51,7 +50,7 @@ RSpec.describe ActivityPub::Activity::Block do
   end
 
   context 'when the recipient follows the sender' do
-    before_all do
+    before do
       recipient.follow!(sender)
     end
 
@@ -75,13 +74,13 @@ RSpec.describe ActivityPub::Activity::Block do
       }.with_indifferent_access
     end
 
-    before_all do
+    before do
       recipient.follow!(sender)
       ActivityPub::Activity::Undo.new(undo_json, sender).perform
     end
 
     describe '#perform' do
-      before_all do
+      before do
         subject.perform
       end
 
