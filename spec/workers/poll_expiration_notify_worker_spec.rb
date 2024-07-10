@@ -1,17 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe PollExpirationNotifyWorker do
-  let(:worker) { described_class.new }
-  let(:account) { Fabricate(:account, domain: remote? ? 'example.com' : nil) }
-  let(:status) { Fabricate(:status, account: account) }
-  let(:poll) { Fabricate(:poll, status: status, account: account) }
-  let(:remote?) { false }
-  let(:poll_vote) { Fabricate(:poll_vote, poll: poll) }
+  let_it_be(:worker) { described_class.new }
+  let_it_be(:account) { Fabricate(:account, domain: nil) }
+  let_it_be(:status) { Fabricate(:status, account: account) }
+  let_it_be(:poll) { Fabricate(:poll, status: status, account: account) }
+  let_it_be(:poll_vote) { Fabricate(:poll_vote, poll: poll) }
 
-  before { Sidekiq::Testing.fake! }
+  before_all { Sidekiq::Testing.fake! }
 
   describe '#perform' do
     it 'runs without error for missing record' do
@@ -28,10 +26,7 @@ describe PollExpirationNotifyWorker do
 
     context 'when poll is expired' do
       before do
-        poll_vote
-
         travel_to poll.expires_at + 5.minutes
-
         worker.perform(poll.id)
       end
 
@@ -50,18 +45,25 @@ describe PollExpirationNotifyWorker do
       end
 
       context 'when poll is remote' do
-        let(:remote?) { true }
+        let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
+        let_it_be(:remote_status) { Fabricate(:status, account: remote_account) }
+        let_it_be(:remote_poll) { Fabricate(:poll, status: remote_status, account: remote_account) }
+
+        before do
+          worker.perform(remote_poll.id)
+        end
 
         it 'does not notify remote voters' do
-          expect(ActivityPub::DistributePollUpdateWorker).to_not have_enqueued_sidekiq_job(poll.status.id)
+          expect(ActivityPub::DistributePollUpdateWorker).to_not have_enqueued_sidekiq_job(remote_poll.status.id)
         end
 
         it 'does not notify owner' do
-          expect(LocalNotificationWorker).to_not have_enqueued_sidekiq_job(poll.account.id, poll.id, 'Poll', 'poll')
+          expect(LocalNotificationWorker).to_not have_enqueued_sidekiq_job(remote_poll.account.id, remote_poll.id, 'Poll', 'poll')
         end
 
         it 'notifies local voters' do
-          expect(LocalNotificationWorker).to have_enqueued_sidekiq_job(poll_vote.account.id, poll.id, 'Poll', 'poll')
+          local_vote = Fabricate(:poll_vote, poll: remote_poll)
+          expect(LocalNotificationWorker).to have_enqueued_sidekiq_job(local_vote.account.id, remote_poll.id, 'Poll', 'poll')
         end
       end
     end
