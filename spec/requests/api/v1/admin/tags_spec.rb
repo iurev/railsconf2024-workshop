@@ -4,11 +4,11 @@ require 'rails_helper'
 
 RSpec.describe 'Tags' do
   let_it_be(:role)    { UserRole.find_by(name: 'Admin') }
-  let_it_be(:user)    { Fabricate(:user, role: role) }
-  let_it_be(:scopes)  { 'admin:read admin:write' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:user)    { Fabricate(:user, role: role) }
+  let(:scopes)  { 'admin:read admin:write' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
   let_it_be(:tag)     { Fabricate(:tag) }
-  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/tags' do
     subject do
@@ -27,6 +27,8 @@ RSpec.describe 'Tags' do
     end
 
     context 'when there are no tags' do
+      before { Tag.destroy_all }
+
       it 'returns an empty list' do
         subject
 
