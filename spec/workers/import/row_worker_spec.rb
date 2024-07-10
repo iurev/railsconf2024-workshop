@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Import::RowWorker do
   subject { described_class.new }
 
-  let(:row) { Fabricate(:bulk_import_row, bulk_import: import) }
+  let_it_be(:import) { Fabricate(:bulk_import, total_items: 2, processed_items: 0, imported_items: 0, state: :in_progress) }
+  let_it_be(:row) { Fabricate(:bulk_import_row, bulk_import: import) }
 
   describe '#perform' do
-    before do
+    before_all do
       allow(BulkImportRowService).to receive(:new).and_return(service_double)
     end
 
@@ -75,8 +75,6 @@ describe Import::RowWorker do
     end
 
     context 'when there are multiple rows to process' do
-      let(:import) { Fabricate(:bulk_import, total_items: 2, processed_items: 0, imported_items: 0, state: :in_progress) }
-
       context 'with a clean failure' do
         include_examples 'clean failure'
 
@@ -103,7 +101,7 @@ describe Import::RowWorker do
     end
 
     context 'when this is the last row to process' do
-      let(:import) { Fabricate(:bulk_import, total_items: 2, processed_items: 1, imported_items: 0, state: :in_progress) }
+      before { import.update(processed_items: 1) }
 
       context 'with a clean failure' do
         include_examples 'clean failure'
@@ -113,7 +111,6 @@ describe Import::RowWorker do
         end
       end
 
-      # NOTE: sidekiq retry logic may be a bit too difficult to test, so leaving this blind spot for now
       it_behaves_like 'unclean failure'
 
       context 'with a clean success' do
