@@ -7,12 +7,18 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
   render_views
 
   let_it_be(:user) { Fabricate(:user) }
-  let(:domain) { "#{Rails.configuration.x.use_https ? 'https' : 'http'}://#{Rails.configuration.x.web_domain}" }
-  let(:fake_client) { WebAuthn::FakeClient.new(domain) }
+  let_it_be(:domain) { "#{Rails.configuration.x.use_https ? 'https' : 'http'}://#{Rails.configuration.x.web_domain}" }
+  let_it_be(:fake_client) { WebAuthn::FakeClient.new(domain) }
+  let_it_be(:webauthn_credential) { Fabricate(:webauthn_credential, user_id: user.id, nickname: 'USB Key') }
 
-  def add_webauthn_credential(user)
-    Fabricate(:webauthn_credential, user_id: user.id, nickname: 'USB Key')
+  let(:challenge) do
+    WebAuthn::Credential.options_for_create(
+      user: { id: user.id, name: user.account.username, display_name: user.account.display_name }
+    ).challenge
   end
+
+  let(:new_webauthn_credential) { fake_client.create(challenge: challenge) }
+  let(:nickname) { 'SecurityKeyNickname' }
 
   describe 'GET #new' do
     context 'when signed in' do
@@ -32,10 +38,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user does not have otp enabled' do
-        before do
-          user.update(otp_required_for_login: false)
-        end
-
         it 'requires otp enabled first' do
           get :new
           expect(response).to redirect_to settings_two_factor_authentication_methods_path
@@ -59,7 +61,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
         context 'when user has webauthn enabled' do
           before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
-            add_webauthn_credential(user)
           end
 
           it 'returns http success' do
@@ -78,10 +79,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user does not have otp enabled' do
-        before do
-          user.update(otp_required_for_login: false)
-        end
-
         it 'requires otp enabled first' do
           get :index
           expect(response).to redirect_to settings_two_factor_authentication_methods_path
@@ -112,7 +109,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
         context 'when user has webauthn enabled' do
           before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
-            add_webauthn_credential(user)
           end
 
           it 'includes existing credentials in list of excluded credentials', :aggregate_failures do
@@ -135,10 +131,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user has not enabled otp' do
-        before do
-          user.update(otp_required_for_login: false)
-        end
-
         it 'requires otp enabled first' do
           get :options
           expect(response).to redirect_to settings_two_factor_authentication_methods_path
@@ -156,14 +148,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
   end
 
   describe 'POST #create' do
-    let(:nickname) { 'SecurityKeyNickname' }
-    let(:challenge) do
-      WebAuthn::Credential.options_for_create(
-        user: { id: user.id, name: user.account.username, display_name: user.account.display_name }
-      ).challenge
-    end
-    let(:new_webauthn_credential) { fake_client.create(challenge: challenge) }
-
     context 'when signed in' do
       before do
         sign_in user, scope: :user
@@ -177,7 +161,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
         context 'when user has enabled webauthn' do
           before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
-            add_webauthn_credential(user)
           end
 
           it 'adds a new credential to user credentials and does not change webauthn_id when creation succeeds', :aggregate_failures do
@@ -220,10 +203,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user has not enabled otp' do
-        before do
-          user.update(otp_required_for_login: false)
-        end
-
         it 'requires otp enabled first' do
           post :create, params: { credential: new_webauthn_credential, nickname: nickname }
           expect(response).to redirect_to settings_two_factor_authentication_methods_path
@@ -254,12 +233,11 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
         context 'when user has webauthn enabled' do
           before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
-            add_webauthn_credential(user)
           end
 
           it 'redirects to 2FA methods list and shows flash success and deletes the credential when deletion succeeds', :aggregate_failures do
             expect do
-              delete :destroy, params: { id: user.webauthn_credentials.take.id }
+              delete :destroy, params: { id: webauthn_credential.id }
             end.to change { user.webauthn_credentials.count }.by(-1)
             expect(response).to redirect_to settings_two_factor_authentication_methods_path
             expect(flash[:success]).to be_present
