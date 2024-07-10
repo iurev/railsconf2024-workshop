@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -22,12 +21,14 @@ describe Settings::MigrationsController do
     context 'when user is sign in' do
       subject { get :show }
 
-      let(:user) { Fabricate(:account, moved_to_account: moved_to_account).user }
+      let_it_be(:user) { Fabricate(:account, moved_to_account: moved_to_account).user }
 
-      before { sign_in user, scope: :user }
+      before_all do
+        sign_in user, scope: :user
+      end
 
       context 'when user does not have moved to account' do
-        let(:moved_to_account) { nil }
+        let_it_be(:moved_to_account) { nil }
 
         it 'renders show page' do
           expect(subject).to have_http_status 200
@@ -36,7 +37,7 @@ describe Settings::MigrationsController do
       end
 
       context 'when user has a moved to account' do
-        let(:moved_to_account) { Fabricate(:account) }
+        let_it_be(:moved_to_account) { Fabricate(:account) }
 
         it 'renders show page' do
           expect(subject).to have_http_status 200
@@ -56,12 +57,14 @@ describe Settings::MigrationsController do
     context 'when user is signed in' do
       subject { post :create, params: { account_migration: { acct: acct, current_password: '12345678' } } }
 
-      let(:user) { Fabricate(:user, password: '12345678') }
+      let_it_be(:user) { Fabricate(:user, password: '12345678') }
 
-      before { sign_in user, scope: :user }
+      before_all do
+        sign_in user, scope: :user
+      end
 
       context 'when migration account is changed' do
-        let(:acct) { Fabricate(:account, also_known_as: [ActivityPub::TagManager.instance.uri_for(user.account)]) }
+        let_it_be(:acct) { Fabricate(:account, also_known_as: [ActivityPub::TagManager.instance.uri_for(user.account)]) }
 
         it 'updates moved to account' do
           expect(subject).to redirect_to settings_migration_path
@@ -81,7 +84,7 @@ describe Settings::MigrationsController do
       end
 
       context 'when target account does not reference the account being moved from' do
-        let(:acct) { Fabricate(:account, also_known_as: []) }
+        let_it_be(:acct) { Fabricate(:account, also_known_as: []) }
 
         it 'does not update the moved account', :aggregate_failures do
           subject
@@ -92,7 +95,7 @@ describe Settings::MigrationsController do
       end
 
       context 'when a recent migration already exists' do
-        let(:acct) { Fabricate(:account, also_known_as: [ActivityPub::TagManager.instance.uri_for(user.account)]) }
+        let_it_be(:acct) { Fabricate(:account, also_known_as: [ActivityPub::TagManager.instance.uri_for(user.account)]) }
 
         before do
           moved_to = Fabricate(:account, also_known_as: [ActivityPub::TagManager.instance.uri_for(user.account)])
