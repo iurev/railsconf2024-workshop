@@ -1,18 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe FollowService do
   subject { described_class.new }
 
-  let(:sender) { Fabricate(:account, username: 'alice') }
+  let_it_be(:sender) { Fabricate(:account, username: 'alice') }
+  let_it_be(:bob) { Fabricate(:account, username: 'bob') }
 
   context 'when local account' do
     describe 'locked account' do
-      let(:bob) { Fabricate(:account, locked: true, username: 'bob') }
-
       before do
+        bob.update!(locked: true)
         subject.call(sender, bob)
       end
 
@@ -22,9 +21,8 @@ RSpec.describe FollowService do
     end
 
     describe 'locked account, no reblogs' do
-      let(:bob) { Fabricate(:account, locked: true, username: 'bob') }
-
       before do
+        bob.update!(locked: true)
         subject.call(sender, bob, reblogs: false)
       end
 
@@ -34,8 +32,6 @@ RSpec.describe FollowService do
     end
 
     describe 'unlocked account, from silenced account' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         sender.touch(:silenced_at)
         subject.call(sender, bob)
@@ -47,8 +43,6 @@ RSpec.describe FollowService do
     end
 
     describe 'unlocked account, from a muted account' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         bob.mute!(sender)
         subject.call(sender, bob)
@@ -61,8 +55,6 @@ RSpec.describe FollowService do
     end
 
     describe 'unlocked account' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         subject.call(sender, bob)
       end
@@ -74,8 +66,6 @@ RSpec.describe FollowService do
     end
 
     describe 'unlocked account, no reblogs' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         subject.call(sender, bob, reblogs: false)
       end
@@ -87,8 +77,6 @@ RSpec.describe FollowService do
     end
 
     describe 'already followed account' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         sender.follow!(bob)
         subject.call(sender, bob)
@@ -100,8 +88,6 @@ RSpec.describe FollowService do
     end
 
     describe 'already followed account, turning reblogs off' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         sender.follow!(bob, reblogs: true)
         subject.call(sender, bob, reblogs: false)
@@ -113,8 +99,6 @@ RSpec.describe FollowService do
     end
 
     describe 'already followed account, turning reblogs on' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         sender.follow!(bob, reblogs: false)
         subject.call(sender, bob, reblogs: true)
@@ -126,8 +110,6 @@ RSpec.describe FollowService do
     end
 
     describe 'already followed account, changing languages' do
-      let(:bob) { Fabricate(:account, username: 'bob') }
-
       before do
         sender.follow!(bob)
         subject.call(sender, bob, languages: %w(en es))
@@ -140,15 +122,15 @@ RSpec.describe FollowService do
   end
 
   context 'when remote ActivityPub account' do
-    let(:bob) { Fabricate(:account, username: 'bob', domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
+    let_it_be(:remote_bob) { Fabricate(:account, username: 'bob', domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
 
     before do
       stub_request(:post, 'http://example.com/inbox').to_return(status: 200, body: '', headers: {})
-      subject.call(sender, bob)
+      subject.call(sender, remote_bob)
     end
 
     it 'creates follow request' do
-      expect(FollowRequest.find_by(account: sender, target_account: bob)).to_not be_nil
+      expect(FollowRequest.find_by(account: sender, target_account: remote_bob)).to_not be_nil
     end
 
     it 'sends a follow activity to the inbox', sidekiq: :inline do
