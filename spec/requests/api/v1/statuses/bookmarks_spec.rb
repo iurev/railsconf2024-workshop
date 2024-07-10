@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:scopes)  { 'write:bookmarks' }
   let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:scopes)  { 'write:bookmarks' }
 
   describe 'POST /api/v1/statuses/:status_id/bookmark' do
     subject do
