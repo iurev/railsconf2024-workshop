@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Favourites' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'write:favourites' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'write:favourites' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/statuses/:status_id/favourite' do
@@ -14,7 +13,7 @@ RSpec.describe 'Favourites' do
       post "/api/v1/statuses/#{status.id}/favourite", headers: headers
     end
 
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:favourites'
 
@@ -36,35 +35,34 @@ RSpec.describe 'Favourites' do
     end
 
     context 'with private status of not-followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:private_status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/favourite", headers: headers
 
         expect(response).to have_http_status(404)
       end
     end
 
     context 'with private status of followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:followed_account) { Fabricate(:account) }
+      let_it_be(:private_status) { Fabricate(:status, account: followed_account, visibility: :private) }
 
       before do
-        user.account.follow!(status.account)
+        user.account.follow!(followed_account)
       end
 
       it 'favourites the status successfully', :aggregate_failures do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/favourite", headers: headers
 
         expect(response).to have_http_status(200)
-        expect(user.account.favourited?(status)).to be true
+        expect(user.account.favourited?(private_status)).to be true
       end
     end
 
     context 'without an authorization header' do
-      let(:headers) { {} }
-
       it 'returns http unauthorized' do
-        subject
+        post "/api/v1/statuses/#{status.id}/favourite", headers: {}
 
         expect(response).to have_http_status(401)
       end
@@ -76,7 +74,7 @@ RSpec.describe 'Favourites' do
       post "/api/v1/statuses/#{status.id}/unfavourite", headers: headers
     end
 
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:favourites'
 
@@ -134,10 +132,10 @@ RSpec.describe 'Favourites' do
     end
 
     context 'with private status that was not favourited' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      let_it_be(:private_status) { Fabricate(:status, visibility: :private) }
 
       it 'returns http not found' do
-        subject
+        post "/api/v1/statuses/#{private_status.id}/unfavourite", headers: headers
 
         expect(response).to have_http_status(404)
       end
