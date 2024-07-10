@@ -7,8 +7,9 @@ describe 'Links' do
   let_it_be(:user)    { Fabricate(:user, role: role) }
   let_it_be(:scopes)  { 'admin:read admin:write' }
   let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
   let_it_be(:preview_card) { Fabricate(:preview_card, trendable: false) }
+  
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/trends/links' do
     subject do
