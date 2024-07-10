@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/upgrade'
@@ -7,7 +6,7 @@ require 'mastodon/cli/upgrade'
 describe Mastodon::CLI::Upgrade do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
