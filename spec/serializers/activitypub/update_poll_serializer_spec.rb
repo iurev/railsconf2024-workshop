@@ -1,14 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe ActivityPub::UpdatePollSerializer do
   subject { serialized_record_json(status, described_class, adapter: ActivityPub::Adapter) }
 
-  let(:account) { Fabricate(:account) }
-  let(:poll)    { Fabricate(:poll, account: account) }
-  let!(:status) { Fabricate(:status, account: account, poll: poll) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:poll)    { Fabricate(:poll, account: account) }
+  let_it_be(:status)  { Fabricate(:status, account: account, poll: poll) }
 
   it 'has a Update type' do
     expect(subject['type']).to eql('Update')
