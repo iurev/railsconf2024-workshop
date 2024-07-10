@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -9,12 +8,12 @@ RSpec.describe SoftwareUpdateCheckService do
   shared_examples 'when the feature is enabled' do
     let(:full_update_check_url) { "#{update_check_url}?version=#{Mastodon::Version.to_s.split('+')[0]}" }
 
-    let(:devops_role)     { Fabricate(:user_role, name: 'DevOps', permissions: UserRole::FLAGS[:view_devops]) }
-    let(:owner_user)      { Fabricate(:user, role: UserRole.find_by(name: 'Owner')) }
-    let(:old_devops_user) { Fabricate(:user) }
-    let(:none_user)       { Fabricate(:user, role: devops_role) }
-    let(:patch_user)      { Fabricate(:user, role: devops_role) }
-    let(:critical_user)   { Fabricate(:user, role: devops_role) }
+    let_it_be(:devops_role)     { Fabricate(:user_role, name: 'DevOps', permissions: UserRole::FLAGS[:view_devops]) }
+    let_it_be(:owner_user)      { Fabricate(:user, role: UserRole.find_by(name: 'Owner')) }
+    let_it_be(:old_devops_user) { Fabricate(:user) }
+    let_it_be(:none_user)       { Fabricate(:user, role: devops_role) }
+    let_it_be(:patch_user)      { Fabricate(:user, role: devops_role) }
+    let_it_be(:critical_user)   { Fabricate(:user, role: devops_role) }
 
     around do |example|
       queue_adapter = ActiveJob::Base.queue_adapter
@@ -25,7 +24,7 @@ RSpec.describe SoftwareUpdateCheckService do
       ActiveJob::Base.queue_adapter = queue_adapter
     end
 
-    before do
+    before_all do
       Fabricate(:software_update, version: '3.5.0', type: 'major', urgent: false)
       Fabricate(:software_update, version: '42.13.12', type: 'major', urgent: false)
 
