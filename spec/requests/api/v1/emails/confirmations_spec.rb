@@ -1,14 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Confirmations' do
-  let(:confirmed_at) { nil }
-  let(:user)         { Fabricate(:user, confirmed_at: confirmed_at) }
-  let(:token)        { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)       { 'read:accounts write:accounts' }
-  let(:headers)      { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user) { Fabricate(:user, confirmed_at: nil) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts write:accounts') }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/emails/confirmations' do
     subject do
@@ -21,7 +18,7 @@ RSpec.describe 'Confirmations' do
 
     context 'with an oauth token' do
       context 'when user was created by a different application' do
-        let(:user) { Fabricate(:user, confirmed_at: confirmed_at, created_by_application: Fabricate(:application)) }
+        let(:user) { Fabricate(:user, confirmed_at: nil, created_by_application: Fabricate(:application)) }
 
         it 'returns http forbidden' do
           subject
@@ -36,7 +33,7 @@ RSpec.describe 'Confirmations' do
         end
 
         context 'when the account is already confirmed' do
-          let(:confirmed_at) { Time.now.utc }
+          before { user.update(confirmed_at: Time.now.utc) }
 
           it 'returns http forbidden' do
             subject
@@ -117,7 +114,7 @@ RSpec.describe 'Confirmations' do
       end
 
       context 'when the account is confirmed' do
-        let(:confirmed_at) { Time.now.utc }
+        before { user.update(confirmed_at: Time.now.utc) }
 
         it 'returns the confirmation status successfully', :aggregate_failures do
           subject
@@ -145,7 +142,7 @@ RSpec.describe 'Confirmations' do
       end
 
       context 'when the account is confirmed' do
-        let(:confirmed_at) { Time.now.utc }
+        before { user.update(confirmed_at: Time.now.utc) }
 
         it 'returns the confirmation status successfully', :aggregate_failures do
           subject
