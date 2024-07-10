@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/statuses'
 
 describe Mastodon::CLI::Statuses do
-  subject { cli.invoke(action, arguments, options) }
+  let_it_be(:cli) { described_class.new }
+  let_it_be(:arguments) { [] }
+  let_it_be(:options) { {} }
 
-  let(:cli) { described_class.new }
-  let(:arguments) { [] }
-  let(:options) { {} }
+  subject { cli.invoke(action, arguments, options) }
 
   it_behaves_like 'CLI Command'
 
