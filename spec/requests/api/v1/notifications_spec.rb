@@ -4,8 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Notifications' do
   let_it_be(:user)    { Fabricate(:user, account_attributes: { username: 'alice' }) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:notifications write:notifications' }
+  let_it_be(:bob)     { Fabricate(:user) }
+  let_it_be(:tom)     { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:notifications write:notifications') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/notifications' do
@@ -13,8 +14,6 @@ RSpec.describe 'Notifications' do
       get '/api/v1/notifications', headers: headers, params: params
     end
 
-    let_it_be(:bob)    { Fabricate(:user) }
-    let_it_be(:tom)    { Fabricate(:user) }
     let(:params) { {} }
 
     before_all do
@@ -121,7 +120,7 @@ RSpec.describe 'Notifications' do
       get "/api/v1/notifications/#{notification.id}", headers: headers
     end
 
-    let(:notification) { Fabricate(:notification, account: user.account) }
+    let_it_be(:notification) { Fabricate(:notification, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'write write:notifications'
 
@@ -147,7 +146,7 @@ RSpec.describe 'Notifications' do
       post "/api/v1/notifications/#{notification.id}/dismiss", headers: headers
     end
 
-    let!(:notification) { Fabricate(:notification, account: user.account) }
+    let_it_be(:notification) { Fabricate(:notification, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:notifications'
 
