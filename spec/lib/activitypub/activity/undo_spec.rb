@@ -1,12 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Undo do
   subject { described_class.new(json, sender) }
 
-  let(:sender) { Fabricate(:account, domain: 'example.com') }
+  let_it_be(:sender) { Fabricate(:account, domain: 'example.com') }
+  let_it_be(:recipient) { Fabricate(:account) }
+  let_it_be(:status) { Fabricate(:status) }
 
   let(:json) do
     {
@@ -20,8 +21,6 @@ RSpec.describe ActivityPub::Activity::Undo do
 
   describe '#perform' do
     context 'with Announce' do
-      let(:status) { Fabricate(:status) }
-
       let(:object_json) do
         {
           id: 'bar',
@@ -69,7 +68,6 @@ RSpec.describe ActivityPub::Activity::Undo do
     end
 
     context 'with Accept' do
-      let(:recipient) { Fabricate(:account) }
       let(:object_json) do
         {
           id: 'bar',
@@ -79,7 +77,7 @@ RSpec.describe ActivityPub::Activity::Undo do
         }
       end
 
-      before do
+      before_all do
         recipient.follow!(sender, uri: 'follow-to-revoke')
       end
 
@@ -95,8 +93,6 @@ RSpec.describe ActivityPub::Activity::Undo do
     end
 
     context 'with Block' do
-      let(:recipient) { Fabricate(:account) }
-
       let(:object_json) do
         {
           id: 'bar',
@@ -106,7 +102,7 @@ RSpec.describe ActivityPub::Activity::Undo do
         }
       end
 
-      before do
+      before_all do
         sender.block!(recipient, uri: 'bar')
       end
 
@@ -126,8 +122,6 @@ RSpec.describe ActivityPub::Activity::Undo do
     end
 
     context 'with Follow' do
-      let(:recipient) { Fabricate(:account) }
-
       let(:object_json) do
         {
           id: 'bar',
@@ -137,7 +131,7 @@ RSpec.describe ActivityPub::Activity::Undo do
         }
       end
 
-      before do
+      before_all do
         sender.follow!(recipient, uri: 'bar')
       end
 
@@ -157,8 +151,6 @@ RSpec.describe ActivityPub::Activity::Undo do
     end
 
     context 'with Like' do
-      let(:status) { Fabricate(:status) }
-
       let(:object_json) do
         {
           id: 'bar',
