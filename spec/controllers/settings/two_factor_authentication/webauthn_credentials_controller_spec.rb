@@ -16,10 +16,14 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
 
   describe 'GET #new' do
     context 'when signed in' do
-      before_all { sign_in user, scope: :user }
+      before do
+        sign_in user, scope: :user
+      end
 
       context 'when user has otp enabled' do
-        before_all { user.update(otp_required_for_login: true) }
+        before do
+          user.update(otp_required_for_login: true)
+        end
 
         it 'returns http success' do
           get :new
@@ -28,7 +32,9 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user does not have otp enabled' do
-        before_all { user.update(otp_required_for_login: false) }
+        before do
+          user.update(otp_required_for_login: false)
+        end
 
         it 'requires otp enabled first' do
           get :new
@@ -41,13 +47,17 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
 
   describe 'GET #index' do
     context 'when signed in' do
-      before_all { sign_in user, scope: :user }
+      before do
+        sign_in user, scope: :user
+      end
 
       context 'when user has otp enabled' do
-        before_all { user.update(otp_required_for_login: true) }
+        before do
+          user.update(otp_required_for_login: true)
+        end
 
         context 'when user has webauthn enabled' do
-          before_all do
+          before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
             add_webauthn_credential(user)
           end
@@ -68,7 +78,9 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user does not have otp enabled' do
-        before_all { user.update(otp_required_for_login: false) }
+        before do
+          user.update(otp_required_for_login: false)
+        end
 
         it 'requires otp enabled first' do
           get :index
@@ -88,13 +100,17 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
 
   describe 'GET /options #options' do
     context 'when signed in' do
-      before_all { sign_in user, scope: :user }
+      before do
+        sign_in user, scope: :user
+      end
 
       context 'when user has otp enabled' do
-        before_all { user.update(otp_required_for_login: true) }
+        before do
+          user.update(otp_required_for_login: true)
+        end
 
         context 'when user has webauthn enabled' do
-          before_all do
+          before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
             add_webauthn_credential(user)
           end
@@ -119,7 +135,9 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user has not enabled otp' do
-        before_all { user.update(otp_required_for_login: false) }
+        before do
+          user.update(otp_required_for_login: false)
+        end
 
         it 'requires otp enabled first' do
           get :options
@@ -147,13 +165,17 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
     let(:new_webauthn_credential) { fake_client.create(challenge: challenge) }
 
     context 'when signed in' do
-      before_all { sign_in user, scope: :user }
+      before do
+        sign_in user, scope: :user
+      end
 
       context 'when user has enabled otp' do
-        before_all { user.update(otp_required_for_login: true) }
+        before do
+          user.update(otp_required_for_login: true)
+        end
 
         context 'when user has enabled webauthn' do
-          before_all do
+          before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
             add_webauthn_credential(user)
           end
@@ -198,7 +220,9 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user has not enabled otp' do
-        before_all { user.update(otp_required_for_login: false) }
+        before do
+          user.update(otp_required_for_login: false)
+        end
 
         it 'requires otp enabled first' do
           post :create, params: { credential: new_webauthn_credential, nickname: nickname }
@@ -218,13 +242,17 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
 
   describe 'DELETE #destroy' do
     context 'when signed in' do
-      before_all { sign_in user, scope: :user }
+      before do
+        sign_in user, scope: :user
+      end
 
       context 'when user has otp enabled' do
-        before_all { user.update(otp_required_for_login: true) }
+        before do
+          user.update(otp_required_for_login: true)
+        end
 
         context 'when user has webauthn enabled' do
-          before_all do
+          before do
             user.update(webauthn_id: WebAuthn.generate_user_id)
             add_webauthn_credential(user)
           end
@@ -248,8 +276,6 @@ describe Settings::TwoFactorAuthentication::WebauthnCredentialsController do
       end
 
       context 'when user does not have otp enabled' do
-        before_all { user.update(otp_required_for_login: false) }
-
         it 'requires otp enabled first' do
           delete :destroy, params: { id: '1' }
           expect(response).to redirect_to settings_two_factor_authentication_methods_path
