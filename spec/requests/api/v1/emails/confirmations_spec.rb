@@ -14,12 +14,18 @@ RSpec.describe 'Confirmations' do
 
     let(:params) { {} }
 
-    it_behaves_like 'forbidden for wrong scope', 'read read:accounts'
+    context 'with wrong scope' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read read:accounts') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+
+      it_behaves_like 'forbidden for wrong scope', 'read read:accounts'
+    end
 
     context 'with an oauth token' do
       context 'when user was created by a different application' do
-        let(:user) { Fabricate(:user, confirmed_at: nil, created_by_application: Fabricate(:application)) }
-        let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts write:accounts') }
+        let(:different_app_user) { Fabricate(:user, confirmed_at: nil, created_by_application: Fabricate(:application)) }
+        let(:different_app_token) { Fabricate(:accessible_access_token, resource_owner_id: different_app_user.id, scopes: 'read:accounts write:accounts') }
+        let(:headers) { { 'Authorization' => "Bearer #{different_app_token.token}" } }
 
         it 'returns http forbidden' do
           subject
@@ -102,7 +108,12 @@ RSpec.describe 'Confirmations' do
       get '/api/v1/emails/check_confirmation', headers: headers
     end
 
-    it_behaves_like 'forbidden for wrong scope', 'write'
+    context 'with wrong scope' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write') }
+      let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+
+      it_behaves_like 'forbidden for wrong scope', 'write'
+    end
 
     context 'with an oauth token' do
       context 'when the account is not confirmed' do
