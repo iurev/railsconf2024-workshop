@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Admin::AccountModerationNotesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:target_account) { Fabricate(:account) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:target_account) { Fabricate(:account) }
 
-  before do
+  before(:all) do
     sign_in user, scope: :user
   end
 
@@ -38,8 +37,8 @@ RSpec.describe Admin::AccountModerationNotesController do
   describe 'DELETE #destroy' do
     subject { delete :destroy, params: { id: note.id } }
 
+    let_it_be(:account) { Fabricate(:account) }
     let!(:note) { Fabricate(:account_moderation_note, account: account, target_account: target_account) }
-    let(:account) { Fabricate(:account) }
 
     it 'destroys note' do
       expect { subject }.to change(AccountModerationNote, :count).by(-1)
