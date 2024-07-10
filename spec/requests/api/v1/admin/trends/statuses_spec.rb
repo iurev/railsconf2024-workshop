@@ -21,28 +21,54 @@ describe 'API V1 Admin Trends Statuses' do
   end
 
   describe 'POST /api/v1/admin/trends/statuses/:id/approve' do
-    before do
-      post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: headers
+    context 'with correct permissions' do
+      before do
+        post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: headers
+      end
+
+      it 'returns http success' do
+        expect(response).to have_http_status(200)
+      end
     end
 
-    it_behaves_like 'forbidden for wrong scope', 'write:statuses'
-    it_behaves_like 'forbidden for wrong role', ''
+    context 'with incorrect permissions' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+      let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
+      let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
 
-    it 'returns http success' do
-      expect(response).to have_http_status(200)
+      it_behaves_like 'forbidden for wrong scope' do
+        let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+      end
+
+      it_behaves_like 'forbidden for wrong role' do
+        let(:headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+      end
     end
   end
 
   describe 'POST /api/v1/admin/trends/statuses/:id/unapprove' do
-    before do
-      post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: headers
+    context 'with correct permissions' do
+      before do
+        post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: headers
+      end
+
+      it 'returns http success' do
+        expect(response).to have_http_status(200)
+      end
     end
 
-    it_behaves_like 'forbidden for wrong scope', 'write:statuses'
-    it_behaves_like 'forbidden for wrong role', ''
+    context 'with incorrect permissions' do
+      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+      let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
+      let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
 
-    it 'returns http success' do
-      expect(response).to have_http_status(200)
+      it_behaves_like 'forbidden for wrong scope' do
+        let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+      end
+
+      it_behaves_like 'forbidden for wrong role' do
+        let(:headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+      end
     end
   end
 end
