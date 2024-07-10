@@ -6,7 +6,7 @@ RSpec.describe Web::PushSubscription do
   subject { described_class.new(data: data) }
 
   let_it_be(:account) { Fabricate(:account) }
-  let_it_be(:data) do
+  let(:data) do
     {
       policy: 'all',
       alerts: {
