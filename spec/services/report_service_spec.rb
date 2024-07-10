@@ -10,8 +10,7 @@ RSpec.describe ReportService do
   let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
 
   before_all do
-    stub_request(:post, 'http://example.com/inbox').to_return(status: 200)
-    stub_request(:post, 'http://foo.com/inbox').to_return(status: 200)
+    stub_request(:post, /http:\/\/(example\.com|foo\.com)\/inbox/).to_return(status: 200)
   end
 
   context 'with a local account' do
