@@ -1,16 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe TagFeed do
   describe '#get' do
-    let(:account) { Fabricate(:account) }
-    let(:tag_cats) { Fabricate(:tag, name: 'cats') }
-    let(:tag_dogs) { Fabricate(:tag, name: 'dogs') }
-    let!(:status_tagged_with_cats) { Fabricate(:status, tags: [tag_cats]) }
-    let!(:status_tagged_with_dogs) { Fabricate(:status, tags: [tag_dogs]) }
-    let!(:both) { Fabricate(:status, tags: [tag_cats, tag_dogs]) }
+    let_it_be(:account) { Fabricate(:account) }
+    let_it_be(:tag_cats) { Fabricate(:tag, name: 'cats') }
+    let_it_be(:tag_dogs) { Fabricate(:tag, name: 'dogs') }
+    let_it_be(:status_tagged_with_cats) { Fabricate(:status, tags: [tag_cats]) }
+    let_it_be(:status_tagged_with_dogs) { Fabricate(:status, tags: [tag_dogs]) }
+    let_it_be(:both) { Fabricate(:status, tags: [tag_cats, tag_dogs]) }
 
     it 'can add tags in "any" mode' do
       results = described_class.new(tag_cats, nil, any: [tag_dogs.name]).get(20)
