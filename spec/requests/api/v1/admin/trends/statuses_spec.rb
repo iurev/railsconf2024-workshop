@@ -15,59 +15,54 @@ describe 'API V1 Admin Trends Statuses' do
   describe 'GET /api/v1/admin/trends/statuses' do
     it 'returns http success' do
       get '/api/v1/admin/trends/statuses', params: { account_id: account.id, limit: 2 }, headers: headers
-
       expect(response).to have_http_status(200)
     end
   end
 
   describe 'POST /api/v1/admin/trends/statuses/:id/approve' do
     context 'with correct permissions' do
-      before do
-        post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: headers
-      end
-
       it 'returns http success' do
+        post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: headers
         expect(response).to have_http_status(200)
       end
     end
 
     context 'with incorrect permissions' do
-      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
-      let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
-      let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
-
-      it_behaves_like 'forbidden for wrong scope' do
-        let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+      it_behaves_like 'forbidden for wrong scope', 'write:statuses' do
+        let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+        let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+        let(:api_call) { -> { post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: wrong_headers } }
       end
 
-      it_behaves_like 'forbidden for wrong role' do
-        let(:headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+      it_behaves_like 'forbidden for wrong role', '' do
+        let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
+        let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
+        let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+        let(:api_call) { -> { post "/api/v1/admin/trends/statuses/#{status.id}/approve", headers: wrong_headers } }
       end
     end
   end
 
   describe 'POST /api/v1/admin/trends/statuses/:id/unapprove' do
     context 'with correct permissions' do
-      before do
-        post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: headers
-      end
-
       it 'returns http success' do
+        post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: headers
         expect(response).to have_http_status(200)
       end
     end
 
     context 'with incorrect permissions' do
-      let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
-      let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
-      let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
-
-      it_behaves_like 'forbidden for wrong scope' do
-        let(:headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+      it_behaves_like 'forbidden for wrong scope', 'write:statuses' do
+        let(:wrong_scope_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+        let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_scope_token.token}" } }
+        let(:api_call) { -> { post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: wrong_headers } }
       end
 
-      it_behaves_like 'forbidden for wrong role' do
-        let(:headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+      it_behaves_like 'forbidden for wrong role', '' do
+        let(:wrong_role_user) { Fabricate(:user, role: UserRole.find_by(name: 'User')) }
+        let(:wrong_role_token) { Fabricate(:accessible_access_token, resource_owner_id: wrong_role_user.id, scopes: scopes) }
+        let(:wrong_headers) { { 'Authorization' => "Bearer #{wrong_role_token.token}" } }
+        let(:api_call) { -> { post "/api/v1/admin/trends/statuses/#{status.id}/reject", headers: wrong_headers } }
       end
     end
   end
