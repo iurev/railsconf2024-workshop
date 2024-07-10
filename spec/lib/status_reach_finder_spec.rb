@@ -7,14 +7,17 @@ describe StatusReachFinder do
     context 'with a local status' do
       subject { described_class.new(status) }
 
-      let(:parent_status) { nil }
+      let_it_be(:alice) { Fabricate(:account, username: 'alice') }
+      let_it_be(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
+      let_it_be(:status) { Fabricate(:status, account: alice, visibility: :public) }
+
       let(:visibility) { :public }
-      let(:alice) { Fabricate(:account, username: 'alice') }
-      let(:status) { Fabricate(:status, account: alice, thread: parent_status, visibility: visibility) }
+
+      before do
+        status.update!(visibility: visibility) if visibility != :public
+      end
 
       context 'when it contains mentions of remote accounts' do
-        let(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
-
         before do
           status.mentions.create!(account: bob)
         end
@@ -25,8 +28,6 @@ describe StatusReachFinder do
       end
 
       context 'when it has been reblogged by a remote account' do
-        let(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
-
         before do
           bob.statuses.create!(reblog: status)
         end
@@ -45,8 +46,6 @@ describe StatusReachFinder do
       end
 
       context 'when it has been favourited by a remote account' do
-        let(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
-
         before do
           bob.favourites.create!(status: status)
         end
@@ -65,8 +64,6 @@ describe StatusReachFinder do
       end
 
       context 'when it has been replied to by a remote account' do
-        let(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
-
         before do
           bob.statuses.create!(thread: status, text: 'Hoge')
         end
@@ -85,8 +82,11 @@ describe StatusReachFinder do
       end
 
       context 'when it is a reply to a remote account' do
-        let(:bob) { Fabricate(:account, username: 'bob', domain: 'foo.bar', protocol: :activitypub, inbox_url: 'https://foo.bar/inbox') }
-        let(:parent_status) { Fabricate(:status, account: bob) }
+        let_it_be(:parent_status) { Fabricate(:status, account: bob) }
+        
+        before do
+          status.update!(thread: parent_status)
+        end
 
         it 'includes the inbox of the replied-to account' do
           expect(subject.inboxes).to include 'https://foo.bar/inbox'
