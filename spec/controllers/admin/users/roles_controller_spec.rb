@@ -9,7 +9,7 @@ describe Admin::Users::RolesController do
   let_it_be(:current_user) { Fabricate(:user, role: current_role) }
   let_it_be(:user) { Fabricate(:user) }
 
-  before_all do
+  before do
     sign_in current_user, scope: :user
   end
 
