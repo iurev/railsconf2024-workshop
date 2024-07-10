@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,7 +11,7 @@ describe Admin::Metrics::Measure::ResolvedReportsMeasure do
 
   describe '#data' do
     context 'with report records' do
-      before do
+      before_all do
         3.times { Fabricate :report, action_taken_at: 2.days.ago }
         2.times { Fabricate :report, action_taken_at: 1.day.ago }
         Fabricate :report, action_taken_at: 0.days.ago
