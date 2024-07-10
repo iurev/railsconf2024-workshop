@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -17,7 +16,7 @@ describe UserTrackingConcern do
   end
 
   describe 'when signed in' do
-    let(:user) { Fabricate(:user) }
+    let_it_be(:user) { Fabricate(:user) }
 
     it 'does not track when there is a recent sign in' do
       user.update(current_sign_in_at: 60.minutes.ago)
@@ -45,10 +44,10 @@ describe UserTrackingConcern do
     end
 
     describe 'feed regeneration' do
-      before do
-        alice = Fabricate(:account)
-        bob   = Fabricate(:account)
+      let_it_be(:alice) { Fabricate(:account) }
+      let_it_be(:bob)   { Fabricate(:account) }
 
+      before_all do
         user.account.follow!(alice)
         user.account.follow!(bob)
 
@@ -57,7 +56,9 @@ describe UserTrackingConcern do
         Fabricate(:status, account: user.account, text: 'test')
 
         user.update(last_sign_in_at: 'Tue, 04 Jul 2017 14:45:56 UTC +00:00', current_sign_in_at: 'Wed, 05 Jul 2017 22:10:52 UTC +00:00')
+      end
 
+      before do
         sign_in user, scope: :user
       end
 
