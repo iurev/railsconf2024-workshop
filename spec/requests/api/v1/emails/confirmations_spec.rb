@@ -19,6 +19,7 @@ RSpec.describe 'Confirmations' do
     context 'with an oauth token' do
       context 'when user was created by a different application' do
         let(:user) { Fabricate(:user, confirmed_at: nil, created_by_application: Fabricate(:application)) }
+        let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts write:accounts') }
 
         it 'returns http forbidden' do
           subject
