@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
   let(:scopes)  { 'write:bookmarks' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/statuses/:status_id/bookmark' do
     subject do
@@ -89,7 +89,7 @@ RSpec.describe 'Bookmarks' do
 
     context 'with public status' do
       context 'when the status was previously bookmarked' do
-        before_all do
+        before do
           Bookmark.find_or_create_by!(account: user.account, status: status)
         end
 
@@ -110,7 +110,7 @@ RSpec.describe 'Bookmarks' do
       end
 
       context 'when the requesting user was blocked by the status author' do
-        before_all do
+        before do
           Bookmark.find_or_create_by!(account: user.account, status: status)
           status.account.block!(user.account)
         end
