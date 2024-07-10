@@ -6,7 +6,7 @@ describe 'The /.well-known/webfinger endpoint' do
   subject(:perform_request!) { get webfinger_url(resource: resource) }
 
   let(:alternate_domains) { [] }
-  let_it_be(:alice) { Fabricate(:account, username: 'alice') }
+  let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}") }
   let(:resource) { nil }
 
   around do |example|
@@ -26,8 +26,8 @@ describe 'The /.well-known/webfinger endpoint' do
 
       expect(body_as_json)
         .to include(
-          subject: eq('acct:alice@cb6e6126.ngrok.io'),
-          aliases: include('https://cb6e6126.ngrok.io/@alice', 'https://cb6e6126.ngrok.io/users/alice')
+          subject: eq("acct:#{alice.username}@cb6e6126.ngrok.io"),
+          aliases: include("https://cb6e6126.ngrok.io/@#{alice.username}", "https://cb6e6126.ngrok.io/users/#{alice.username}")
         )
     end
   end
@@ -160,7 +160,7 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account has an avatar' do
-    let_it_be(:alice) { Fabricate(:account, username: 'alice', avatar: attachment_fixture('attachment.jpg')) }
+    let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}", avatar: attachment_fixture('attachment.jpg')) }
     let(:resource) { alice.to_webfinger_s }
 
     it 'returns avatar in response' do
@@ -202,7 +202,7 @@ describe 'The /.well-known/webfinger endpoint' do
   end
 
   context 'when an account does not have an avatar' do
-    let_it_be(:alice) { Fabricate(:account, username: 'alice', avatar: nil) }
+    let(:alice) { Fabricate(:account, username: "alice_#{SecureRandom.hex(8)}", avatar: nil) }
     let(:resource) { alice.to_webfinger_s }
 
     before do
