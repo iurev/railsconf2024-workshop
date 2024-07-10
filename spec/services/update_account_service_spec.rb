@@ -7,9 +7,9 @@ RSpec.describe UpdateAccountService do
 
   describe 'switching form locked to unlocked accounts' do
     let_it_be(:account) { Fabricate(:account, locked: true) }
-    let(:alice)   { Fabricate(:account) }
-    let(:bob)     { Fabricate(:account) }
-    let(:eve)     { Fabricate(:account) }
+    let_it_be(:alice)   { Fabricate(:account) }
+    let_it_be(:bob)     { Fabricate(:account) }
+    let_it_be(:eve)     { Fabricate(:account) }
 
     before do
       bob.touch(:silenced_at)
