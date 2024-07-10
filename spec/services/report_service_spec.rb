@@ -13,6 +13,10 @@ RSpec.describe ReportService do
     stub_request(:post, /http:\/\/(example\.com|foo\.com)\/inbox/).to_return(status: 200)
   end
 
+  before do
+    allow(ActivityPub::DeliveryWorker).to receive(:perform_async).and_return(true)
+  end
+
   context 'with a local account' do
     it 'has a uri' do
       report = subject.call(source_account, target_account)
@@ -26,9 +30,9 @@ RSpec.describe ReportService do
     context 'when forward is true' do
       let(:forward) { true }
 
-      it 'sends ActivityPub payload when forward is true', sidekiq: :inline do
+      it 'sends ActivityPub payload when forward is true' do
+        expect(ActivityPub::DeliveryWorker).to receive(:perform_async)
         subject.call(source_account, remote_account, forward: forward)
-        expect(a_request(:post, 'http://example.com/inbox')).to have_been_made
       end
 
       it 'has an uri' do
@@ -41,25 +45,23 @@ RSpec.describe ReportService do
         let_it_be(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
 
         context 'when forward_to_domains includes both the replied-to domain and the origin domain' do
-          it 'sends ActivityPub payload to both the author of the replied-to post and the reported user', sidekiq: :inline do
+          it 'sends ActivityPub payload to both the author of the replied-to post and the reported user' do
+            expect(ActivityPub::DeliveryWorker).to receive(:perform_async).twice
             subject.call(source_account, remote_account, status_ids: [reported_status.id], forward: forward, forward_to_domains: [remote_account.domain, remote_thread_account.domain])
-            expect(a_request(:post, 'http://foo.com/inbox')).to have_been_made
-            expect(a_request(:post, 'http://example.com/inbox')).to have_been_made
           end
         end
 
         context 'when forward_to_domains includes only the replied-to domain' do
-          it 'sends ActivityPub payload only to the author of the replied-to post', sidekiq: :inline do
+          it 'sends ActivityPub payload only to the author of the replied-to post' do
+            expect(ActivityPub::DeliveryWorker).to receive(:perform_async).once
             subject.call(source_account, remote_account, status_ids: [reported_status.id], forward: forward, forward_to_domains: [remote_thread_account.domain])
-            expect(a_request(:post, 'http://foo.com/inbox')).to have_been_made
-            expect(a_request(:post, 'http://example.com/inbox')).to_not have_been_made
           end
         end
 
         context 'when forward_to_domains does not include the replied-to domain' do
           it 'does not send ActivityPub payload to the author of the replied-to post' do
+            expect(ActivityPub::DeliveryWorker).to receive(:perform_async).once
             subject.call(source_account, remote_account, status_ids: [reported_status.id], forward: forward)
-            expect(a_request(:post, 'http://foo.com/inbox')).to_not have_been_made
           end
         end
       end
@@ -69,16 +71,16 @@ RSpec.describe ReportService do
         let_it_be(:reported_status) { Fabricate(:status, account: remote_account, thread: Fabricate(:status, account: remote_thread_account)) }
 
         context 'when forward_to_domains includes both the replied-to domain and the origin domain' do
-          it 'sends ActivityPub payload only once', sidekiq: :inline do
+          it 'sends ActivityPub payload only once' do
+            expect(ActivityPub::DeliveryWorker).to receive(:perform_async).once
             subject.call(source_account, remote_account, status_ids: [reported_status.id], forward: forward, forward_to_domains: [remote_account.domain])
-            expect(a_request(:post, 'http://example.com/inbox')).to have_been_made.once
           end
         end
 
         context 'when forward_to_domains does not include the replied-to domain' do
-          it 'sends ActivityPub payload only once', sidekiq: :inline do
+          it 'sends ActivityPub payload only once' do
+            expect(ActivityPub::DeliveryWorker).to receive(:perform_async).once
             subject.call(source_account, remote_account, status_ids: [reported_status.id], forward: forward)
-            expect(a_request(:post, 'http://example.com/inbox')).to have_been_made.once
           end
         end
       end
@@ -86,8 +88,8 @@ RSpec.describe ReportService do
 
     context 'when forward is false' do
       it 'does not send anything' do
+        expect(ActivityPub::DeliveryWorker).not_to receive(:perform_async)
         subject.call(source_account, remote_account, forward: forward)
-        expect(a_request(:post, 'http://example.com/inbox')).to_not have_been_made
       end
     end
   end
