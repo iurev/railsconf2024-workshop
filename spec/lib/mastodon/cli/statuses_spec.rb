@@ -20,8 +20,7 @@ describe Mastodon::CLI::Statuses do
 
       it 'exits with error message' do
         expect { subject }
-          .to output(/Cannot run/).to_stderr
-          .and raise_error(SystemExit)
+          .to raise_error(Thor::Error, /Cannot run with this batch_size setting, must be at least 1/)
       end
     end
 
