@@ -1,14 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::FetchFeaturedCollectionService do
   subject { described_class.new }
 
-  let(:actor) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/account', featured_collection_url: 'https://example.com/account/pinned') }
-
-  let!(:known_status) { Fabricate(:status, account: actor, uri: 'https://example.com/account/pinned/1') }
+  let_it_be(:actor) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/account', featured_collection_url: 'https://example.com/account/pinned') }
+  let_it_be(:known_status) { Fabricate(:status, account: actor, uri: 'https://example.com/account/pinned/1') }
 
   let(:status_json_pinned_known) do
     {
@@ -72,13 +70,15 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
   end
 
   shared_examples 'sets pinned posts' do
-    before do
+    before(:all) do
       stub_request(:get, 'https://example.com/account/pinned/known').to_return(status: 200, body: Oj.dump(status_json_pinned_known), headers: { 'Content-Type': 'application/activity+json' })
       stub_request(:get, 'https://example.com/account/pinned/unknown-inlined').to_return(status: 200, body: Oj.dump(status_json_pinned_unknown_inlined), headers: { 'Content-Type': 'application/activity+json' })
       stub_request(:get, 'https://example.com/account/pinned/unknown-unreachable').to_return(status: 404)
       stub_request(:get, 'https://example.com/account/pinned/unknown-reachable').to_return(status: 200, body: Oj.dump(status_json_pinned_unknown_reachable), headers: { 'Content-Type': 'application/activity+json' })
       stub_request(:get, 'https://example.com/account/collections/featured').to_return(status: 200, body: Oj.dump(featured_with_null), headers: { 'Content-Type': 'application/activity+json' })
+    end
 
+    before(:each) do
       subject.call(actor, note: true, hashtag: false)
     end
 
@@ -94,7 +94,7 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
 
   describe '#call' do
     context 'when the endpoint is a Collection' do
-      before do
+      before(:all) do
         stub_request(:get, actor.featured_collection_url).to_return(status: 200, body: Oj.dump(payload), headers: { 'Content-Type': 'application/activity+json' })
       end
 
@@ -111,7 +111,7 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
         }.with_indifferent_access
       end
 
-      before do
+      before(:all) do
         stub_request(:get, actor.featured_collection_url).to_return(status: 200, body: Oj.dump(payload), headers: { 'Content-Type': 'application/activity+json' })
       end
 
@@ -120,8 +120,11 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
       context 'when there is a single item, with the array compacted away' do
         let(:items) { 'https://example.com/account/pinned/unknown-reachable' }
 
-        before do
+        before(:all) do
           stub_request(:get, 'https://example.com/account/pinned/unknown-reachable').to_return(status: 200, body: Oj.dump(status_json_pinned_unknown_reachable), headers: { 'Content-Type': 'application/activity+json' })
+        end
+
+        before(:each) do
           subject.call(actor, note: true, hashtag: false)
         end
 
@@ -147,7 +150,7 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
         }.with_indifferent_access
       end
 
-      before do
+      before(:all) do
         stub_request(:get, actor.featured_collection_url).to_return(status: 200, body: Oj.dump(payload), headers: { 'Content-Type': 'application/activity+json' })
       end
 
@@ -156,8 +159,11 @@ RSpec.describe ActivityPub::FetchFeaturedCollectionService do
       context 'when there is a single item, with the array compacted away' do
         let(:items) { 'https://example.com/account/pinned/unknown-reachable' }
 
-        before do
+        before(:all) do
           stub_request(:get, 'https://example.com/account/pinned/unknown-reachable').to_return(status: 200, body: Oj.dump(status_json_pinned_unknown_reachable), headers: { 'Content-Type': 'application/activity+json' })
+        end
+
+        before(:each) do
           subject.call(actor, note: true, hashtag: false)
         end
 
