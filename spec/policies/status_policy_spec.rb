@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'pundit/rspec'
@@ -7,10 +6,10 @@ require 'pundit/rspec'
 RSpec.describe StatusPolicy, type: :model do
   subject { described_class }
 
-  let(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:alice) { Fabricate(:account, username: 'alice') }
-  let(:bob) { Fabricate(:account, username: 'bob') }
-  let(:status) { Fabricate(:status, account: alice) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:alice) { Fabricate(:account, username: 'alice') }
+  let_it_be(:bob) { Fabricate(:account, username: 'bob') }
+  let_it_be(:status) { Fabricate(:status, account: alice) }
 
   context 'with the permissions of show? and reblog?' do
     permissions :show?, :reblog? do
@@ -20,8 +19,7 @@ RSpec.describe StatusPolicy, type: :model do
 
       it 'denies access when viewer is blocked' do
         block = Fabricate(:block)
-        status.visibility = :private
-        status.account = block.target_account
+        status.update!(visibility: :private, account: block.target_account)
 
         expect(subject).to_not permit(block.account, status)
       end
@@ -31,21 +29,21 @@ RSpec.describe StatusPolicy, type: :model do
   context 'with the permission of show?' do
     permissions :show? do
       it 'grants access when direct and account is viewer' do
-        status.visibility = :direct
+        status.update!(visibility: :direct)
 
         expect(subject).to permit(status.account, status)
       end
 
       it 'grants access when direct and viewer is mentioned' do
-        status.visibility = :direct
-        status.mentions = [Fabricate(:mention, account: alice)]
+        status.update!(visibility: :direct)
+        status.mentions.create!(account: alice)
 
         expect(subject).to permit(alice, status)
       end
 
       it 'grants access when direct and non-owner viewer is mentioned and mentions are loaded' do
-        status.visibility = :direct
-        status.mentions = [Fabricate(:mention, account: bob)]
+        status.update!(visibility: :direct)
+        status.mentions.create!(account: bob)
         status.mentions.load
 
         expect(subject).to permit(bob, status)
@@ -53,35 +51,34 @@ RSpec.describe StatusPolicy, type: :model do
 
       it 'denies access when direct and viewer is not mentioned' do
         viewer = Fabricate(:account)
-        status.visibility = :direct
+        status.update!(visibility: :direct)
 
         expect(subject).to_not permit(viewer, status)
       end
 
       it 'grants access when private and account is viewer' do
-        status.visibility = :private
+        status.update!(visibility: :private)
 
         expect(subject).to permit(status.account, status)
       end
 
       it 'grants access when private and account is following viewer' do
         follow = Fabricate(:follow)
-        status.visibility = :private
-        status.account = follow.target_account
+        status.update!(visibility: :private, account: follow.target_account)
 
         expect(subject).to permit(follow.account, status)
       end
 
       it 'grants access when private and viewer is mentioned' do
-        status.visibility = :private
-        status.mentions = [Fabricate(:mention, account: alice)]
+        status.update!(visibility: :private)
+        status.mentions.create!(account: alice)
 
         expect(subject).to permit(alice, status)
       end
 
       it 'denies access when private and viewer is not mentioned or followed' do
         viewer = Fabricate(:account)
-        status.visibility = :private
+        status.update!(visibility: :private)
 
         expect(subject).to_not permit(viewer, status)
       end
@@ -92,14 +89,14 @@ RSpec.describe StatusPolicy, type: :model do
     permissions :reblog? do
       it 'denies access when private' do
         viewer = Fabricate(:account)
-        status.visibility = :private
+        status.update!(visibility: :private)
 
         expect(subject).to_not permit(viewer, status)
       end
 
       it 'denies access when direct' do
         viewer = Fabricate(:account)
-        status.visibility = :direct
+        status.update!(visibility: :direct)
 
         expect(subject).to_not permit(viewer, status)
       end
@@ -125,15 +122,15 @@ RSpec.describe StatusPolicy, type: :model do
   context 'with the permission of favourite?' do
     permissions :favourite? do
       it 'grants access when viewer is not blocked' do
-        follow         = Fabricate(:follow)
-        status.account = follow.target_account
+        follow = Fabricate(:follow)
+        status.update!(account: follow.target_account)
 
         expect(subject).to permit(follow.account, status)
       end
 
       it 'denies when viewer is blocked' do
-        block          = Fabricate(:block)
-        status.account = block.target_account
+        block = Fabricate(:block)
+        status.update!(account: block.target_account)
 
         expect(subject).to_not permit(block.account, status)
       end
