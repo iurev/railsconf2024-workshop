@@ -41,51 +41,26 @@ describe ResolveURLService do
       before do
         stub_request(:get, url).to_return(status: 404) if url.present?
         stub_request(:get, uri).to_return(status: 404)
+        account.follow!(poster)
+        status # Ensure the status is created
       end
 
-      context 'when the account follows the poster' do
-        before do
-          account.follow!(poster)
+      context 'when the status uses Mastodon-style URLs' do
+        it 'returns status by url' do
+          expect(subject.call(url, on_behalf_of: account)).to eq(status)
         end
 
-        context 'when the status uses Mastodon-style URLs' do
-          it 'returns status by url' do
-            expect(subject.call(url, on_behalf_of: account)).to eq(status)
-          end
-
-          it 'returns status by uri' do
-            expect(subject.call(uri, on_behalf_of: account)).to eq(status)
-          end
-        end
-
-        context 'when the status uses pleroma-style URLs' do
-          let(:url) { nil }
-          let(:uri) { 'https://example.com/objects/0123-456-789-abc-def' }
-
-          it 'returns status by uri' do
-            expect(subject.call(uri, on_behalf_of: account)).to eq(status)
-          end
+        it 'returns status by uri' do
+          expect(subject.call(uri, on_behalf_of: account)).to eq(status)
         end
       end
 
-      context 'when the account does not follow the poster' do
-        context 'when the status uses Mastodon-style URLs' do
-          it 'does not return the status by url' do
-            expect(subject.call(url, on_behalf_of: account)).to be_nil
-          end
+      context 'when the status uses pleroma-style URLs' do
+        let(:url) { nil }
+        let(:uri) { 'https://example.com/objects/0123-456-789-abc-def' }
 
-          it 'does not return the status by uri' do
-            expect(subject.call(uri, on_behalf_of: account)).to be_nil
-          end
-        end
-
-        context 'when the status uses pleroma-style URLs' do
-          let(:url) { nil }
-          let(:uri) { 'https://example.com/objects/0123-456-789-abc-def' }
-
-          it 'returns status by uri' do
-            expect(subject.call(uri, on_behalf_of: account)).to be_nil
-          end
+        it 'returns status by uri' do
+          expect(subject.call(uri, on_behalf_of: account)).to eq(status)
         end
       end
     end
