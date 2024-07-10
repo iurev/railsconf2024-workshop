@@ -15,11 +15,15 @@ describe StatusFilter do
       end
 
       context 'when status account is silenced' do
-        before do
+        before_all do
           status.account.silence!
         end
 
         it { is_expected.to be_filtered }
+
+        after_all do
+          status.account.unsilence!
+        end
       end
 
       context 'when status policy does not allow show' do
@@ -40,7 +44,7 @@ describe StatusFilter do
       end
 
       context 'when status account is blocked' do
-        before do
+        before_all do
           Fabricate(:block, account: account, target_account: status.account)
         end
 
@@ -48,16 +52,20 @@ describe StatusFilter do
       end
 
       context 'when status account domain is blocked' do
-        before do
+        before_all do
           status.account.update(domain: 'example.com')
           Fabricate(:account_domain_block, account: account, domain: status.account_domain)
         end
 
         it { is_expected.to be_filtered }
+
+        after_all do
+          status.account.update(domain: nil)
+        end
       end
 
       context 'when status account is muted' do
-        before do
+        before_all do
           Fabricate(:mute, account: account, target_account: status.account)
         end
 
@@ -65,11 +73,15 @@ describe StatusFilter do
       end
 
       context 'when status account is silenced' do
-        before do
+        before_all do
           status.account.silence!
         end
 
         it { is_expected.to be_filtered }
+
+        after_all do
+          status.account.unsilence!
+        end
       end
 
       context 'when status policy does not allow show' do
