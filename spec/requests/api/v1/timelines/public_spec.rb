@@ -1,13 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Public' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:local_status)   { Fabricate(:status, account: Fabricate(:account, domain: nil)) }
+  let_it_be(:remote_status)  { Fabricate(:status, account: Fabricate(:account, domain: 'example.com')) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+  before_all do
+    Fabricate(:status, visibility: :private)
+    @media_status = Fabricate(:status, media_attachments: [Fabricate(:media_attachment)])
+  end
 
   shared_examples 'a successful request to the public timeline' do
     it 'returns the expected statuses successfully', :aggregate_failures do
@@ -23,17 +29,10 @@ describe 'Public' do
       get '/api/v1/timelines/public', headers: headers, params: params
     end
 
-    let!(:local_status)   { Fabricate(:status, account: Fabricate.build(:account, domain: nil)) }
-    let!(:remote_status)  { Fabricate(:status, account: Fabricate.build(:account, domain: 'example.com')) }
-    let!(:media_status)   { Fabricate(:status, media_attachments: [Fabricate.build(:media_attachment)]) }
     let(:params) { {} }
 
-    before do
-      Fabricate(:status, visibility: :private)
-    end
-
     context 'when the instance allows public preview' do
-      let(:expected_statuses) { [local_status, remote_status, media_status] }
+      let(:expected_statuses) { [local_status, remote_status, @media_status] }
 
       context 'with an authorized user' do
         it_behaves_like 'a successful request to the public timeline'
@@ -47,7 +46,7 @@ describe 'Public' do
 
       context 'with local param' do
         let(:params) { { local: true } }
-        let(:expected_statuses) { [local_status, media_status] }
+        let(:expected_statuses) { [local_status, @media_status] }
 
         it_behaves_like 'a successful request to the public timeline'
       end
@@ -61,14 +60,14 @@ describe 'Public' do
 
       context 'with local and remote params' do
         let(:params) { { local: true, remote: true } }
-        let(:expected_statuses) { [local_status, remote_status, media_status] }
+        let(:expected_statuses) { [local_status, remote_status, @media_status] }
 
         it_behaves_like 'a successful request to the public timeline'
       end
 
       context 'with only_media param' do
         let(:params) { { only_media: true } }
-        let(:expected_statuses) { [media_status] }
+        let(:expected_statuses) { [@media_status] }
 
         it_behaves_like 'a successful request to the public timeline'
       end
@@ -88,8 +87,8 @@ describe 'Public' do
 
           expect(response)
             .to include_pagination_headers(
-              prev: api_v1_timelines_public_url(limit: params[:limit], min_id: media_status.id),
-              next: api_v1_timelines_public_url(limit: params[:limit], max_id: media_status.id)
+              prev: api_v1_timelines_public_url(limit: params[:limit], min_id: @media_status.id),
+              next: api_v1_timelines_public_url(limit: params[:limit], max_id: @media_status.id)
             )
         end
       end
@@ -101,7 +100,7 @@ describe 'Public' do
       end
 
       context 'with an authenticated user' do
-        let(:expected_statuses) { [local_status, remote_status, media_status] }
+        let(:expected_statuses) { [local_status, remote_status, @media_status] }
 
         it_behaves_like 'a successful request to the public timeline'
       end
