@@ -31,19 +31,20 @@ describe Poll do
   end
 
   describe 'validations' do
-    let_it_be(:valid_poll) { Fabricate.build(:poll) }
-    let_it_be(:invalid_poll) { Fabricate.build(:poll, expires_at: nil) }
-
     context 'when valid' do
+      let(:poll) { Fabricate.build(:poll) }
+
       it 'is valid with valid attributes' do
-        expect(valid_poll).to be_valid
+        expect(poll).to be_valid
       end
     end
 
     context 'when not valid' do
+      let(:poll) { Fabricate.build(:poll, expires_at: nil) }
+
       it 'is invalid without an expire date' do
-        invalid_poll.valid?
-        expect(invalid_poll).to model_have_error_on_field(:expires_at)
+        poll.valid?
+        expect(poll).to model_have_error_on_field(:expires_at)
       end
     end
   end
