@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/cache'
@@ -7,7 +6,7 @@ require 'mastodon/cli/cache'
 describe Mastodon::CLI::Cache do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -30,9 +29,9 @@ describe Mastodon::CLI::Cache do
 
     context 'with the `accounts` argument' do
       let(:arguments) { ['accounts'] }
-      let(:account_stat) { Fabricate(:account_stat) }
+      let_it_be(:account_stat) { Fabricate(:account_stat) }
 
-      before do
+      before_all do
         account_stat.update(statuses_count: 123)
       end
 
@@ -46,9 +45,9 @@ describe Mastodon::CLI::Cache do
 
     context 'with the `statuses` argument' do
       let(:arguments) { ['statuses'] }
-      let(:status_stat) { Fabricate(:status_stat) }
+      let_it_be(:status_stat) { Fabricate(:status_stat) }
 
-      before do
+      before_all do
         status_stat.update(replies_count: 123)
       end
 
