@@ -8,7 +8,7 @@ describe Admin::ReportsController do
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:report) { Fabricate(:report) }
 
-  before_all do
+  before do
     sign_in user, scope: :user
   end
 
