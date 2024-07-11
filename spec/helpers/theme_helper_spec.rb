@@ -4,11 +4,10 @@ require 'rails_helper'
 
 describe ThemeHelper do
   describe 'theme_style_tags' do
-    let_it_be(:result_system) { helper.theme_style_tags('system') }
-    let_it_be(:result_contrast) { helper.theme_style_tags('contrast') }
+    let(:result) { helper.theme_style_tags(theme) }
 
     context 'when using system theme' do
-      let(:result) { result_system }
+      let(:theme) { 'system' }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -25,7 +24,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:result) { result_contrast }
+      let(:theme) { 'contrast' }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -38,12 +37,10 @@ describe ThemeHelper do
   end
 
   describe 'theme_color_tags' do
-    let_it_be(:result_system) { helper.theme_color_tags('system') }
-    let_it_be(:result_light) { helper.theme_color_tags('mastodon-light') }
-    let_it_be(:result_contrast) { helper.theme_color_tags('contrast') }
+    let(:result) { helper.theme_color_tags(theme) }
 
     context 'when using system theme' do
-      let(:result) { result_system }
+      let(:theme) { 'system' }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -60,7 +57,7 @@ describe ThemeHelper do
     end
 
     context 'when using mastodon-light theme' do
-      let(:result) { result_light }
+      let(:theme) { 'mastodon-light' }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -71,7 +68,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:result) { result_contrast }
+      let(:theme) { 'contrast' }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
