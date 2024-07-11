@@ -1,19 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::TwoFactorAuthentication::OtpAuthenticationController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #show' do
-    context 'when signed in' do
-      before do
-        sign_in user, scope: :user
-      end
-
+    context 'when signed in', :user do
       describe 'when user has OTP enabled' do
         before do
           user.update(otp_required_for_login: true)
@@ -49,11 +44,7 @@ describe Settings::TwoFactorAuthentication::OtpAuthenticationController do
   end
 
   describe 'POST #create' do
-    context 'when signed in' do
-      before do
-        sign_in user, scope: :user
-      end
-
+    context 'when signed in', :user do
       describe 'when user has OTP enabled' do
         before do
           user.update(otp_required_for_login: true)
