@@ -60,7 +60,7 @@ describe Settings::Migration::RedirectsController do
   private
 
   def stub_resolver
-    resolver = instance_double(ResolveAccountService, call: Fabricate(:account))
+    resolver = instance_double(ResolveAccountService, call: account)
     allow(ResolveAccountService).to receive(:new).and_return(resolver)
   end
 end
