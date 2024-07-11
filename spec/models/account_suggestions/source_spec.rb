@@ -11,23 +11,23 @@ RSpec.describe AccountSuggestions::Source do
     end
 
     context 'with follows and follow requests' do
-      let!(:account_domain_blocked_account) { Fabricate(:account, domain: 'blocked.host', discoverable: true) }
-      let!(:account) { Fabricate(:account, discoverable: true) }
-      let!(:blocked_account) { Fabricate(:account, discoverable: true) }
-      let!(:eligible_account) { Fabricate(:account, discoverable: true) }
-      let!(:follow_recommendation_muted_account) { Fabricate(:account, discoverable: true) }
-      let!(:follow_requested_account) { Fabricate(:account, discoverable: true) }
-      let!(:following_account) { Fabricate(:account, discoverable: true) }
-      let!(:moved_account) { Fabricate(:account, moved_to_account: Fabricate(:account), discoverable: true) }
-      let!(:silenced_account) { Fabricate(:account, silenced: true, discoverable: true) }
-      let!(:undiscoverable_account) { Fabricate(:account, discoverable: false) }
+      let_it_be(:account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:account_domain_blocked_account) { Fabricate(:account, domain: 'blocked.host', discoverable: true) }
+      let_it_be(:blocked_account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:eligible_account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:follow_recommendation_muted_account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:follow_requested_account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:following_account) { Fabricate(:account, discoverable: true) }
+      let_it_be(:moved_account) { Fabricate(:account, moved_to_account: Fabricate(:account), discoverable: true) }
+      let_it_be(:silenced_account) { Fabricate(:account, silenced: true, discoverable: true) }
+      let_it_be(:undiscoverable_account) { Fabricate(:account, discoverable: false) }
 
-      before do
-        Fabricate :account_domain_block, account: account, domain: account_domain_blocked_account.domain
-        Fabricate :block, account: account, target_account: blocked_account
-        Fabricate :follow_recommendation_mute, account: account, target_account: follow_recommendation_muted_account
-        Fabricate :follow_request, account: account, target_account: follow_requested_account
-        Fabricate :follow, account: account, target_account: following_account
+      before_all do
+        Fabricate(:account_domain_block, account: account, domain: account_domain_blocked_account.domain)
+        Fabricate(:block, account: account, target_account: blocked_account)
+        Fabricate(:follow_recommendation_mute, account: account, target_account: follow_recommendation_muted_account)
+        Fabricate(:follow_request, account: account, target_account: follow_requested_account)
+        Fabricate(:follow, account: account, target_account: following_account)
       end
 
       it 'returns eligible accounts' do
