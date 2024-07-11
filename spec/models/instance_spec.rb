@@ -9,12 +9,9 @@ RSpec.describe Instance do
     describe '#searchable' do
       let_it_be(:expected_domain) { 'host.example' }
       let_it_be(:blocked_domain) { 'other.example' }
-
-      before do
-        Fabricate :account, domain: expected_domain
-        Fabricate :account, domain: blocked_domain
-        Fabricate :domain_block, domain: blocked_domain
-      end
+      let_it_be(:expected_account) { Fabricate :account, domain: expected_domain }
+      let_it_be(:blocked_account) { Fabricate :account, domain: blocked_domain }
+      let_it_be(:domain_block) { Fabricate :domain_block, domain: blocked_domain }
 
       it 'returns records not domain blocked' do
         results = described_class.searchable.pluck(:domain)
@@ -29,12 +26,9 @@ RSpec.describe Instance do
       let_it_be(:host_domain) { 'host.example.com' }
       let_it_be(:host_under_domain) { 'host_under.example.com' }
       let_it_be(:other_domain) { 'other.example' }
-
-      before do
-        Fabricate :account, domain: host_domain
-        Fabricate :account, domain: host_under_domain
-        Fabricate :account, domain: other_domain
-      end
+      let_it_be(:host_account) { Fabricate :account, domain: host_domain }
+      let_it_be(:host_under_account) { Fabricate :account, domain: host_under_domain }
+      let_it_be(:other_account) { Fabricate :account, domain: other_domain }
 
       it 'returns matching records' do
         expect(described_class.matches_domain('host.exa').pluck(:domain))
@@ -60,12 +54,9 @@ RSpec.describe Instance do
       let_it_be(:exact_match_domain) { 'example.com' }
       let_it_be(:subdomain_domain) { 'foo.example.com' }
       let_it_be(:partial_domain) { 'grexample.com' }
-
-      before do
-        Fabricate(:account, domain: exact_match_domain)
-        Fabricate(:account, domain: subdomain_domain)
-        Fabricate(:account, domain: partial_domain)
-      end
+      let_it_be(:exact_match_account) { Fabricate(:account, domain: exact_match_domain) }
+      let_it_be(:subdomain_account) { Fabricate(:account, domain: subdomain_domain) }
+      let_it_be(:partial_account) { Fabricate(:account, domain: partial_domain) }
 
       it 'returns matching instances' do
         results = described_class.by_domain_and_subdomains('example.com').pluck(:domain)
@@ -81,15 +72,11 @@ RSpec.describe Instance do
       let_it_be(:example_domain) { 'example.host' }
       let_it_be(:other_domain) { 'other.host' }
       let_it_be(:none_domain) { 'none.host' }
-
-      before do
-        example_account = Fabricate(:account, domain: example_domain)
-        other_account = Fabricate(:account, domain: other_domain)
-        Fabricate(:account, domain: none_domain)
-
-        Fabricate :follow, account: example_account
-        Fabricate :follow, target_account: other_account
-      end
+      let_it_be(:example_account) { Fabricate(:account, domain: example_domain) }
+      let_it_be(:other_account) { Fabricate(:account, domain: other_domain) }
+      let_it_be(:none_account) { Fabricate(:account, domain: none_domain) }
+      let_it_be(:example_follow) { Fabricate :follow, account: example_account }
+      let_it_be(:other_follow) { Fabricate :follow, target_account: other_account }
 
       it 'returns instances with domain accounts that have follows' do
         results = described_class.with_domain_follows(['example.host', 'other.host', 'none.host']).pluck(:domain)
