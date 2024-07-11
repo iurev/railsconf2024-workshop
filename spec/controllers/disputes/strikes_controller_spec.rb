@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Disputes::StrikesController do
   render_views
 
+  let_it_be(:current_user) { Fabricate(:user) }
+
   before { sign_in current_user, scope: :user }
 
   describe '#show' do
-    let(:current_user) { Fabricate(:user) }
     let(:strike) { Fabricate(:account_warning, target_account: current_user.account) }
 
     before do
