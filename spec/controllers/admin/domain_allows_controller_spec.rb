@@ -5,8 +5,12 @@ require 'rails_helper'
 RSpec.describe Admin::DomainAllowsController do
   render_views
 
+  before_all do
+    @admin = Fabricate(:user, role: UserRole.find_by(name: 'Admin'))
+  end
+
   before do
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+    sign_in @admin, scope: :user
   end
 
   describe 'GET #new' do
@@ -36,10 +40,11 @@ RSpec.describe Admin::DomainAllowsController do
   end
 
   describe 'DELETE #destroy' do
+    let_it_be(:domain_allow) { Fabricate(:domain_allow) }
+
     it 'disallows the domain' do
       service = instance_double(UnallowDomainService, call: true)
       allow(UnallowDomainService).to receive(:new).and_return(service)
-      domain_allow = Fabricate(:domain_allow)
       delete :destroy, params: { id: domain_allow.id }
 
       expect(service).to have_received(:call).with(domain_allow)
