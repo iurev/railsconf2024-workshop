@@ -7,8 +7,8 @@ RSpec.describe HtmlAwareFormatter do
     subject { described_class.new(text, local).to_s }
 
     context 'when local' do
-      let(:local) { true }
-      let(:text) { 'Foo bar' }
+      let_it_be(:local) { true }
+      let_it_be(:text) { 'Foo bar' }
 
       it 'returns formatted text' do
         expect(subject).to eq '<p>Foo bar</p>'
@@ -16,10 +16,10 @@ RSpec.describe HtmlAwareFormatter do
     end
 
     context 'when remote' do
-      let(:local) { false }
+      let_it_be(:local) { false }
 
       context 'when given plain text' do
-        let(:text) { 'Beep boop' }
+        let_it_be(:text) { 'Beep boop' }
 
         it 'keeps the plain text' do
           expect(subject).to include 'Beep boop'
@@ -27,7 +27,7 @@ RSpec.describe HtmlAwareFormatter do
       end
 
       context 'when given text containing script tags' do
-        let(:text) { '<script>alert("Hello")</script>' }
+        let_it_be(:text) { '<script>alert("Hello")</script>' }
 
         it 'strips the scripts' do
           expect(subject).to_not include '<script>alert("Hello")</script>'
@@ -35,7 +35,7 @@ RSpec.describe HtmlAwareFormatter do
       end
 
       context 'when given text containing malicious classes' do
-        let(:text) { '<span class="mention  status__content__spoiler-link">Show more</span>' }
+        let_it_be(:text) { '<span class="mention  status__content__spoiler-link">Show more</span>' }
 
         it 'strips the malicious classes' do
           expect(subject).to_not include 'status__content__spoiler-link'
