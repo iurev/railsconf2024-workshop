@@ -4,14 +4,16 @@ require 'rails_helper'
 
 RSpec.describe NotificationRequest do
   describe '#reconsider_existence!' do
-    let(:notification_request) { Fabricate(:notification_request, dismissed: dismissed) }
+    let_it_be(:account) { Fabricate(:account) }
+    let_it_be(:from_account) { Fabricate(:account) }
+    let(:notification_request) { Fabricate(:notification_request, account: account, from_account: from_account, dismissed: dismissed) }
     let(:dismissed) { false }
 
     subject { notification_request }
 
     context 'when there are remaining notifications' do
       before do
-        Fabricate(:notification, account: subject.account, activity: Fabricate(:status, account: subject.from_account), filtered: true)
+        Fabricate(:notification, account: account, from_account: from_account, activity: Fabricate(:status, account: from_account), filtered: true)
         subject.reconsider_existence!
       end
 
