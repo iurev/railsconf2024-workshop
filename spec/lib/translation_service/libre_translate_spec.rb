@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe TranslationService::LibreTranslate do
-  subject(:service) { described_class.new('https://libretranslate.example.com', 'my-api-key') }
+  let_it_be(:service) { described_class.new('https://libretranslate.example.com', 'my-api-key') }
 
   before do
     stub_request(:get, 'https://libretranslate.example.com/languages').to_return(
