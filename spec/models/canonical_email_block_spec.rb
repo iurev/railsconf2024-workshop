@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe CanonicalEmailBlock do
   describe '#email=' do
-    let(:target_hash) { '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b' }
+    let_it_be(:target_hash) { '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b' }
 
     it 'sets canonical_email_hash' do
       subject.email = 'test@example.com'
@@ -29,7 +28,7 @@ RSpec.describe CanonicalEmailBlock do
   end
 
   describe '.block?' do
-    before { Fabricate(:canonical_email_block, email: 'foo@bar.com') }
+    let_it_be(:canonical_email_block) { Fabricate(:canonical_email_block, email: 'foo@bar.com') }
 
     it 'returns true for the same email' do
       expect(described_class.block?('foo@bar.com')).to be true
