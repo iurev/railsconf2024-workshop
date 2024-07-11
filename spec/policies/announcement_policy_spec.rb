@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'pundit/rspec'
 
 describe AnnouncementPolicy do
   let(:policy) { described_class }
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)  { Fabricate(:account) }
 
   permissions :index?, :create?, :update?, :destroy? do
     context 'with an admin' do
