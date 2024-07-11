@@ -23,11 +23,11 @@ RSpec.describe AccountSuggestions::Source do
       let_it_be(:undiscoverable_account) { Fabricate(:account, discoverable: false) }
 
       before_all do
-        Fabricate :account_domain_block, account: account, domain: account_domain_blocked_account.domain
-        Fabricate :block, account: account, target_account: blocked_account
-        Fabricate :follow_recommendation_mute, account: account, target_account: follow_recommendation_muted_account
-        Fabricate :follow_request, account: account, target_account: follow_requested_account
-        Fabricate :follow, account: account, target_account: following_account
+        Fabricate(:account_domain_block, account: account, domain: account_domain_blocked_account.domain)
+        Fabricate(:block, account: account, target_account: blocked_account)
+        Fabricate(:follow_recommendation_mute, account: account, target_account: follow_recommendation_muted_account)
+        Fabricate(:follow_request, account: account, target_account: follow_requested_account)
+        Fabricate(:follow, account: account, target_account: following_account)
       end
 
       it 'returns eligible accounts' do
