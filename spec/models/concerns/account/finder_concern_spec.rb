@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Account::FinderConcern do
   describe 'local finders' do
-    let!(:account) { Fabricate(:account, username: 'Alice') }
+    let_it_be(:account) { Fabricate(:account, username: 'Alice') }
 
     describe '.find_local' do
       it 'returns case-insensitive result' do
@@ -53,7 +52,7 @@ describe Account::FinderConcern do
   end
 
   describe 'remote finders' do
-    let!(:account) { Fabricate(:account, username: 'Alice', domain: 'mastodon.social') }
+    let_it_be(:account) { Fabricate(:account, username: 'Alice', domain: 'mastodon.social') }
 
     describe '.find_remote' do
       it 'returns exact match result' do
