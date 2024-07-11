@@ -49,7 +49,7 @@ describe AccountControllerConcern do
   end
 
   context 'when account is not suspended' do
-    let(:account) { Fabricate(:account, username: 'username') }
+    let_it_be(:account) { Fabricate(:account, username: 'username') }
 
     it 'assigns @account, returns success, and sets link headers' do
       get 'success', params: { account_username: account.username }
