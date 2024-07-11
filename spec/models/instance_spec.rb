@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,8 +7,8 @@ RSpec.describe Instance do
     before { described_class.refresh }
 
     describe '#searchable' do
-      let(:expected_domain) { 'host.example' }
-      let(:blocked_domain) { 'other.example' }
+      let_it_be(:expected_domain) { 'host.example' }
+      let_it_be(:blocked_domain) { 'other.example' }
 
       before do
         Fabricate :account, domain: expected_domain
@@ -27,9 +26,9 @@ RSpec.describe Instance do
     end
 
     describe '#matches_domain' do
-      let(:host_domain) { 'host.example.com' }
-      let(:host_under_domain) { 'host_under.example.com' }
-      let(:other_domain) { 'other.example' }
+      let_it_be(:host_domain) { 'host.example.com' }
+      let_it_be(:host_under_domain) { 'host_under.example.com' }
+      let_it_be(:other_domain) { 'other.example' }
 
       before do
         Fabricate :account, domain: host_domain
@@ -58,9 +57,9 @@ RSpec.describe Instance do
     end
 
     describe '#by_domain_and_subdomains' do
-      let(:exact_match_domain) { 'example.com' }
-      let(:subdomain_domain) { 'foo.example.com' }
-      let(:partial_domain) { 'grexample.com' }
+      let_it_be(:exact_match_domain) { 'example.com' }
+      let_it_be(:subdomain_domain) { 'foo.example.com' }
+      let_it_be(:partial_domain) { 'grexample.com' }
 
       before do
         Fabricate(:account, domain: exact_match_domain)
@@ -79,9 +78,9 @@ RSpec.describe Instance do
     end
 
     describe '#with_domain_follows' do
-      let(:example_domain) { 'example.host' }
-      let(:other_domain) { 'other.host' }
-      let(:none_domain) { 'none.host' }
+      let_it_be(:example_domain) { 'example.host' }
+      let_it_be(:other_domain) { 'other.host' }
+      let_it_be(:none_domain) { 'none.host' }
 
       before do
         example_account = Fabricate(:account, domain: example_domain)
