@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe PreviewCardProvider do
   describe 'scopes' do
-    let(:trendable_and_reviewed) { Fabricate(:preview_card_provider, trendable: true, reviewed_at: 5.days.ago) }
-    let(:not_trendable_and_not_reviewed) { Fabricate(:preview_card_provider, trendable: false, reviewed_at: nil) }
+    let_it_be(:trendable_and_reviewed) { Fabricate(:preview_card_provider, trendable: true, reviewed_at: 5.days.ago) }
+    let_it_be(:not_trendable_and_not_reviewed) { Fabricate(:preview_card_provider, trendable: false, reviewed_at: nil) }
 
     describe 'trendable' do
       it 'returns the relevant records' do
