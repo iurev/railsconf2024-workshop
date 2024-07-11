@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Accept do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
 
-  let(:json) do
+  let_it_be(:json) do
     {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id: 'foo',
