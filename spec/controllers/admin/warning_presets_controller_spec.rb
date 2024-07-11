@@ -8,7 +8,7 @@ describe Admin::WarningPresetsController do
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:account_warning_preset) { Fabricate(:account_warning_preset) }
 
-  before_all do
+  before do
     sign_in user, scope: :user
   end
 
