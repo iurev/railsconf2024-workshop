@@ -5,10 +5,8 @@ require 'rails_helper'
 RSpec.describe Admin::ConfirmationsController do
   render_views
 
-  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-
   before do
-    sign_in admin, scope: :user
+    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
   end
 
   describe 'POST #create' do
@@ -37,7 +35,7 @@ RSpec.describe Admin::ConfirmationsController do
   describe 'POST #resend' do
     subject { post :resend, params: { account_id: user.account.id } }
 
-    let(:user) { Fabricate(:user, confirmed_at: confirmed_at) }
+    let!(:user) { Fabricate(:user, confirmed_at: confirmed_at) }
 
     before do
       allow(UserMailer).to receive(:confirmation_instructions) { instance_double(ActionMailer::MessageDelivery, deliver_later: nil) }
