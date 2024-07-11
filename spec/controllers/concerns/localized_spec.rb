@@ -53,9 +53,8 @@ describe Localized do
   end
 
   context 'with a user with invalid locale has signed in' do
-    let_it_be(:user) { Fabricate.build(:user, locale: :invalid) }
-
     before do
+      user = Fabricate.build(:user, locale: :invalid)
       user.save!(validate: false)
       sign_in(user)
     end
