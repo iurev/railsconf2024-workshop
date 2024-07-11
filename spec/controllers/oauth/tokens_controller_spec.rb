@@ -9,7 +9,7 @@ RSpec.describe Oauth::TokensController do
     let_it_be(:access_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, application: application) }
     let_it_be(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
 
-    before_all do
+    before do
       post :revoke, params: { client_id: application.uid, token: access_token.token }
     end
 
