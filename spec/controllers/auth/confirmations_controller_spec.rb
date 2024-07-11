@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Auth::ConfirmationsController do
   render_views
 
-  before_all do
+  before do
     request.env['devise.mapping'] = Devise.mappings[:user]
     allow(BootstrapTimelineWorker).to receive(:perform_async)
   end
