@@ -5,7 +5,7 @@ require 'rails_helper'
 describe ReactComponentHelper do
   describe 'react_component' do
     context 'with no block passed in' do
-      let_it_be(:result) { helper.react_component('name', { one: :two }) }
+      let(:result) { helper.react_component('name', { one: :two }) }
 
       it 'returns a tag with data attributes' do
         expect(parsed_html.div['data-component']).to eq('Name')
@@ -14,7 +14,7 @@ describe ReactComponentHelper do
     end
 
     context 'with a block passed in' do
-      let_it_be(:result) do
+      let(:result) do
         helper.react_component('name', { one: :two }) do
           helper.content_tag(:nav, 'ok')
         end
@@ -29,7 +29,7 @@ describe ReactComponentHelper do
   end
 
   describe 'react_admin_component' do
-    let_it_be(:result) { helper.react_admin_component('name', { one: :two }) }
+    let(:result) { helper.react_admin_component('name', { one: :two }) }
 
     it 'returns a tag with data attributes' do
       expect(parsed_html.div['data-admin-component']).to eq('Name')
