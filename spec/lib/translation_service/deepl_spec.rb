@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe TranslationService::DeepL do
-  let_it_be(:service) { described_class.new(plan, 'my-api-key') }
+  subject(:service) { described_class.new(plan, 'my-api-key') }
 
   let(:plan) { 'advanced' }
 
