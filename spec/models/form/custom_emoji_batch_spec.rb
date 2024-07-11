@@ -94,6 +94,7 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the copy action' do
+      let(:custom_emoji) { Fabricate(:custom_emoji) }
       let(:options) { { action: 'copy', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'makes a copy of the emoji' do
