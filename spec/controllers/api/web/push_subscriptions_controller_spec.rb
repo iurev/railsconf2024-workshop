@@ -1,14 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Api::Web::PushSubscriptionsController do
   render_views
 
-  let(:user) { Fabricate(:user) }
-
-  let(:create_payload) do
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:create_payload) do
     {
       subscription: {
         endpoint: 'https://fcm.googleapis.com/fcm/send/fiuH06a27qE:APA91bHnSiGcLwdaxdyqVXNDR9w1NlztsHb6lyt5WDKOC_Z_Q8BlFxQoR8tWFSXUIDdkyw0EdvxTu63iqamSaqVSevW5LfoFwojws8XYDXv_NRRLH6vo2CdgiN4jgHv5VLt2A8ah6lUX',
@@ -38,10 +36,12 @@ describe Api::Web::PushSubscriptionsController do
     }
   end
 
+  before(:all) do
+    stub_request(:post, create_payload[:subscription][:endpoint]).to_return(status: 200)
+  end
+
   before do
     sign_in(user)
-
-    stub_request(:post, create_payload[:subscription][:endpoint]).to_return(status: 200)
   end
 
   describe 'POST #create' do
