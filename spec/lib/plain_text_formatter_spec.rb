@@ -16,11 +16,10 @@ RSpec.describe PlainTextFormatter do
 
     context 'when status is remote' do
       let_it_be(:remote_account) { Fabricate(:account, domain: 'remote.test', username: 'bob', url: 'https://remote.test/') }
-
-      let(:status) { Fabricate(:status, account: remote_account, text: text) }
+      let_it_be(:status) { Fabricate(:status, account: remote_account, text: 'Base text') }
 
       context 'when text contains inline HTML tags' do
-        let(:text) { '<b>Lorem</b> <em>ipsum</em>' }
+        before { status.update!(text: '<b>Lorem</b> <em>ipsum</em>') }
 
         it 'strips the tags' do
           expect(subject).to eq 'Lorem ipsum'
@@ -28,7 +27,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains <p> tags' do
-        let(:text) { '<p>Lorem</p><p>ipsum</p>' }
+        before { status.update!(text: '<p>Lorem</p><p>ipsum</p>') }
 
         it 'inserts a newline' do
           expect(subject).to eq "Lorem\nipsum"
@@ -36,7 +35,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains a single <br> tag' do
-        let(:text) { 'Lorem<br>ipsum' }
+        before { status.update!(text: 'Lorem<br>ipsum') }
 
         it 'inserts a newline' do
           expect(subject).to eq "Lorem\nipsum"
@@ -44,7 +43,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains consecutive <br> tag' do
-        let(:text) { 'Lorem<br><br><br>ipsum' }
+        before { status.update!(text: 'Lorem<br><br><br>ipsum') }
 
         it 'inserts a single newline' do
           expect(subject).to eq "Lorem\nipsum"
@@ -52,7 +51,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains HTML entity' do
-        let(:text) { 'Lorem &amp; ipsum &#x2764;' }
+        before { status.update!(text: 'Lorem &amp; ipsum &#x2764;') }
 
         it 'unescapes the entity' do
           expect(subject).to eq 'Lorem & ipsum ❤'
@@ -60,7 +59,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains <script> tag' do
-        let(:text) { 'Lorem <script> alert("Booh!") </script>ipsum' }
+        before { status.update!(text: 'Lorem <script> alert("Booh!") </script>ipsum') }
 
         it 'strips the tag and its contents' do
           expect(subject).to eq 'Lorem ipsum'
@@ -68,7 +67,7 @@ RSpec.describe PlainTextFormatter do
       end
 
       context 'when text contains an HTML comment tags' do
-        let(:text) { 'Lorem <!-- Booh! -->ipsum' }
+        before { status.update!(text: 'Lorem <!-- Booh! -->ipsum') }
 
         it 'strips the comment' do
           expect(subject).to eq 'Lorem ipsum'
