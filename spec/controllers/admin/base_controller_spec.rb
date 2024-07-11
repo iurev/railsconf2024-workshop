@@ -23,25 +23,32 @@ describe Admin::BaseController do
     expect(response).to have_http_status(403)
   end
 
-  it 'returns private cache control headers' do
-    user.update!(role: UserRole.find_by(name: 'Moderator'))
-    sign_in(user)
-    get :success
+  context 'when user is a moderator' do
+    before do
+      user.update!(role: UserRole.find_by(name: 'Moderator'))
+      sign_in(user)
+    end
 
-    expect(response.headers['Cache-Control']).to include('private, no-store')
+    it 'returns private cache control headers' do
+      get :success
+      expect(response.headers['Cache-Control']).to include('private, no-store')
+    end
+
+    it 'renders admin layout' do
+      get :success
+      expect(response).to render_template layout: 'admin'
+    end
   end
 
-  it 'renders admin layout as a moderator' do
-    user.update!(role: UserRole.find_by(name: 'Moderator'))
-    sign_in(user)
-    get :success
-    expect(response).to render_template layout: 'admin'
-  end
+  context 'when user is an admin' do
+    before do
+      user.update!(role: UserRole.find_by(name: 'Admin'))
+      sign_in(user)
+    end
 
-  it 'renders admin layout as an admin' do
-    user.update!(role: UserRole.find_by(name: 'Admin'))
-    sign_in(user)
-    get :success
-    expect(response).to render_template layout: 'admin'
+    it 'renders admin layout' do
+      get :success
+      expect(response).to render_template layout: 'admin'
+    end
   end
 end
