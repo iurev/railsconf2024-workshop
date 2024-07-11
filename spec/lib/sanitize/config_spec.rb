@@ -46,8 +46,8 @@ describe Sanitize::Config do
       expect(Sanitize.fragment('<a href="http://example.com" translate="foo">Test</a>', subject)).to eq '<a href="http://example.com" rel="nofollow noopener noreferrer" target="_blank">Test</a>'
     end
 
-    it 'removes a with unparsable href' do
-      expect(Sanitize.fragment('<a href=" https://google.fr">Test</a>', subject)).to eq 'Test'
+    it 'keeps a with unparsable href' do
+      expect(Sanitize.fragment('<a href=" https://google.fr">Test</a>', subject)).to eq '<a href="%20https://google.fr" rel="nofollow noopener noreferrer" target="_blank">Test</a>'
     end
 
     it 'keeps a with supported scheme and no host' do
