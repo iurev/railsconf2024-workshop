@@ -1,12 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe RemoteFollow do
-  before do
+  before_all do
     stub_request(:get, 'https://quitter.no/.well-known/webfinger?resource=acct:gargron@quitter.no').to_return(request_fixture('webfinger.txt'))
   end
+
+  let_it_be(:account) { Fabricate(:account, username: 'alice') }
 
   let(:attrs)         { nil }
   let(:remote_follow) { described_class.new(attrs) }
@@ -58,8 +59,7 @@ RSpec.describe RemoteFollow do
       remote_follow.valid?
     end
 
-    let(:attrs)   { { acct: 'gargron@quitter.no' } }
-    let(:account) { Fabricate(:account, username: 'alice') }
+    let(:attrs) { { acct: 'gargron@quitter.no' } }
 
     it 'returns subscribe address' do
       expect(subject).to eq 'https://quitter.no/main/ostatussub?profile=https%3A%2F%2Fcb6e6126.ngrok.io%2Fusers%2Falice'
