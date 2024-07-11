@@ -40,10 +40,15 @@ describe Mastodon::CLI::Settings do
         let(:options) { { require_reason: true } }
 
         it 'changes registrations_mode and require_invite_text' do
-          expect { subject }
-            .to output_results('OK')
-            .and change(Setting, :registrations_mode).from(nil).to('approved')
-            .and change(Setting, :require_invite_text).from(false).to(true)
+          puts "Before: registrations_mode=#{Setting.registrations_mode}, require_invite_text=#{Setting.require_invite_text}"
+          result = nil
+          expect {
+            result = subject
+            puts "After: registrations_mode=#{Setting.registrations_mode}, require_invite_text=#{Setting.require_invite_text}"
+            puts "Result: #{result.inspect}"
+          }.to output_results('OK')
+           .and change(Setting, :registrations_mode).from(nil).to('approved')
+           .and change(Setting, :require_invite_text).from(false).to(true)
         end
       end
     end
