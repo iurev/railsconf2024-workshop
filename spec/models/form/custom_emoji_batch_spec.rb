@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,8 @@ describe Form::CustomEmojiBatch do
     subject { described_class.new({ current_account: account }.merge(options)) }
 
     let(:options) { {} }
-    let(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+    let_it_be(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+    let_it_be(:custom_emoji_category) { Fabricate(:custom_emoji_category) }
 
     context 'with empty custom_emoji_ids' do
       let(:options) { { custom_emoji_ids: [] } }
@@ -20,7 +20,6 @@ describe Form::CustomEmojiBatch do
 
     describe 'the update action' do
       let(:custom_emoji) { Fabricate(:custom_emoji, category: Fabricate(:custom_emoji_category)) }
-      let(:custom_emoji_category) { Fabricate(:custom_emoji_category) }
 
       context 'without anything to change' do
         let(:options) { { action: 'update' } }
