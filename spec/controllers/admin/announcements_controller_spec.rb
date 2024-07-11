@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Admin::AnnouncementsController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
@@ -29,7 +29,7 @@ describe Admin::AnnouncementsController do
   end
 
   describe 'GET #edit' do
-    let(:announcement) { Fabricate(:announcement) }
+    let_it_be(:announcement) { Fabricate(:announcement) }
 
     it 'returns http success and renders edit' do
       get :edit, params: { id: announcement.id }
@@ -51,7 +51,7 @@ describe Admin::AnnouncementsController do
   end
 
   describe 'PUT #update' do
-    let(:announcement) { Fabricate(:announcement, text: 'Original text') }
+    let_it_be(:announcement) { Fabricate(:announcement, text: 'Original text') }
 
     it 'updates an announcement and redirects' do
       put :update, params: { id: announcement.id, announcement: { text: 'Updated text.' } }
@@ -62,7 +62,7 @@ describe Admin::AnnouncementsController do
   end
 
   describe 'DELETE #destroy' do
-    let!(:announcement) { Fabricate(:announcement, text: 'Original text') }
+    let_it_be(:announcement) { Fabricate(:announcement, text: 'Original text') }
 
     it 'destroys an announcement and redirects' do
       expect do
@@ -77,7 +77,7 @@ describe Admin::AnnouncementsController do
   describe 'POST #publish' do
     subject { post :publish, params: { id: announcement.id } }
 
-    let(:announcement) { Fabricate(:announcement, published_at: nil) }
+    let_it_be(:announcement) { Fabricate(:announcement, published_at: nil) }
 
     it 'marks announcement published' do
       subject
@@ -90,7 +90,7 @@ describe Admin::AnnouncementsController do
   describe 'POST #unpublish' do
     subject { post :unpublish, params: { id: announcement.id } }
 
-    let(:announcement) { Fabricate(:announcement, published_at: 4.days.ago) }
+    let_it_be(:announcement) { Fabricate(:announcement, published_at: 4.days.ago) }
 
     it 'marks announcement as not published' do
       subject
