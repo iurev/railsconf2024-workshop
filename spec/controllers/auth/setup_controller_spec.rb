@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -15,7 +14,9 @@ describe Auth::SetupController do
     end
 
     context 'with an unconfirmed signed in user' do
-      before { sign_in Fabricate(:user, confirmed_at: nil) }
+      let_it_be(:user) { Fabricate(:user, confirmed_at: nil) }
+
+      before { sign_in user }
 
       it 'returns http success' do
         get :show
