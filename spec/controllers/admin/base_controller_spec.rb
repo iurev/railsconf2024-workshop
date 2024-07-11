@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -11,32 +10,37 @@ describe Admin::BaseController do
     end
   end
 
-  it 'requires administrator or moderator' do
+  let_it_be(:user) { Fabricate(:user) }
+
+  before do
     routes.draw { get 'success' => 'admin/base#success' }
-    sign_in(Fabricate(:user))
+  end
+
+  it 'requires administrator or moderator' do
+    sign_in(user)
     get :success
 
     expect(response).to have_http_status(403)
   end
 
   it 'returns private cache control headers' do
-    routes.draw { get 'success' => 'admin/base#success' }
-    sign_in(Fabricate(:user, role: UserRole.find_by(name: 'Moderator')))
+    user.update!(role: UserRole.find_by(name: 'Moderator'))
+    sign_in(user)
     get :success
 
     expect(response.headers['Cache-Control']).to include('private, no-store')
   end
 
   it 'renders admin layout as a moderator' do
-    routes.draw { get 'success' => 'admin/base#success' }
-    sign_in(Fabricate(:user, role: UserRole.find_by(name: 'Moderator')))
+    user.update!(role: UserRole.find_by(name: 'Moderator'))
+    sign_in(user)
     get :success
     expect(response).to render_template layout: 'admin'
   end
 
   it 'renders admin layout as an admin' do
-    routes.draw { get 'success' => 'admin/base#success' }
-    sign_in(Fabricate(:user, role: UserRole.find_by(name: 'Admin')))
+    user.update!(role: UserRole.find_by(name: 'Admin'))
+    sign_in(user)
     get :success
     expect(response).to render_template layout: 'admin'
   end
