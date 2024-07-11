@@ -1,17 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe Settings::Exports::BookmarksController do
+describe Settings::Exports::BookmarksController, :account do
   render_views
 
-  let(:user)    { Fabricate(:user) }
-  let(:account) { Fabricate(:account, domain: 'foo.bar') }
-  let(:status)  { Fabricate(:status, account: account, uri: 'https://foo.bar/statuses/1312') }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:account) { Fabricate(:account, domain: 'foo.bar') }
+  let_it_be(:status)  { Fabricate(:status, account: account, uri: 'https://foo.bar/statuses/1312') }
 
   describe 'GET #index' do
-    before do
+    before_all do
       user.account.bookmarks.create!(status: status)
     end
 
