@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe NotificationRequest do
   describe '#reconsider_existence!' do
-    subject { Fabricate(:notification_request, dismissed: dismissed) }
+    let_it_be(:notification_request) { Fabricate(:notification_request) }
 
-    let(:dismissed) { false }
+    subject { notification_request }
 
     context 'when there are remaining notifications' do
       before do
@@ -30,7 +29,7 @@ RSpec.describe NotificationRequest do
       end
 
       context 'when dismissed' do
-        let(:dismissed) { true }
+        before { subject.update(dismissed: true) }
 
         it 'leaves request intact' do
           expect(subject.destroyed?).to be false
