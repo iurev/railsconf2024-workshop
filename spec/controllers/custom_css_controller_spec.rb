@@ -6,7 +6,7 @@ describe CustomCssController do
   render_views
 
   describe 'GET #show' do
-    before_all do
+    before do
       get :show
     end
 
