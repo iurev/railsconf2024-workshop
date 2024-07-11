@@ -11,6 +11,8 @@ describe MediaProxyController do
 
   let_it_be(:status) { Fabricate(:status) }
   let_it_be(:media_attachment) { Fabricate(:media_attachment, status: status, remote_url: 'http://example.com/attachment.png') }
+  let_it_be(:direct_status) { Fabricate(:status, visibility: :direct) }
+  let_it_be(:direct_media_attachment) { Fabricate(:media_attachment, status: direct_status, remote_url: 'http://example.com/attachment.png') }
 
   describe '#show' do
     it 'redirects when attached to a status' do
@@ -33,8 +35,6 @@ describe MediaProxyController do
     end
 
     it 'raises when not permitted to view' do
-      direct_status = Fabricate(:status, visibility: :direct)
-      direct_media_attachment = Fabricate(:media_attachment, status: direct_status, remote_url: 'http://example.com/attachment.png')
       get :show, params: { id: direct_media_attachment.id }
 
       expect(response).to have_http_status(404)
