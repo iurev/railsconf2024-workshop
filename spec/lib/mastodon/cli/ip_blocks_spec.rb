@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/ip_blocks'
@@ -7,7 +6,7 @@ require 'mastodon/cli/ip_blocks'
 describe Mastodon::CLI::IpBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -15,7 +14,7 @@ describe Mastodon::CLI::IpBlocks do
 
   describe '#add' do
     let(:action) { :add }
-    let(:ip_list) do
+    let_it_be(:ip_list) do
       [
         '192.0.2.1',
         '172.16.0.1',
@@ -61,7 +60,7 @@ describe Mastodon::CLI::IpBlocks do
     end
 
     context 'when a specified IP address is already blocked' do
-      let!(:blocked_ip) { IpBlock.create(ip: ip_list.last, severity: options[:severity]) }
+      let_it_be(:blocked_ip) { IpBlock.create(ip: ip_list.last, severity: 'no_access') }
       let(:arguments) { ip_list }
 
       before { allow(IpBlock).to receive(:new).and_call_original }
@@ -74,7 +73,6 @@ describe Mastodon::CLI::IpBlocks do
       end
 
       context 'with --force option' do
-        let!(:blocked_ip) { IpBlock.create(ip: ip_list.last, severity: 'no_access') }
         let(:options) { { severity: 'sign_up_requires_approval', force: true } }
 
         it 'overwrites the existing IP block record' do
@@ -154,7 +152,7 @@ describe Mastodon::CLI::IpBlocks do
     let(:action) { :remove }
 
     context 'when removing exact matches' do
-      let(:ip_list) do
+      let_it_be(:ip_list) do
         [
           '192.0.2.1',
           '172.16.0.1',
@@ -171,7 +169,7 @@ describe Mastodon::CLI::IpBlocks do
       end
       let(:arguments) { ip_list }
 
-      before do
+      before_all do
         ip_list.each { |ip| IpBlock.create(ip: ip, severity: :no_access) }
       end
 
@@ -183,9 +181,9 @@ describe Mastodon::CLI::IpBlocks do
     end
 
     context 'with --force option' do
-      let!(:first_ip_range_block) { IpBlock.create(ip: '192.168.0.0/24', severity: :no_access) }
-      let!(:second_ip_range_block) { IpBlock.create(ip: '10.0.0.0/16', severity: :no_access) }
-      let!(:third_ip_range_block) { IpBlock.create(ip: '172.16.0.0/20', severity: :no_access) }
+      let_it_be(:first_ip_range_block) { IpBlock.create(ip: '192.168.0.0/24', severity: :no_access) }
+      let_it_be(:second_ip_range_block) { IpBlock.create(ip: '10.0.0.0/16', severity: :no_access) }
+      let_it_be(:third_ip_range_block) { IpBlock.create(ip: '172.16.0.0/20', severity: :no_access) }
       let(:arguments) { ['192.168.0.5', '10.0.1.50'] }
       let(:options) { { force: true } }
 
@@ -243,9 +241,9 @@ describe Mastodon::CLI::IpBlocks do
   describe '#export' do
     let(:action) { :export }
 
-    let(:first_ip_range_block) { IpBlock.create(ip: '192.168.0.0/24', severity: :no_access) }
-    let(:second_ip_range_block) { IpBlock.create(ip: '10.0.0.0/16', severity: :no_access) }
-    let(:third_ip_range_block) { IpBlock.create(ip: '127.0.0.1', severity: :sign_up_block) }
+    let_it_be(:first_ip_range_block) { IpBlock.create(ip: '192.168.0.0/24', severity: :no_access) }
+    let_it_be(:second_ip_range_block) { IpBlock.create(ip: '10.0.0.0/16', severity: :no_access) }
+    let_it_be(:third_ip_range_block) { IpBlock.create(ip: '127.0.0.1', severity: :sign_up_block) }
 
     context 'when --format option is set to "plain"' do
       let(:options) { { format: 'plain' } }
