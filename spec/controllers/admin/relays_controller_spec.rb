@@ -1,16 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe Admin::RelaysController do
+describe Admin::RelaysController, :admin do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-
-  before do
-    sign_in user, scope: :user
-  end
+  let_it_be(:relay) { Fabricate(:relay) }
 
   describe 'GET #index' do
     it 'returns http success' do
@@ -59,8 +54,6 @@ describe Admin::RelaysController do
   end
 
   describe 'DELETE #destroy' do
-    let(:relay) { Fabricate(:relay) }
-
     it 'deletes an existing relay' do
       delete :destroy, params: { id: relay.id }
 
@@ -70,9 +63,8 @@ describe Admin::RelaysController do
   end
 
   describe 'POST #enable' do
-    let(:relay) { Fabricate(:relay, state: :idle) }
-
     before do
+      relay.update!(state: :idle)
       stub_request(:post, /example.com/).to_return(status: 200)
     end
 
@@ -85,9 +77,8 @@ describe Admin::RelaysController do
   end
 
   describe 'POST #disable' do
-    let(:relay) { Fabricate(:relay, state: :pending) }
-
     before do
+      relay.update!(state: :pending)
       stub_request(:post, /example.com/).to_return(status: 200)
     end
 
