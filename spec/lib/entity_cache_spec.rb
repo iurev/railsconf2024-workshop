@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe EntityCache do
-  let(:local_account)  { Fabricate(:account, domain: nil, username: 'alice') }
-  let(:remote_account) { Fabricate(:account, domain: 'remote.test', username: 'bob', url: 'https://remote.test/') }
+  let_it_be(:local_account)  { Fabricate(:account, domain: nil, username: 'alice') }
+  let_it_be(:remote_account) { Fabricate(:account, domain: 'remote.test', username: 'bob', url: 'https://remote.test/') }
 
   describe '#emoji' do
     subject { described_class.instance.emoji(shortcodes, domain) }
