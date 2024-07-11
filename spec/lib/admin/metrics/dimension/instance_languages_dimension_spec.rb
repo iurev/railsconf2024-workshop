@@ -8,14 +8,14 @@ describe Admin::Metrics::Dimension::InstanceLanguagesDimension do
   let(:start_at) { 2.days.ago }
   let(:end_at) { Time.now.utc }
   let(:limit) { 10 }
+  let(:domain) { 'host.example' }
   let(:params) { ActionController::Parameters.new(domain: domain) }
 
   describe '#data' do
-    let(:domain) { 'host.example' }
-    let(:alice) { Fabricate(:account, domain: domain) }
-    let(:bob) { Fabricate(:account) }
+    let_it_be(:alice) { Fabricate(:account, domain: 'host.example') }
+    let_it_be(:bob) { Fabricate(:account) }
 
-    before do
+    before_all do
       Fabricate :status, account: alice, language: 'en'
       Fabricate :status, account: bob, language: 'es'
     end
