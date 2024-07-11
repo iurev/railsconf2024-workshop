@@ -1,12 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'blocking domains through the moderation interface' do
-  before do
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+
+  before_all do
     allow(DomainBlockWorker).to receive(:perform_async).and_return(true)
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+  end
+
+  before do
+    sign_in admin, scope: :user
   end
 
   context 'when silencing a new domain' do
@@ -39,9 +43,9 @@ describe 'blocking domains through the moderation interface' do
   end
 
   context 'when suspending a domain that is already silenced' do
-    it 'presents a confirmation screen before suspending the domain' do
-      domain_block = Fabricate(:domain_block, domain: 'example.com', severity: 'silence')
+    let_it_be(:domain_block) { Fabricate(:domain_block, domain: 'example.com', severity: 'silence') }
 
+    it 'presents a confirmation screen before suspending the domain' do
       visit new_admin_domain_block_path
 
       submit_domain_block('example.com', 'suspend')
@@ -59,9 +63,9 @@ describe 'blocking domains through the moderation interface' do
   end
 
   context 'when suspending a subdomain of an already-silenced domain' do
-    it 'presents a confirmation screen before suspending the domain' do
-      domain_block = Fabricate(:domain_block, domain: 'example.com', severity: 'silence')
+    let_it_be(:domain_block) { Fabricate(:domain_block, domain: 'example.com', severity: 'silence') }
 
+    it 'presents a confirmation screen before suspending the domain' do
       visit new_admin_domain_block_path
 
       submit_domain_block('subdomain.example.com', 'suspend')
@@ -86,9 +90,9 @@ describe 'blocking domains through the moderation interface' do
   end
 
   context 'when editing a domain block' do
-    it 'presents a confirmation screen before suspending the domain' do
-      domain_block = Fabricate(:domain_block, domain: 'example.com', severity: 'silence')
+    let_it_be(:domain_block) { Fabricate(:domain_block, domain: 'example.com', severity: 'silence') }
 
+    it 'presents a confirmation screen before suspending the domain' do
       visit edit_admin_domain_block_path(domain_block)
 
       select I18n.t('admin.domain_blocks.new.severity.suspend'), from: 'domain_block_severity'
