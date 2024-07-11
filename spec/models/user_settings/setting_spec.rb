@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe UserSettings::Setting do
+  let_it_be(:name) { :foo }
+  let_it_be(:default) { false }
+  let_it_be(:namespace) { nil }
+
   subject { described_class.new(name, options) }
 
-  let(:name)      { :foo }
-  let(:options)   { { default: default, namespace: namespace } }
-  let(:default)   { false }
-  let(:namespace) { nil }
+  let(:options) { { default: default, namespace: namespace } }
 
   describe '#default_value' do
     context 'when default value is a primitive value' do
@@ -33,8 +33,6 @@ RSpec.describe UserSettings::Setting do
     end
 
     context 'when default value is a boolean' do
-      let(:default) { false }
-
       it 'returns boolean' do
         expect(subject.type).to be_a ActiveModel::Type::Boolean
       end
@@ -67,8 +65,6 @@ RSpec.describe UserSettings::Setting do
 
   describe '#type_cast' do
     context 'when default value is a boolean' do
-      let(:default) { false }
-
       it 'returns boolean' do
         expect(subject.type_cast('1')).to be true
       end
