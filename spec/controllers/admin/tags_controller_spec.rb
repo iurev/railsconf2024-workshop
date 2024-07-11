@@ -1,18 +1,18 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Admin::TagsController do
   render_views
 
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:tag) { Fabricate(:tag) }
+
   before do
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin'))
+    sign_in admin
   end
 
   describe 'GET #show' do
-    let!(:tag) { Fabricate(:tag) }
-
     before do
       get :show, params: { id: tag.id }
     end
@@ -23,7 +23,9 @@ RSpec.describe Admin::TagsController do
   end
 
   describe 'PUT #update' do
-    let!(:tag) { Fabricate(:tag, listable: false) }
+    before do
+      tag.update(listable: false)
+    end
 
     context 'with valid params' do
       it 'updates the tag' do
