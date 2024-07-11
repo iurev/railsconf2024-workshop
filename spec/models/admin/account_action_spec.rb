@@ -6,14 +6,17 @@ RSpec.describe Admin::AccountAction do
   let_it_be(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
   let_it_be(:target_account) { Fabricate(:account) }
 
-  let(:account_action) { described_class.new }
   let(:type) { 'disable' }
 
+  before_all do
+    @account_action = described_class.new
+  end
+
   describe '#save!' do
-    subject { account_action.save! }
+    subject { @account_action.save! }
 
     before do
-      account_action.assign_attributes(
+      @account_action.assign_attributes(
         type: type,
         current_account: account,
         target_account: target_account
@@ -78,24 +81,24 @@ RSpec.describe Admin::AccountAction do
     end
 
     it 'calls process_email!' do
-      allow(account_action).to receive(:process_email!)
+      allow(@account_action).to receive(:process_email!)
       subject
-      expect(account_action).to have_received(:process_email!)
+      expect(@account_action).to have_received(:process_email!)
     end
 
     it 'calls process_reports!' do
-      allow(account_action).to receive(:process_reports!)
+      allow(@account_action).to receive(:process_reports!)
       subject
-      expect(account_action).to have_received(:process_reports!)
+      expect(@account_action).to have_received(:process_reports!)
     end
   end
 
   describe '#report' do
-    subject { account_action.report }
+    subject { @account_action.report }
 
     context 'with report_id.present?' do
       before do
-        account_action.report_id = Fabricate(:report).id
+        @account_action.report_id = Fabricate(:report).id
       end
 
       it 'returns Report' do
@@ -111,11 +114,11 @@ RSpec.describe Admin::AccountAction do
   end
 
   describe '#with_report?' do
-    subject { account_action.with_report? }
+    subject { @account_action.with_report? }
 
     context 'with !report.nil?' do
       before do
-        account_action.report_id = Fabricate(:report).id
+        @account_action.report_id = Fabricate(:report).id
       end
 
       it 'returns true' do
