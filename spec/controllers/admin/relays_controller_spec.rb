@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Admin::RelaysController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:relay) { Fabricate(:relay) }
 
   before do
