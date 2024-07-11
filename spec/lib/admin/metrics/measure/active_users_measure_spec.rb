@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,14 +11,16 @@ describe Admin::Metrics::Measure::ActiveUsersMeasure do
 
   describe '#data' do
     context 'with activity tracking records' do
+      let_it_be(:users) { Fabricate.times(6, :user) }
+
       before do
-        3.times do
-          travel_to(2.days.ago) { record_login_activity }
+        3.times do |i|
+          travel_to(2.days.ago) { record_login_activity(users[i]) }
         end
-        2.times do
-          travel_to(1.day.ago) { record_login_activity }
+        2.times do |i|
+          travel_to(1.day.ago) { record_login_activity(users[i + 3]) }
         end
-        travel_to(0.days.ago) { record_login_activity }
+        travel_to(0.days.ago) { record_login_activity(users.last) }
       end
 
       it 'returns correct activity tracker counts' do
@@ -33,8 +34,8 @@ describe Admin::Metrics::Measure::ActiveUsersMeasure do
           )
       end
 
-      def record_login_activity
-        ActivityTracker.record('activity:logins', Fabricate(:user).id)
+      def record_login_activity(user)
+        ActivityTracker.record('activity:logins', user.id)
       end
     end
   end
