@@ -15,7 +15,7 @@ describe Mastodon::CLI::Feeds do
   describe '#build' do
     let(:action) { :build }
 
-    before_all { Fabricate(:account) }
+    before { Fabricate(:account) }
 
     context 'with --all option' do
       let(:options) { { all: true } }
@@ -27,7 +27,7 @@ describe Mastodon::CLI::Feeds do
     end
 
     context 'with a username' do
-      before_all { Fabricate(:account, username: 'alice') }
+      before { Fabricate(:account, username: 'alice') }
 
       let(:arguments) { ['alice'] }
 
