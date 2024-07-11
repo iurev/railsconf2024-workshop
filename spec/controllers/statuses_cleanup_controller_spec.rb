@@ -1,14 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe StatusesCleanupController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
-  before do
+  before(:all) do
     sign_in user, scope: :user
   end
 
