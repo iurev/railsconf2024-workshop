@@ -6,7 +6,7 @@ require 'mastodon/cli/cache'
 describe Mastodon::CLI::Cache do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -29,33 +29,33 @@ describe Mastodon::CLI::Cache do
 
     context 'with the `accounts` argument' do
       let(:arguments) { ['accounts'] }
+      let(:account_stat) { Fabricate(:account_stat) }
 
-      before_all do
-        @account_stat = Fabricate(:account_stat)
-        @account_stat.update(statuses_count: 123)
+      before do
+        account_stat.update(statuses_count: 123)
       end
 
       it 're-calculates account records in the cache' do
         expect { subject }
           .to output_results('OK')
 
-        expect(@account_stat.reload.statuses_count).to be_zero
+        expect(account_stat.reload.statuses_count).to be_zero
       end
     end
 
     context 'with the `statuses` argument' do
       let(:arguments) { ['statuses'] }
+      let(:status_stat) { Fabricate(:status_stat) }
 
-      before_all do
-        @status_stat = Fabricate(:status_stat)
-        @status_stat.update(replies_count: 123)
+      before do
+        status_stat.update(replies_count: 123)
       end
 
       it 're-calculates account records in the cache' do
         expect { subject }
           .to output_results('OK')
 
-        expect(@status_stat.reload.replies_count).to be_zero
+        expect(status_stat.reload.replies_count).to be_zero
       end
     end
 
