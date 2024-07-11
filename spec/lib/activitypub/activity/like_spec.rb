@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Like do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
-  let(:status)    { Fabricate(:status, account: recipient) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
+  let_it_be(:status)    { Fabricate(:status, account: recipient) }
 
   let(:json) do
     {
