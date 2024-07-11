@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'pundit/rspec'
@@ -7,8 +6,8 @@ require 'pundit/rspec'
 RSpec.describe SoftwareUpdatePolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Owner')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Owner')).account }
+  let_it_be(:john)  { Fabricate(:account) }
 
   permissions :index? do
     context 'when owner' do
