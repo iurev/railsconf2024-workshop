@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'parslet/rig/rspec'
 
 describe SearchQueryParser do
-  let(:parser) { described_class.new }
+  let_it_be(:parser) { described_class.new }
 
   context 'with term' do
     it 'consumes "hello"' do
