@@ -6,7 +6,7 @@ require 'mastodon/cli/main'
 describe Mastodon::CLI::Main do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
