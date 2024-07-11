@@ -7,8 +7,12 @@ describe Settings::Preferences::OtherController do
 
   let_it_be(:user) { Fabricate(:user, chosen_languages: []) }
 
-  before do
+  before(:all) do
     sign_in user, scope: :user
+  end
+
+  after(:all) do
+    sign_out user
   end
 
   describe 'GET #show' do
