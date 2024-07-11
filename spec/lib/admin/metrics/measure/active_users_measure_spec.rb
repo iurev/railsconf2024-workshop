@@ -13,14 +13,16 @@ describe Admin::Metrics::Measure::ActiveUsersMeasure do
     context 'with activity tracking records' do
       let_it_be(:users) { Fabricate.times(6, :user) }
 
-      before do
-        3.times do |i|
-          travel_to(2.days.ago) { record_login_activity(users[i]) }
+      before_all do
+        travel_to(2.days.ago) do
+          3.times { |i| ActivityTracker.record('activity:logins', users[i].id) }
         end
-        2.times do |i|
-          travel_to(1.day.ago) { record_login_activity(users[i + 3]) }
+        travel_to(1.day.ago) do
+          2.times { |i| ActivityTracker.record('activity:logins', users[i + 3].id) }
         end
-        travel_to(0.days.ago) { record_login_activity(users.last) }
+        travel_to(0.days.ago) do
+          ActivityTracker.record('activity:logins', users.last.id)
+        end
       end
 
       it 'returns correct activity tracker counts' do
@@ -32,10 +34,6 @@ describe Admin::Metrics::Measure::ActiveUsersMeasure do
             include(date: 1.day.ago.midnight.to_time, value: '2'),
             include(date: 0.days.ago.midnight.to_time, value: '1')
           )
-      end
-
-      def record_login_activity(user)
-        ActivityTracker.record('activity:logins', user.id)
       end
     end
   end
