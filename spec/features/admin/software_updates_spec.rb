@@ -3,10 +3,11 @@
 require 'rails_helper'
 
 describe 'finding software updates through the admin interface' do
-  before do
-    Fabricate(:software_update, version: '99.99.99', type: 'major', urgent: true, release_notes: 'https://github.com/mastodon/mastodon/releases/v99')
+  let_it_be(:software_update) { Fabricate(:software_update, version: '99.99.99', type: 'major', urgent: true, release_notes: 'https://github.com/mastodon/mastodon/releases/v99') }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Owner')) }
 
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Owner')), scope: :user
+  before do
+    sign_in user, scope: :user
   end
 
   it 'shows a link to the software updates page, which links to release notes' do
