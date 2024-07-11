@@ -7,6 +7,7 @@ RSpec.describe Admin::AccountAction do
   let_it_be(:target_account) { Fabricate(:account) }
 
   let(:account_action) { described_class.new }
+  let(:type) { 'disable' }
 
   describe '#save!' do
     subject { account_action.save! }
