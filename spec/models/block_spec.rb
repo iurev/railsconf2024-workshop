@@ -1,9 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Block do
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:target_account) { Fabricate(:account) }
+
   describe 'validations' do
     it 'is invalid without an account' do
       block = Fabricate.build(:block, account: nil)
@@ -19,8 +21,6 @@ RSpec.describe Block do
   end
 
   it 'removes blocking cache after creation' do
-    account = Fabricate(:account)
-    target_account = Fabricate(:account)
     Rails.cache.write("exclude_account_ids_for:#{account.id}", [])
     Rails.cache.write("exclude_account_ids_for:#{target_account.id}", [])
 
@@ -31,8 +31,6 @@ RSpec.describe Block do
   end
 
   it 'removes blocking cache after destruction' do
-    account = Fabricate(:account)
-    target_account = Fabricate(:account)
     block = described_class.create!(account: account, target_account: target_account)
     Rails.cache.write("exclude_account_ids_for:#{account.id}", [target_account.id])
     Rails.cache.write("exclude_account_ids_for:#{target_account.id}", [account.id])
