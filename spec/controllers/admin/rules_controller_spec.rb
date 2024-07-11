@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::RulesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
@@ -74,7 +73,7 @@ describe Admin::RulesController do
   end
 
   describe 'DELETE #destroy' do
-    let!(:rule) { Fabricate(:rule) }
+    let_it_be(:rule) { Fabricate(:rule) }
 
     it 'destroys the rule and redirects' do
       delete :destroy, params: { id: rule.id }
