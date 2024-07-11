@@ -1,10 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe PrivacyController do
+RSpec.describe PrivacyController, type: :controller do
   render_views
+
+  let_it_be(:controller) { described_class.new }
 
   describe 'GET #show' do
     it 'returns http success' do
