@@ -6,7 +6,7 @@ require 'mastodon/cli/canonical_email_blocks'
 describe Mastodon::CLI::CanonicalEmailBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
