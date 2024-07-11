@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Oauth::TokensController do
   describe 'POST #revoke' do
-    let!(:user) { Fabricate(:user) }
-    let!(:application) { Fabricate(:application, confidential: false) }
-    let!(:access_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, application: application) }
+    let_it_be(:user) { Fabricate(:user) }
+    let_it_be(:application) { Fabricate(:application, confidential: false) }
+    let_it_be(:access_token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, application: application) }
     let!(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
 
     before do
