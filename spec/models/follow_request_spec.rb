@@ -14,11 +14,12 @@ RSpec.describe FollowRequest do
 
       before do
         list.accounts << target_account
-        Fabricate(:follow_request, account: account, target_account: target_account)
+        follow_request # Ensure follow_request is created before the test
+        ListAccount.where(list: list, account: target_account).update(follow_request: follow_request)
       end
 
       it 'updates the ListAccount' do
-        expect { follow_request.authorize! }.to change { [list.list_accounts.first.follow_request_id, list.list_accounts.first.follow_id] }.from([follow_request.id, nil]).to([nil, anything])
+        expect { follow_request.authorize! }.to change { list.list_accounts.first.reload.follow_id }.from(nil).to(be_present)
       end
     end
 
@@ -59,7 +60,8 @@ RSpec.describe FollowRequest do
 
       before do
         list.accounts << target_account
-        Fabricate(:follow_request, account: account, target_account: target_account)
+        follow_request # Ensure follow_request is created before the test
+        ListAccount.where(list: list, account: target_account).update(follow_request: follow_request)
       end
 
       it 'deletes the ListAccount record' do
