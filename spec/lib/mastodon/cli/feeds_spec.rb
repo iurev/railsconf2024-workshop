@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/feeds'
