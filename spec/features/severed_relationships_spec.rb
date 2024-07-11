@@ -7,11 +7,11 @@ describe 'Severed relationships page' do
 
   describe 'GET severed_relationships#index' do
     let_it_be(:event) { Fabricate(:relationship_severance_event) }
-    let_it_be(:severed_relationships) { Fabricate.times(3, :severed_relationship, local_account: bob.account, relationship_severance_event: event) }
-    let_it_be(:account_event) { Fabricate(:account_relationship_severance_event, account: bob.account, relationship_severance_event: event) }
 
     before do
       as_a_logged_in_user
+      Fabricate.times(3, :severed_relationship, local_account: bob.account, relationship_severance_event: event)
+      Fabricate(:account_relationship_severance_event, account: bob.account, relationship_severance_event: event)
     end
 
     it 'returns http success' do
