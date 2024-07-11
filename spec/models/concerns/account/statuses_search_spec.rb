@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Account::StatusesSearch do
-  let(:account) { Fabricate(:account, indexable: indexable) }
+  let_it_be(:account) { Fabricate(:account) }
 
-  before do
+  before_all do
     allow(Chewy).to receive(:enabled?).and_return(true)
   end
 
@@ -17,7 +16,7 @@ describe Account::StatusesSearch do
     end
 
     context 'when account is indexable' do
-      let(:indexable) { true }
+      before { account.update!(indexable: true) }
 
       it 'enqueues add_to_public_statuses_index and not to remove_from_public_statuses_index' do
         account.enqueue_update_public_statuses_index
@@ -27,7 +26,7 @@ describe Account::StatusesSearch do
     end
 
     context 'when account is not indexable' do
-      let(:indexable) { false }
+      before { account.update!(indexable: false) }
 
       it 'enqueues remove_from_public_statuses_index and not to add_to_public_statuses_index' do
         account.enqueue_update_public_statuses_index
@@ -38,10 +37,10 @@ describe Account::StatusesSearch do
   end
 
   describe '#enqueue_add_to_public_statuses_index' do
-    let(:indexable) { true }
     let(:worker) { AddToPublicStatusesIndexWorker }
 
     before do
+      account.update!(indexable: true)
       allow(worker).to receive(:perform_async)
     end
 
@@ -52,10 +51,10 @@ describe Account::StatusesSearch do
   end
 
   describe '#enqueue_remove_from_public_statuses_index' do
-    let(:indexable) { false }
     let(:worker) { RemoveFromPublicStatusesIndexWorker }
 
     before do
+      account.update!(indexable: false)
       allow(worker).to receive(:perform_async)
     end
 
