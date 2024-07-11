@@ -1,13 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Favourite do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:base_status) { Fabricate(:status, reblog: nil) }
 
   context 'when status is a reblog' do
-    let(:reblog) { Fabricate(:status, reblog: nil) }
+    let(:reblog) { base_status }
     let(:status) { Fabricate(:status, reblog: reblog) }
 
     it 'invalidates if the reblogged status is already a favourite' do
@@ -22,7 +22,7 @@ RSpec.describe Favourite do
   end
 
   context 'when status is not a reblog' do
-    let(:status) { Fabricate(:status, reblog: nil) }
+    let(:status) { base_status }
 
     it 'saves with the specified status' do
       favourite = described_class.create!(account: account, status: status)
