@@ -20,7 +20,7 @@ describe Oauth::AuthorizedApplicationsController do
     context 'when signed in' do
       let_it_be(:user) { Fabricate(:user) }
 
-      before_all do
+      before do
         sign_in user, scope: :user
       end
 
@@ -53,11 +53,8 @@ describe Oauth::AuthorizedApplicationsController do
     let!(:access_token) { Fabricate(:accessible_access_token, application: application, resource_owner_id: user.id) }
     let!(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
 
-    before_all do
-      sign_in user, scope: :user
-    end
-
     before do
+      sign_in user, scope: :user
       post :destroy, params: { id: application.id }
     end
 
