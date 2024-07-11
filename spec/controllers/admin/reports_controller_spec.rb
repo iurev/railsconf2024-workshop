@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::ReportsController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:report) { Fabricate(:report) }
 
-  before do
+  before_all do
     sign_in user, scope: :user
   end
 
@@ -41,8 +41,6 @@ describe Admin::ReportsController do
 
   describe 'GET #show' do
     it 'renders report' do
-      report = Fabricate(:report)
-
       get :show, params: { id: report }
 
       expect(assigns(:report)).to eq report
@@ -52,8 +50,6 @@ describe Admin::ReportsController do
 
   describe 'POST #resolve' do
     it 'resolves the report' do
-      report = Fabricate(:report)
-
       put :resolve, params: { id: report }
       expect(response).to redirect_to(admin_reports_path)
       report.reload
@@ -65,8 +61,6 @@ describe Admin::ReportsController do
 
   describe 'POST #reopen' do
     it 'reopens the report' do
-      report = Fabricate(:report)
-
       put :reopen, params: { id: report }
       expect(response).to redirect_to(admin_report_path(report))
       report.reload
@@ -78,8 +72,6 @@ describe Admin::ReportsController do
 
   describe 'POST #assign_to_self' do
     it 'reopens the report' do
-      report = Fabricate(:report)
-
       put :assign_to_self, params: { id: report }
       expect(response).to redirect_to(admin_report_path(report))
       report.reload
@@ -90,8 +82,6 @@ describe Admin::ReportsController do
 
   describe 'POST #unassign' do
     it 'reopens the report' do
-      report = Fabricate(:report)
-
       put :unassign, params: { id: report }
       expect(response).to redirect_to(admin_report_path(report))
       report.reload
