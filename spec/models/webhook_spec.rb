@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Webhook do
-  let(:webhook) { Fabricate(:webhook) }
+  let_it_be(:webhook) { Fabricate(:webhook) }
 
   describe 'Validations' do
     it 'requires presence of events' do
