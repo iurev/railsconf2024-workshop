@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -43,9 +42,9 @@ describe Localized do
   end
 
   context 'with a user with valid locale has signed in' do
-    it "sets user's locale" do
-      user = Fabricate(:user, locale: :ca)
+    let_it_be(:user) { Fabricate(:user, locale: :ca) }
 
+    it "sets user's locale" do
       sign_in(user)
       get 'success'
 
@@ -54,8 +53,9 @@ describe Localized do
   end
 
   context 'with a user with invalid locale has signed in' do
+    let_it_be(:user) { Fabricate.build(:user, locale: :invalid) }
+
     before do
-      user = Fabricate.build(:user, locale: :invalid)
       user.save!(validate: false)
       sign_in(user)
     end
