@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe RequestPool do
-  subject { described_class.new }
+  let_it_be(:subject) { described_class.new }
 
   describe '#with' do
     it 'returns a HTTP client for a host' do
