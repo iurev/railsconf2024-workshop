@@ -4,8 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Trends::Tags do
   let_it_be(:at_time) { DateTime.new(2021, 11, 14, 10, 15, 0) }
-
-  subject { described_class.new(threshold: 5, review_threshold: 10) }
+  let_it_be(:subject) { described_class.new(threshold: 5, review_threshold: 10) }
 
   describe '#add' do
     let_it_be(:tag) { Fabricate(:tag) }
@@ -36,7 +35,8 @@ RSpec.describe Trends::Tags do
     let_it_be(:tag_dogs) { Fabricate(:tag, name: 'DogsOfMastodon', trendable: true) }
     let_it_be(:tag_ocs) { Fabricate(:tag, name: 'OCs', trendable: true) }
 
-    before do
+    before(:all) do
+      subject = described_class.new(threshold: 5, review_threshold: 10)
       2.times  { |i| subject.add(tag_cats, i, yesterday) }
       13.times { |i| subject.add(tag_ocs, i, yesterday) }
       16.times { |i| subject.add(tag_cats, i, today) }
