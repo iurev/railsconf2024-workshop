@@ -7,7 +7,7 @@ RSpec.describe FollowRequest do
   let_it_be(:target_account) { Fabricate(:account) }
 
   describe '#authorize!' do
-    let_it_be(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
+    let(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
 
     context 'when the to-be-followed person has been added to a list' do
       let_it_be(:list) { Fabricate(:list, account: account) }
@@ -36,14 +36,14 @@ RSpec.describe FollowRequest do
     end
 
     it 'correctly passes show_reblogs when true' do
-      follow_request = Fabricate.create(:follow_request, show_reblogs: true)
+      follow_request = Fabricate(:follow_request, show_reblogs: true)
       follow_request.authorize!
       target = follow_request.target_account
       expect(follow_request.account.muting_reblogs?(target)).to be false
     end
 
     it 'correctly passes show_reblogs when false' do
-      follow_request = Fabricate.create(:follow_request, show_reblogs: false)
+      follow_request = Fabricate(:follow_request, show_reblogs: false)
       follow_request.authorize!
       target = follow_request.target_account
       expect(follow_request.account.muting_reblogs?(target)).to be true
@@ -51,7 +51,7 @@ RSpec.describe FollowRequest do
   end
 
   describe '#reject!' do
-    let_it_be(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
+    let(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
 
     context 'when the to-be-followed person has been added to a list' do
       let_it_be(:list) { Fabricate(:list, account: account) }
