@@ -2,18 +2,16 @@
 
 require 'rails_helper'
 
-describe Admin::RelationshipsController do
+describe Admin::RelationshipsController, :account do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
   end
 
   describe 'GET #index' do
-    let(:account) { Fabricate(:account) }
-
     it 'returns http success' do
       get :index, params: { account_id: account.id }
 
