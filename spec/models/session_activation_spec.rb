@@ -59,12 +59,10 @@ RSpec.describe SessionActivation do
       end
 
       context 'when id does not exist as session_id' do
-        before do
-          session_activation.update!(session_id: '2')
-        end
+        let(:non_existent_id) { 'non_existent_id' }
 
         it 'returns false' do
-          expect(described_class.active?(id)).to be false
+          expect(described_class.active?(non_existent_id)).to be false
         end
       end
     end
