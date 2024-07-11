@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -16,7 +15,7 @@ RSpec.describe Admin::AccountModerationNotesHelper do
     end
 
     context 'with account' do
-      let(:account) { Fabricate(:account) }
+      let_it_be(:account) { Fabricate(:account) }
 
       it 'calls #link_to' do
         allow(helper).to receive(:link_to)
@@ -42,7 +41,7 @@ RSpec.describe Admin::AccountModerationNotesHelper do
     end
 
     context 'with account' do
-      let(:account) { Fabricate(:account) }
+      let_it_be(:account) { Fabricate(:account) }
 
       it 'calls #link_to' do
         result = helper.admin_account_inline_link_to(account)
