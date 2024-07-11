@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'webauthn/fake_client'
@@ -7,10 +6,11 @@ require 'webauthn/fake_client'
 describe Admin::Users::TwoFactorAuthenticationsController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+    sign_in admin, scope: :user
   end
 
   describe 'DELETE #destroy' do
