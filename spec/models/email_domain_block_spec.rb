@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,9 +11,9 @@ RSpec.describe EmailDomainBlock do
 
       context 'with a top level domain' do
         let(:domain) { 'example.com' }
+        let_it_be(:email_domain_block) { Fabricate(:email_domain_block, domain: 'example.com') }
 
         it 'returns true if the domain is blocked' do
-          Fabricate(:email_domain_block, domain: 'example.com')
           expect(described_class.block?(input)).to be true
         end
 
@@ -26,9 +25,9 @@ RSpec.describe EmailDomainBlock do
 
       context 'with a subdomain' do
         let(:domain) { 'mail.example.com' }
+        let_it_be(:email_domain_block) { Fabricate(:email_domain_block, domain: 'example.com') }
 
         it 'returns true if it is a subdomain of a blocked domain' do
-          Fabricate(:email_domain_block, domain: 'example.com')
           expect(described_class.block?(input)).to be true
         end
       end
@@ -36,9 +35,9 @@ RSpec.describe EmailDomainBlock do
 
     context 'when given an array of domains' do
       let(:input) { %w(foo.com mail.foo.com) }
+      let_it_be(:email_domain_block) { Fabricate(:email_domain_block, domain: 'mail.foo.com') }
 
       it 'returns true if the domain is blocked' do
-        Fabricate(:email_domain_block, domain: 'mail.foo.com')
         expect(described_class.block?(input)).to be true
       end
     end
