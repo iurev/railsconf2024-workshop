@@ -205,21 +205,21 @@ RSpec.describe Tag do
     let_it_be(:tag) { Fabricate(:tag, name: 'match') }
     let_it_be(:miss_tag) { Fabricate(:tag, name: 'miss') }
     let_it_be(:similar_tag) { Fabricate(:tag, name: 'matchlater', reviewed_at: Time.now.utc) }
-    let_it_be(:exact_tag) { Fabricate(:tag, name: 'match', reviewed_at: Time.now.utc) }
 
     it 'finds tag records with matching names' do
       results = described_class.search_for('match')
-      expect(results).to eq [tag]
+      expect(results).to eq [tag, similar_tag]
     end
 
     it 'finds tag records in case insensitive' do
       results = described_class.search_for('MATCH')
-      expect(results).to eq [tag]
+      expect(results).to eq [tag, similar_tag]
     end
 
     it 'finds the exact matching tag as the first item' do
       results = described_class.search_for('match')
-      expect(results).to eq [exact_tag, similar_tag]
+      expect(results.first).to eq tag
+      expect(results.second).to eq similar_tag
     end
   end
 end
