@@ -26,7 +26,7 @@ RSpec.describe ActivityPub::Activity::Add do
     end
 
     context 'when status was not known before' do
-      let_it_be(:service_stub) { instance_double(ActivityPub::FetchRemoteStatusService) }
+      let(:service_stub) { instance_double(ActivityPub::FetchRemoteStatusService) }
 
       let(:json) do
         {
@@ -39,7 +39,7 @@ RSpec.describe ActivityPub::Activity::Add do
         }.with_indifferent_access
       end
 
-      before_all do
+      before do
         allow(ActivityPub::FetchRemoteStatusService).to receive(:new).and_return(service_stub)
       end
 
