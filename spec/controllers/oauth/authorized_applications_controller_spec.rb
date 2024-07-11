@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -19,8 +18,10 @@ describe Oauth::AuthorizedApplicationsController do
     end
 
     context 'when signed in' do
-      before do
-        sign_in Fabricate(:user), scope: :user
+      let_it_be(:user) { Fabricate(:user) }
+
+      before_all do
+        sign_in user, scope: :user
       end
 
       it 'returns http success' do
@@ -47,13 +48,16 @@ describe Oauth::AuthorizedApplicationsController do
   end
 
   describe 'DELETE #destroy' do
-    let!(:user) { Fabricate(:user) }
-    let!(:application) { Fabricate(:application) }
+    let_it_be(:user) { Fabricate(:user) }
+    let_it_be(:application) { Fabricate(:application) }
     let!(:access_token) { Fabricate(:accessible_access_token, application: application, resource_owner_id: user.id) }
     let!(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
 
-    before do
+    before_all do
       sign_in user, scope: :user
+    end
+
+    before do
       post :destroy, params: { id: application.id }
     end
 
