@@ -64,7 +64,7 @@ RSpec.describe SessionActivation do
         end
 
         it 'returns false' do
-          expect(subject).to be false
+          expect(described_class.active?(id)).to be false
         end
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe SessionActivation do
       described_class.purge_old
 
       expect { oldest_session_activation.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      expect { newest_session_activation.reload }.to_not raise_error
+      expect { newest_session_activation.reload }.not_to raise_error
     end
   end
 
@@ -132,7 +132,7 @@ RSpec.describe SessionActivation do
       described_class.exclusive(session_activation.session_id)
 
       expect { unwanted_session_activation.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      expect { session_activation.reload }.to_not raise_error
+      expect { session_activation.reload }.not_to raise_error
     end
   end
 end
