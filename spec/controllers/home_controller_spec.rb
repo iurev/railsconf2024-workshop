@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -17,7 +16,7 @@ RSpec.describe HomeController do
     end
 
     context 'when signed in' do
-      let(:user) { Fabricate(:user) }
+      let_it_be(:user) { Fabricate(:user) }
 
       before do
         sign_in(user)
