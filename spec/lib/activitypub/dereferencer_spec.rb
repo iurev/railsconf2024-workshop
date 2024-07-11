@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe ActivityPub::Dereferencer do
   let_it_be(:object) { { '@context': 'https://www.w3.org/ns/activitystreams', id: 'https://example.com/foo', type: 'Note', content: 'Hoge' } }
+  let_it_be(:signature_actor) { Fabricate(:account) }
   let(:permitted_origin) { 'https://example.com' }
-  let(:signature_actor) { nil }
   let(:uri) { nil }
 
   before do
@@ -23,8 +23,6 @@ RSpec.describe ActivityPub::Dereferencer do
       end
 
       context 'with signature account' do
-        let(:signature_actor) { Fabricate(:account) }
-
         it 'makes signed request' do
           subject
           expect(a_request(:get, 'https://example.com/foo').with { |req| req.headers['Signature'].present? }).to have_been_made
@@ -54,8 +52,6 @@ RSpec.describe ActivityPub::Dereferencer do
       end
 
       context 'with signature account' do
-        let(:signature_actor) { Fabricate(:account) }
-
         it 'makes signed request' do
           subject
           expect(a_request(:get, 'https://example.com/foo').with { |req| req.headers['Signature'].present? && req.headers['Authorization'] == 'Bearer hoge' }).to have_been_made
