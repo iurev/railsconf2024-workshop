@@ -1,13 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Admin::ExportDomainAllowsController do
   render_views
 
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+
   before do
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+    sign_in admin, scope: :user
   end
 
   describe 'GET #new' do
@@ -19,10 +20,10 @@ RSpec.describe Admin::ExportDomainAllowsController do
   end
 
   describe 'GET #export' do
-    it 'renders instances' do
-      Fabricate(:domain_allow, domain: 'good.domain')
-      Fabricate(:domain_allow, domain: 'better.domain')
+    let_it_be(:domain_allow1) { Fabricate(:domain_allow, domain: 'good.domain') }
+    let_it_be(:domain_allow2) { Fabricate(:domain_allow, domain: 'better.domain') }
 
+    it 'renders instances' do
       get :export, params: { format: :csv }
       expect(response).to have_http_status(200)
       expect(response.body).to eq(domain_allows_csv_file)
