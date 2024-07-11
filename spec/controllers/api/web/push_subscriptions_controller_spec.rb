@@ -17,12 +17,10 @@ describe Api::Web::PushSubscriptionsController do
       },
     }
   end
-
-  let(:alerts_payload) do
+  let_it_be(:alerts_payload) do
     {
       data: {
         policy: 'all',
-
         alerts: {
           follow: true,
           follow_request: false,
