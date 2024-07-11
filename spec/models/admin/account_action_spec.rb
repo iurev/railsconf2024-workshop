@@ -11,16 +11,17 @@ RSpec.describe Admin::AccountAction do
   describe '#save!' do
     subject { account_action.save! }
 
-    before_all do
-      account_action = described_class.new
+    before do
       account_action.assign_attributes(
-        type: 'disable',
+        type: type,
         current_account: account,
         target_account: target_account
       )
     end
 
     context 'when type is "disable"' do
+      let(:type) { 'disable' }
+
       it 'disable user' do
         subject
         expect(target_account.user).to be_disabled
@@ -28,7 +29,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is "silence"' do
-      before { account_action.type = 'silence' }
+      let(:type) { 'silence' }
 
       it 'silences account' do
         subject
@@ -37,7 +38,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is "suspend"' do
-      before { account_action.type = 'suspend' }
+      let(:type) { 'suspend' }
 
       it 'suspends account' do
         subject
@@ -54,7 +55,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is invalid' do
-      before { account_action.type = 'whatever' }
+      let(:type) { 'whatever' }
 
       it 'raises an invalid record error' do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
@@ -62,7 +63,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is not given' do
-      before { account_action.type = '' }
+      let(:type) { '' }
 
       it 'raises an invalid record error' do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
