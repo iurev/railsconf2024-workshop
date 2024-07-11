@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'I18n' do
   describe 'Pluralizing locale translations' do
-    let_it_be(:subject) { I18n.t('generic.validation_errors', count: 1) }
+    subject { I18n.t('generic.validation_errors', count: 1) }
 
     context 'with the `en` locale which has `one` and `other` plural values' do
       around do |example|
