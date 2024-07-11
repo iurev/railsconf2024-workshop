@@ -3,12 +3,14 @@
 require 'rails_helper'
 
 describe WebfingerResource do
-  around do |example|
-    before_local = Rails.configuration.x.local_domain
-    before_web = Rails.configuration.x.web_domain
-    example.run
-    Rails.configuration.x.local_domain = before_local
-    Rails.configuration.x.web_domain = before_web
+  before(:context) do
+    @before_local = Rails.configuration.x.local_domain
+    @before_web = Rails.configuration.x.web_domain
+  end
+
+  after(:context) do
+    Rails.configuration.x.local_domain = @before_local
+    Rails.configuration.x.web_domain = @before_web
   end
 
   describe '#username' do
