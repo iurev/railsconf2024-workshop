@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe ThemeHelper do
   describe 'theme_style_tags' do
-    let(:result) { helper.theme_style_tags(theme) }
+    let_it_be(:result_system) { helper.theme_style_tags('system') }
+    let_it_be(:result_contrast) { helper.theme_style_tags('contrast') }
 
     context 'when using system theme' do
-      let(:theme) { 'system' }
+      let(:result) { result_system }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -25,7 +25,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:theme) { 'contrast' }
+      let(:result) { result_contrast }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -38,10 +38,12 @@ describe ThemeHelper do
   end
 
   describe 'theme_color_tags' do
-    let(:result) { helper.theme_color_tags(theme) }
+    let_it_be(:result_system) { helper.theme_color_tags('system') }
+    let_it_be(:result_light) { helper.theme_color_tags('mastodon-light') }
+    let_it_be(:result_contrast) { helper.theme_color_tags('contrast') }
 
     context 'when using system theme' do
-      let(:theme) { 'system' }
+      let(:result) { result_system }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -58,7 +60,7 @@ describe ThemeHelper do
     end
 
     context 'when using mastodon-light theme' do
-      let(:theme) { 'mastodon-light' }
+      let(:result) { result_light }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -69,7 +71,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:theme) { 'contrast' }
+      let(:result) { result_contrast }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
