@@ -52,11 +52,12 @@ describe RequestPool do
       end
 
       it 'closes the connections' do
-        subject.with('http://example.com') do |http_client|
+        fresh_subject = described_class.new
+        fresh_subject.with('http://example.com') do |http_client|
           http_client.get('/').flush
         end
 
-        expect { reaper_observes_idle_timeout }.to change(subject, :size).from(1).to(0)
+        expect { reaper_observes_idle_timeout }.to change(fresh_subject, :size).from(1).to(0)
       end
 
       def reaper_observes_idle_timeout
