@@ -6,15 +6,17 @@ RSpec.describe AccountMigration do
   describe 'validations' do
     subject { described_class.new(account: source_account, acct: target_acct) }
 
-    let(:source_account) { Fabricate(:account) }
+    let_it_be(:source_account) { Fabricate(:account) }
     let(:target_acct)    { target_account.acct }
 
     context 'with valid properties' do
-      let(:target_account) { Fabricate(:account, username: 'target', domain: 'remote.org') }
+      let_it_be(:target_account) { Fabricate(:account, username: 'target', domain: 'remote.org') }
+
+      before_all do
+        target_account.aliases.create!(acct: source_account.acct)
+      end
 
       before do
-        target_account.aliases.create!(acct: source_account.acct)
-
         service_double = instance_double(ResolveAccountService)
         allow(ResolveAccountService).to receive(:new).and_return(service_double)
         allow(service_double).to receive(:call).with(target_acct, anything).and_return(target_account)
