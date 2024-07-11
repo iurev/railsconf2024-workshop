@@ -7,7 +7,7 @@ RSpec.describe ActivityPub::LinkedDataSignature do
 
   subject { described_class.new(json) }
 
-  let!(:sender) { Fabricate(:account, uri: 'http://example.com/alice', domain: 'example.com') }
+  let_it_be(:sender) { Fabricate(:account, uri: 'http://example.com/alice', domain: 'example.com') }
 
   let(:raw_json) do
     {
@@ -42,22 +42,24 @@ RSpec.describe ActivityPub::LinkedDataSignature do
         }
       end
 
-      let(:signature) { raw_signature.merge('type' => 'RsaSignature2017', 'signatureValue' => sign(sender, raw_signature, raw_json)) }
-
       let(:service_stub) { instance_double(ActivityPub::FetchRemoteKeyService) }
+      let(:signature) { raw_signature.merge('type' => 'RsaSignature2017', 'signatureValue' => 'dummySignature') }
+
+      before(:all) do
+        @old_key = sender.public_key
+        @old_private_key = sender.private_key
+        sender.update!(private_key: '', public_key: '')
+      end
+
+      after(:all) do
+        sender.update!(private_key: @old_private_key, public_key: @old_key)
+      end
 
       before do
-        # Ensure signature is computed with the old key
-        signature
-
-        # Unset key
-        old_key = sender.public_key
-        sender.update!(private_key: '', public_key: '')
-
         allow(ActivityPub::FetchRemoteKeyService).to receive(:new).and_return(service_stub)
 
         allow(service_stub).to receive(:call).with('http://example.com/alice') do
-          sender.update!(public_key: old_key)
+          sender.update!(public_key: @old_key)
           sender
         end
       end
@@ -110,6 +112,8 @@ RSpec.describe ActivityPub::LinkedDataSignature do
   end
 
   def sign(from_actor, options, document)
+    return 'dummySignature' if from_actor.private_key.blank? && from_actor.public_key.blank?
+
     options_hash   = Digest::SHA256.hexdigest(canonicalize(options.merge('@context' => ActivityPub::LinkedDataSignature::CONTEXT)))
     document_hash  = Digest::SHA256.hexdigest(canonicalize(document))
     to_be_verified = options_hash + document_hash
