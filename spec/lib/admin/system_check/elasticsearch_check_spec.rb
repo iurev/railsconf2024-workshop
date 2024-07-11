@@ -1,18 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::SystemCheck::ElasticsearchCheck do
   subject(:check) { described_class.new(user) }
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   it_behaves_like 'a check available to devops users'
 
   describe 'pass?' do
     context 'when chewy is enabled' do
-      before do
+      before_all do
         allow(Chewy).to receive(:enabled?).and_return(true)
         allow(Chewy.client.cluster).to receive(:health).and_return({ 'status' => 'green', 'number_of_nodes' => 1 })
         allow(Chewy.client.indices).to receive_messages(get_mapping: {
@@ -86,7 +85,7 @@ describe Admin::SystemCheck::ElasticsearchCheck do
   end
 
   describe 'message' do
-    before do
+    before_all do
       allow(Chewy).to receive(:enabled?).and_return(true)
       allow(Chewy.client.cluster).to receive(:health).and_return({ 'status' => 'green', 'number_of_nodes' => 1 })
       allow(Chewy.client.indices).to receive(:get_mapping).and_return({
