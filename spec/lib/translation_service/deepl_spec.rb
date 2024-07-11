@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe TranslationService::DeepL do
-  subject(:service) { described_class.new(plan, 'my-api-key') }
+  let_it_be(:service) { described_class.new(plan, 'my-api-key') }
 
   let(:plan) { 'advanced' }
 
