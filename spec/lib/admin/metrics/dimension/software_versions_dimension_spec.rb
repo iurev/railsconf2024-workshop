@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Metrics::Dimension::SoftwareVersionsDimension do
-  subject { described_class.new(start_at, end_at, limit, params) }
+  let_it_be(:start_at) { 2.days.ago }
+  let_it_be(:end_at) { Time.now.utc }
+  let_it_be(:limit) { 10 }
+  let_it_be(:params) { ActionController::Parameters.new }
 
-  let(:start_at) { 2.days.ago }
-  let(:end_at) { Time.now.utc }
-  let(:limit) { 10 }
-  let(:params) { ActionController::Parameters.new }
+  subject { described_class.new(start_at, end_at, limit, params) }
 
   describe '#data' do
     it 'reports on the running software' do
