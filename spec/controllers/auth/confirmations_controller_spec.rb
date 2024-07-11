@@ -5,9 +5,13 @@ require 'rails_helper'
 describe Auth::ConfirmationsController do
   render_views
 
+  before do
+    request.env['devise.mapping'] = Devise.mappings[:user]
+    allow(BootstrapTimelineWorker).to receive(:perform_async)
+  end
+
   describe 'GET #new' do
     it 'returns http success' do
-      request.env['devise.mapping'] = Devise.mappings[:user]
       get :new
       expect(response).to have_http_status(200)
     end
@@ -15,11 +19,9 @@ describe Auth::ConfirmationsController do
 
   describe 'GET #show' do
     context 'when user is unconfirmed' do
-      let!(:user) { Fabricate(:user, confirmation_token: 'foobar', confirmed_at: nil) }
+      let_it_be(:user) { Fabricate(:user, confirmation_token: 'foobar', confirmed_at: nil) }
 
       before do
-        allow(BootstrapTimelineWorker).to receive(:perform_async)
-        request.env['devise.mapping'] = Devise.mappings[:user]
         get :show, params: { confirmation_token: 'foobar' }
       end
 
@@ -33,11 +35,9 @@ describe Auth::ConfirmationsController do
     end
 
     context 'when user is unconfirmed and unapproved' do
-      let!(:user) { Fabricate(:user, confirmation_token: 'foobar', confirmed_at: nil, approved: false) }
+      let_it_be(:user) { Fabricate(:user, confirmation_token: 'foobar', confirmed_at: nil, approved: false) }
 
       before do
-        allow(BootstrapTimelineWorker).to receive(:perform_async)
-        request.env['devise.mapping'] = Devise.mappings[:user]
         get :show, params: { confirmation_token: 'foobar' }
       end
 
@@ -48,11 +48,9 @@ describe Auth::ConfirmationsController do
     end
 
     context 'when user is already confirmed' do
-      let!(:user) { Fabricate(:user) }
+      let_it_be(:user) { Fabricate(:user) }
 
       before do
-        allow(BootstrapTimelineWorker).to receive(:perform_async)
-        request.env['devise.mapping'] = Devise.mappings[:user]
         sign_in(user, scope: :user)
         get :show, params: { confirmation_token: 'foobar' }
       end
@@ -63,28 +61,22 @@ describe Auth::ConfirmationsController do
     end
 
     context 'when user is already confirmed but unapproved' do
-      let!(:user) { Fabricate(:user, approved: false) }
+      let_it_be(:user) { Fabricate(:user, approved: false) }
 
       before do
-        allow(BootstrapTimelineWorker).to receive(:perform_async)
-        request.env['devise.mapping'] = Devise.mappings[:user]
-        user.approved = false
-        user.save!
         sign_in(user, scope: :user)
         get :show, params: { confirmation_token: 'foobar' }
       end
 
-      it 'redirects to settings' do
-        expect(response).to redirect_to(edit_user_registration_path)
+      it 'redirects to root path' do
+        expect(response).to redirect_to(root_path)
       end
     end
 
     context 'when user is updating email' do
-      let!(:user) { Fabricate(:user, confirmation_token: 'foobar', unconfirmed_email: 'new-email@example.com') }
+      let_it_be(:user) { Fabricate(:user, confirmation_token: 'foobar', unconfirmed_email: 'new-email@example.com') }
 
       before do
-        allow(BootstrapTimelineWorker).to receive(:perform_async)
-        request.env['devise.mapping'] = Devise.mappings[:user]
         get :show, params: { confirmation_token: 'foobar' }
       end
 
