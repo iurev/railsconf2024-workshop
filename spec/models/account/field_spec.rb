@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Account::Field do
-  let_it_be(:account) { instance_double(Account, local?: true) }
+  let(:account) { instance_double(Account, local?: true) }
 
   describe '#verified?' do
     subject { described_class.new(account, 'name' => 'Foo', 'value' => 'Bar', 'verified_at' => verified_at) }
@@ -105,7 +105,7 @@ RSpec.describe Account::Field do
     end
 
     context 'with remote accounts' do
-      let_it_be(:account) { instance_double(Account, local?: false) }
+      let(:account) { instance_double(Account, local?: false) }
 
       context 'with a link' do
         let(:value) { '<a href="https://www.patreon.com/mastodon" target="_blank" rel="nofollow noopener noreferrer me"><span class="invisible">https://www.</span><span class="">patreon.com/mastodon</span><span class="invisible"></span></a>' }
