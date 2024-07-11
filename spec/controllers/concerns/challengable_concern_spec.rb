@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -25,8 +24,10 @@ RSpec.describe ChallengableConcern do
     end
   end
 
+  let_it_be(:password) { 'foobar12345' }
+
   context 'with a no-password user' do
-    let(:user) { Fabricate(:user, external: true, password: nil) }
+    let_it_be(:user) { Fabricate(:user, external: true, password: nil) }
 
     before do
       sign_in user
@@ -50,8 +51,7 @@ RSpec.describe ChallengableConcern do
   end
 
   context 'with recent challenge in session' do
-    let(:password) { 'foobar12345' }
-    let(:user) { Fabricate(:user, password: password) }
+    let_it_be(:user) { Fabricate(:user, password: password) }
 
     before do
       sign_in user
@@ -75,8 +75,7 @@ RSpec.describe ChallengableConcern do
   end
 
   context 'with a password user' do
-    let(:password) { 'foobar12345' }
-    let(:user) { Fabricate(:user, password: password) }
+    let_it_be(:user) { Fabricate(:user, password: password) }
 
     before do
       sign_in user
