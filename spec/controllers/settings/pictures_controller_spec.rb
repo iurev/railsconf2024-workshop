@@ -7,7 +7,7 @@ describe Settings::PicturesController do
 
   let_it_be(:user) { Fabricate(:user) }
 
-  before_all do
+  before do
     sign_in user, scope: :user
   end
 
