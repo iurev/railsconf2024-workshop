@@ -30,10 +30,10 @@ describe StatusesHelper do
   end
 
   describe 'fa_visibility_icon' do
-    let_it_be(:public_status) { Status.new(visibility: 'public') }
-    let_it_be(:unlisted_status) { Status.new(visibility: 'unlisted') }
-    let_it_be(:private_status) { Status.new(visibility: 'private') }
-    let_it_be(:direct_status) { Status.new(visibility: 'direct') }
+    let(:public_status) { Status.new(visibility: 'public') }
+    let(:unlisted_status) { Status.new(visibility: 'unlisted') }
+    let(:private_status) { Status.new(visibility: 'private') }
+    let(:direct_status) { Status.new(visibility: 'direct') }
 
     it 'returns the correct fa icon for public status' do
       expect(helper.fa_visibility_icon(public_status)).to match('fa-globe')
