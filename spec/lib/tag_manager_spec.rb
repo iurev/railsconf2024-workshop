@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,13 +6,13 @@ RSpec.describe TagManager do
   describe '#local_domain?' do
     # The following comparisons MUST be case-insensitive.
 
-    around do |example|
-      original_local_domain = Rails.configuration.x.local_domain
+    before_all do
+      @original_local_domain = Rails.configuration.x.local_domain
       Rails.configuration.x.local_domain = 'domain.example.com'
+    end
 
-      example.run
-
-      Rails.configuration.x.local_domain = original_local_domain
+    after_all do
+      Rails.configuration.x.local_domain = @original_local_domain
     end
 
     it 'returns true for nil' do
@@ -32,13 +31,13 @@ RSpec.describe TagManager do
   describe '#web_domain?' do
     # The following comparisons MUST be case-insensitive.
 
-    around do |example|
-      original_web_domain = Rails.configuration.x.web_domain
+    before_all do
+      @original_web_domain = Rails.configuration.x.web_domain
       Rails.configuration.x.web_domain = 'domain.example.com'
+    end
 
-      example.run
-
-      Rails.configuration.x.web_domain = original_web_domain
+    after_all do
+      Rails.configuration.x.web_domain = @original_web_domain
     end
 
     it 'returns true for nil' do
@@ -65,10 +64,12 @@ RSpec.describe TagManager do
   end
 
   describe '#local_url?' do
-    around do |example|
-      original_web_domain = Rails.configuration.x.web_domain
-      example.run
-      Rails.configuration.x.web_domain = original_web_domain
+    before_all do
+      @original_web_domain = Rails.configuration.x.web_domain
+    end
+
+    after_all do
+      Rails.configuration.x.web_domain = @original_web_domain
     end
 
     it 'returns true if the normalized string with port is local URL' do
