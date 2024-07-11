@@ -7,8 +7,6 @@ RSpec.describe RemoteFollow do
     stub_request(:get, 'https://quitter.no/.well-known/webfinger?resource=acct:gargron@quitter.no').to_return(request_fixture('webfinger.txt'))
   end
 
-  let_it_be(:account) { Fabricate(:account, username: 'alice') }
-
   let(:attrs)         { nil }
   let(:remote_follow) { described_class.new(attrs) }
 
@@ -55,11 +53,12 @@ RSpec.describe RemoteFollow do
   describe '#subscribe_address_for' do
     subject { remote_follow.subscribe_address_for(account) }
 
+    let(:account) { Fabricate(:account, username: 'alice') }
+    let(:attrs) { { acct: 'gargron@quitter.no' } }
+
     before do
       remote_follow.valid?
     end
-
-    let(:attrs) { { acct: 'gargron@quitter.no' } }
 
     it 'returns subscribe address' do
       expect(subject).to eq 'https://quitter.no/main/ostatussub?profile=https%3A%2F%2Fcb6e6126.ngrok.io%2Fusers%2Falice'
