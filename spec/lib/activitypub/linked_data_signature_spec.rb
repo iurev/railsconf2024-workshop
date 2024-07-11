@@ -43,14 +43,15 @@ RSpec.describe ActivityPub::LinkedDataSignature do
       end
 
       let(:service_stub) { instance_double(ActivityPub::FetchRemoteKeyService) }
+      let(:signature) { raw_signature.merge('type' => 'RsaSignature2017', 'signatureValue' => 'dummySignature') }
 
-      before_all do
+      before(:all) do
         @old_key = sender.public_key
         @old_private_key = sender.private_key
         sender.update!(private_key: nil, public_key: nil)
       end
 
-      after_all do
+      after(:all) do
         sender.update!(private_key: @old_private_key, public_key: @old_key)
       end
 
@@ -62,8 +63,6 @@ RSpec.describe ActivityPub::LinkedDataSignature do
           sender
         end
       end
-
-      let(:signature) { raw_signature.merge('type' => 'RsaSignature2017', 'signatureValue' => 'dummySignature') }
 
       it 'fetches key and returns creator' do
         expect(subject.verify_actor!).to eq sender
