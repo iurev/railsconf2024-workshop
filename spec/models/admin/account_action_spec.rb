@@ -1,29 +1,26 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Admin::AccountAction do
+  let_it_be(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:target_account) { Fabricate(:account) }
+
   let(:account_action) { described_class.new }
 
   describe '#save!' do
-    subject              { account_action.save! }
+    subject { account_action.save! }
 
-    let(:account)        { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-    let(:target_account) { Fabricate(:account) }
-    let(:type)           { 'disable' }
-
-    before do
+    before_all do
+      account_action = described_class.new
       account_action.assign_attributes(
-        type: type,
+        type: 'disable',
         current_account: account,
         target_account: target_account
       )
     end
 
     context 'when type is "disable"' do
-      let(:type) { 'disable' }
-
       it 'disable user' do
         subject
         expect(target_account.user).to be_disabled
@@ -31,7 +28,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is "silence"' do
-      let(:type) { 'silence' }
+      before { account_action.type = 'silence' }
 
       it 'silences account' do
         subject
@@ -40,7 +37,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is "suspend"' do
-      let(:type) { 'suspend' }
+      before { account_action.type = 'suspend' }
 
       it 'suspends account' do
         subject
@@ -57,7 +54,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is invalid' do
-      let(:type) { 'whatever' }
+      before { account_action.type = 'whatever' }
 
       it 'raises an invalid record error' do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
@@ -65,7 +62,7 @@ RSpec.describe Admin::AccountAction do
     end
 
     context 'when type is not given' do
-      let(:type) { '' }
+      before { account_action.type = '' }
 
       it 'raises an invalid record error' do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
