@@ -4,9 +4,11 @@ require 'rails_helper'
 
 RSpec.describe SoftwareUpdate do
   describe '.pending_to_a' do
-    let_it_be(:patch_update) { Fabricate(:software_update, version: '3.4.42', type: 'patch', urgent: true) }
-    let_it_be(:minor_update) { Fabricate(:software_update, version: '3.5.0', type: 'minor', urgent: false) }
-    let_it_be(:major_update) { Fabricate(:software_update, version: '4.2.0', type: 'major', urgent: false) }
+    before_all do
+      @patch_update = Fabricate(:software_update, version: '3.4.42', type: 'patch', urgent: true)
+      @minor_update = Fabricate(:software_update, version: '3.5.0', type: 'minor', urgent: false)
+      @major_update = Fabricate(:software_update, version: '4.2.0', type: 'major', urgent: false)
+    end
 
     before do
       allow(Mastodon::Version).to receive(:gem_version).and_return(Gem::Version.new(mastodon_version))
