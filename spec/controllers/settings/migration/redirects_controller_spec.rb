@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::Migration::RedirectsController do
   render_views
 
-  let!(:user) { Fabricate(:user, password: 'testtest') }
+  let_it_be(:user) { Fabricate(:user, password: 'testtest') }
+  let_it_be(:account) { Fabricate(:account) }
 
-  before do
+  before_all do
     sign_in user, scope: :user
   end
 
@@ -45,8 +45,6 @@ describe Settings::Migration::RedirectsController do
   end
 
   describe 'DELETE #destroy' do
-    let(:account) { Fabricate(:account) }
-
     before do
       user.account.update(moved_to_account_id: account.id)
     end
