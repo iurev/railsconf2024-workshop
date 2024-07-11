@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 describe WebfingerResource do
-  before_all do
+  before(:context) do
     @before_local = Rails.configuration.x.local_domain
     @before_web = Rails.configuration.x.web_domain
   end
 
-  after_all do
+  after(:context) do
     Rails.configuration.x.local_domain = @before_local
     Rails.configuration.x.web_domain = @before_web
   end
