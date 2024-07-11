@@ -11,8 +11,7 @@ RSpec.describe DomainAllow do
     end
 
     it 'is invalid if the same normalized domain already exists' do
-      let_it_be(:existing_domain_allow) { Fabricate(:domain_allow, domain: 'にゃん') }
-      
+      _domain_allow = Fabricate(:domain_allow, domain: 'にゃん')
       domain_allow_with_normalized_value = Fabricate.build(:domain_allow, domain: 'xn--r9j5b5b')
       domain_allow_with_normalized_value.valid?
       expect(domain_allow_with_normalized_value).to model_have_error_on_field(:domain)
