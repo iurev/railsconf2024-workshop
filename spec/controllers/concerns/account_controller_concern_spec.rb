@@ -11,7 +11,7 @@ describe AccountControllerConcern do
     end
   end
 
-  before_all do
+  before do
     routes.draw { get 'success' => 'anonymous#success' }
   end
 
