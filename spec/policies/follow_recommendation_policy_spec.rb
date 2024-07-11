@@ -9,11 +9,16 @@ describe FollowRecommendationPolicy do
   let_it_be(:admin) { Fabricate(:user, role: admin_role).account }
   let_it_be(:john)  { Fabricate(:account) }
 
-  describe 'permissions' do
-    it 'permits admin and denies non-admin for show?, suppress?, and unsuppress?', :aggregate_failures do
-      %i[show? suppress? unsuppress?].each do |permission|
-        expect(policy).to permit(admin, Tag), "expected to permit #{permission} for admin"
-        expect(policy).not_to permit(john, Tag), "expected not to permit #{permission} for non-admin"
+  permissions :show?, :suppress?, :unsuppress? do
+    context 'with an admin' do
+      it 'permits' do
+        expect(policy).to permit(admin, Tag)
+      end
+    end
+
+    context 'with a non-admin' do
+      it 'denies' do
+        expect(policy).to_not permit(john, Tag)
       end
     end
   end
