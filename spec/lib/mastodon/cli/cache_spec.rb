@@ -6,7 +6,7 @@ require 'mastodon/cli/cache'
 describe Mastodon::CLI::Cache do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -29,9 +29,9 @@ describe Mastodon::CLI::Cache do
 
     context 'with the `accounts` argument' do
       let(:arguments) { ['accounts'] }
-      let_it_be(:account_stat) { Fabricate(:account_stat) }
+      let(:account_stat) { Fabricate(:account_stat) }
 
-      before_all do
+      before do
         account_stat.update(statuses_count: 123)
       end
 
@@ -45,9 +45,9 @@ describe Mastodon::CLI::Cache do
 
     context 'with the `statuses` argument' do
       let(:arguments) { ['statuses'] }
-      let_it_be(:status_stat) { Fabricate(:status_stat) }
+      let(:status_stat) { Fabricate(:status_stat) }
 
-      before_all do
+      before do
         status_stat.update(replies_count: 123)
       end
 
