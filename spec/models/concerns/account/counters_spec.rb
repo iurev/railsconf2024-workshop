@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Account::Counters do
-  let!(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
 
   describe '#increment_count!' do
     let(:increment_by) { 15 }
