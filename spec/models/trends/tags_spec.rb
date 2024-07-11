@@ -35,8 +35,7 @@ RSpec.describe Trends::Tags do
     let_it_be(:tag_dogs) { Fabricate(:tag, name: 'DogsOfMastodon', trendable: true) }
     let_it_be(:tag_ocs) { Fabricate(:tag, name: 'OCs', trendable: true) }
 
-    before(:all) do
-      subject = described_class.new(threshold: 5, review_threshold: 10)
+    before do
       2.times  { |i| subject.add(tag_cats, i, yesterday) }
       13.times { |i| subject.add(tag_ocs, i, yesterday) }
       16.times { |i| subject.add(tag_cats, i, today) }
