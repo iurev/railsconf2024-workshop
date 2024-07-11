@@ -50,8 +50,8 @@ describe Oauth::AuthorizedApplicationsController do
   describe 'DELETE #destroy' do
     let_it_be(:user) { Fabricate(:user) }
     let_it_be(:application) { Fabricate(:application) }
-    let!(:access_token) { Fabricate(:accessible_access_token, application: application, resource_owner_id: user.id) }
-    let!(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
+    let_it_be(:access_token) { Fabricate(:accessible_access_token, application: application, resource_owner_id: user.id) }
+    let_it_be(:web_push_subscription) { Fabricate(:web_push_subscription, user: user, access_token: access_token) }
 
     before do
       sign_in user, scope: :user
