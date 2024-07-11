@@ -5,8 +5,8 @@ require 'rails_helper'
 describe Announcement do
   describe 'Scopes' do
     context 'with published and unpublished records' do
-      let!(:published) { Fabricate(:announcement, published: true) }
-      let!(:unpublished) { Fabricate(:announcement, published: false, scheduled_at: 10.days.from_now) }
+      let_it_be(:published) { Fabricate(:announcement, published: true) }
+      let_it_be(:unpublished) { Fabricate(:announcement, published: false, scheduled_at: 10.days.from_now) }
 
       describe '#unpublished' do
         it 'returns records with published false' do
@@ -26,10 +26,10 @@ describe Announcement do
     end
 
     context 'with timestamped announcements' do
-      let!(:adam_announcement) { Fabricate(:announcement, starts_at: 100.days.ago, scheduled_at: 10.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now) }
-      let!(:brenda_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 100.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now) }
-      let!(:clara_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 10.days.ago, published_at: 100.days.ago, ends_at: 5.days.from_now) }
-      let!(:darnelle_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 10.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now, created_at: 100.days.ago) }
+      let_it_be(:adam_announcement) { Fabricate(:announcement, starts_at: 100.days.ago, scheduled_at: 10.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now) }
+      let_it_be(:brenda_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 100.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now) }
+      let_it_be(:clara_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 10.days.ago, published_at: 100.days.ago, ends_at: 5.days.from_now) }
+      let_it_be(:darnelle_announcement) { Fabricate(:announcement, starts_at: 10.days.ago, scheduled_at: 10.days.ago, published_at: 10.days.ago, ends_at: 5.days.from_now, created_at: 100.days.ago) }
 
       describe '#chronological' do
         it 'orders the records correctly' do
@@ -115,10 +115,10 @@ describe Announcement do
 
   describe '#reactions' do
     context 'with announcement_reactions present' do
-      let(:account_reaction_emoji) { Fabricate :custom_emoji }
-      let(:other_reaction_emoji) { Fabricate :custom_emoji }
-      let!(:account) { Fabricate(:account) }
-      let!(:announcement) { Fabricate(:announcement) }
+      let_it_be(:account_reaction_emoji) { Fabricate(:custom_emoji) }
+      let_it_be(:other_reaction_emoji) { Fabricate(:custom_emoji) }
+      let_it_be(:account) { Fabricate(:account) }
+      let_it_be(:announcement) { Fabricate(:announcement) }
 
       before do
         Fabricate(:announcement_reaction, announcement: announcement, created_at: 10.days.ago, name: other_reaction_emoji.shortcode)
@@ -149,10 +149,11 @@ describe Announcement do
   end
 
   describe '#statuses' do
-    let(:announcement) { Fabricate(:announcement, status_ids: status_ids) }
+    let_it_be(:status) { Fabricate(:status, visibility: :public) }
+    let_it_be(:direct_status) { Fabricate(:status, visibility: :direct) }
 
     context 'with empty status_ids' do
-      let(:status_ids) { nil }
+      let(:announcement) { Fabricate(:announcement, status_ids: nil) }
 
       it 'returns empty array' do
         results = announcement.statuses
@@ -162,9 +163,7 @@ describe Announcement do
     end
 
     context 'with relevant status_ids' do
-      let(:status) { Fabricate(:status, visibility: :public) }
-      let(:direct_status) { Fabricate(:status, visibility: :direct) }
-      let(:status_ids) { [status.id, direct_status.id] }
+      let(:announcement) { Fabricate(:announcement, status_ids: [status.id, direct_status.id]) }
 
       it 'returns public and unlisted statuses' do
         results = announcement.statuses
