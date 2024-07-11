@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,8 +6,8 @@ RSpec.describe TagsController do
   render_views
 
   describe 'GET #show' do
+    let_it_be(:tag) { Fabricate(:tag, name: 'test') }
     let(:format) { 'html' }
-    let(:tag) { Fabricate(:tag, name: 'test') }
     let(:tag_name) { tag&.name }
 
     before do
