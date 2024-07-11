@@ -1,12 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::DashboardHelper do
   describe 'relevant_account_timestamp' do
+    let_it_be(:account) { Fabricate(:account) }
+
     context 'with an account with older sign in' do
-      let(:account) { Fabricate(:account) }
       let(:stamp) { 10.days.ago }
 
       it 'returns a time element' do
@@ -19,8 +19,6 @@ describe Admin::DashboardHelper do
     end
 
     context 'with an account with newer sign in' do
-      let(:account) { Fabricate(:account) }
-
       it 'returns a time element' do
         account.user.update(current_sign_in_at: 10.hours.ago)
         result = helper.relevant_account_timestamp(account)
@@ -30,11 +28,8 @@ describe Admin::DashboardHelper do
     end
 
     context 'with an account where the user is pending' do
-      let(:account) { Fabricate(:account) }
-
       it 'returns a time element' do
-        account.user.update(current_sign_in_at: nil)
-        account.user.update(approved: false)
+        account.user.update(current_sign_in_at: nil, approved: false)
         result = helper.relevant_account_timestamp(account)
 
         expect(result).to match('time-ago')
@@ -43,7 +38,6 @@ describe Admin::DashboardHelper do
     end
 
     context 'with an account with a last status value' do
-      let(:account) { Fabricate(:account) }
       let(:stamp) { 5.minutes.ago }
 
       it 'returns a time element' do
@@ -57,8 +51,6 @@ describe Admin::DashboardHelper do
     end
 
     context 'with an account without sign in or last status or pending' do
-      let(:account) { Fabricate(:account) }
-
       it 'returns a time element' do
         account.user.update(current_sign_in_at: nil)
         result = helper.relevant_account_timestamp(account)
