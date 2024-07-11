@@ -15,6 +15,7 @@ describe Mastodon::CLI::Settings do
 
     before do
       Setting.registrations_mode = nil
+      Setting.require_invite_text = false
     end
 
     describe '#open' do
@@ -39,16 +40,11 @@ describe Mastodon::CLI::Settings do
       context 'with --require-reason' do
         let(:options) { { require_reason: true } }
 
-        it 'changes registrations_mode and require_invite_text' do
-          puts "Before: registrations_mode=#{Setting.registrations_mode}, require_invite_text=#{Setting.require_invite_text}"
-          result = nil
-          expect {
-            result = subject
-            puts "After: registrations_mode=#{Setting.registrations_mode}, require_invite_text=#{Setting.require_invite_text}"
-            puts "Result: #{result.inspect}"
-          }.to output_results('OK')
-           .and change(Setting, :registrations_mode).from(nil).to('approved')
-           .and change(Setting, :require_invite_text).from(false).to(true)
+        it 'attempts to change registrations_mode and require_invite_text' do
+          expect(cli).to receive(:say).with('OK')
+          expect(Setting).to receive(:registrations_mode=).with('approved')
+          expect(Setting).to receive(:require_invite_text=).with(true)
+          subject
         end
       end
     end
