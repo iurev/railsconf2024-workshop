@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/canonical_email_blocks'
@@ -7,7 +6,7 @@ require 'mastodon/cli/canonical_email_blocks'
 describe Mastodon::CLI::CanonicalEmailBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -18,7 +17,7 @@ describe Mastodon::CLI::CanonicalEmailBlocks do
     let(:arguments) { ['user@example.com'] }
 
     context 'when a block is present' do
-      before { Fabricate(:canonical_email_block, email: 'user@example.com') }
+      let_it_be(:block) { Fabricate(:canonical_email_block, email: 'user@example.com') }
 
       it 'announces the presence of the block' do
         expect { subject }
@@ -39,7 +38,7 @@ describe Mastodon::CLI::CanonicalEmailBlocks do
     let(:arguments) { ['user@example.com'] }
 
     context 'when a block is present' do
-      before { Fabricate(:canonical_email_block, email: 'user@example.com') }
+      let_it_be(:block) { Fabricate(:canonical_email_block, email: 'user@example.com') }
 
       it 'removes the block' do
         expect { subject }
