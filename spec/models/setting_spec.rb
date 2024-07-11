@@ -19,29 +19,13 @@ RSpec.describe Setting do
     let_it_be(:default_value) { 'default_value' }
     let_it_be(:default_settings) { { key => default_value } }
 
-    before(:all) do
-      Setting.class_eval do
-        def self.cache_key(key)
-          'cache-key'
-        end
-
-        def self.default_settings
-          { 'key' => 'default_value' }
-        end
-      end
-    end
-
-    after(:all) do
-      Setting.class_eval do
-        class << self
-          remove_method :cache_key
-          remove_method :default_settings
-        end
-      end
+    before do
+      allow(described_class).to receive(:cache_key).with(key).and_return(cache_key)
+      allow(described_class).to receive(:default_settings).and_return(default_settings)
     end
 
     context 'when Rails.cache does not exist' do
-      before(:all) do
+      before do
         Rails.cache.delete(cache_key)
       end
 
@@ -68,11 +52,11 @@ RSpec.describe Setting do
     end
 
     context 'when Rails.cache exists' do
-      before(:all) do
+      before do
         Rails.cache.write(cache_key, cache_value)
       end
 
-      after(:all) do
+      after do
         Rails.cache.delete(cache_key)
       end
 
