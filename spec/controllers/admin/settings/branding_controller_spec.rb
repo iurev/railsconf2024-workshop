@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,8 +6,10 @@ RSpec.describe Admin::Settings::BrandingController do
   render_views
 
   describe 'When signed in as an admin' do
+    let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+
     before do
-      sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+      sign_in admin, scope: :user
     end
 
     describe 'GET #show' do
