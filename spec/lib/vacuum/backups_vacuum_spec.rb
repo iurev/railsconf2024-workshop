@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -9,8 +8,8 @@ RSpec.describe Vacuum::BackupsVacuum do
   let(:retention_period) { 7.days }
 
   describe '#perform' do
-    let!(:expired_backup) { Fabricate(:backup, created_at: (retention_period + 1.day).ago) }
-    let!(:current_backup) { Fabricate(:backup) }
+    let_it_be(:expired_backup) { Fabricate(:backup, created_at: (8.days).ago) }
+    let_it_be(:current_backup) { Fabricate(:backup) }
 
     before do
       subject.perform
