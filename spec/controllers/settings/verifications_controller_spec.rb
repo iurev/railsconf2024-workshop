@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Settings::VerificationsController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   before do
     sign_in user, scope: :user
