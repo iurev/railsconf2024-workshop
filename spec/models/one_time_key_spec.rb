@@ -1,12 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe OneTimeKey do
   describe 'validations' do
+    let_it_be(:one_time_key) { Fabricate.build(:one_time_key) }
+
     context 'with an invalid signature' do
-      let(:one_time_key) { Fabricate.build(:one_time_key, signature: 'wrong!') }
+      before { one_time_key.signature = 'wrong!' }
 
       it 'is invalid' do
         expect(one_time_key).to_not be_valid
@@ -14,7 +15,7 @@ describe OneTimeKey do
     end
 
     context 'with an invalid key' do
-      let(:one_time_key) { Fabricate.build(:one_time_key, key: 'wrong!') }
+      before { one_time_key.key = 'wrong!' }
 
       it 'is invalid' do
         expect(one_time_key).to_not be_valid
