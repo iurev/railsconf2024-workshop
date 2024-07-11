@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe ContentSecurityPolicy do
-  subject { described_class.new }
+  let_it_be(:subject) { described_class.new }
 
   around do |example|
     original_asset_host = Rails.configuration.action_controller.asset_host
