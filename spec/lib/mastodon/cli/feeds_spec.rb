@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/feeds'
@@ -7,7 +6,7 @@ require 'mastodon/cli/feeds'
 describe Mastodon::CLI::Feeds do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -16,7 +15,7 @@ describe Mastodon::CLI::Feeds do
   describe '#build' do
     let(:action) { :build }
 
-    before { Fabricate(:account) }
+    before_all { Fabricate(:account) }
 
     context 'with --all option' do
       let(:options) { { all: true } }
@@ -28,7 +27,7 @@ describe Mastodon::CLI::Feeds do
     end
 
     context 'with a username' do
-      before { Fabricate(:account, username: 'alice') }
+      before_all { Fabricate(:account, username: 'alice') }
 
       let(:arguments) { ['alice'] }
 
