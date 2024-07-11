@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,7 @@ describe Importer::StatusesIndexImporter do
     let(:pool) { Concurrent::FixedThreadPool.new(5) }
     let(:importer) { described_class.new(batch_size: 123, executor: pool) }
 
-    before { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
 
     it 'indexes relevant statuses' do
       expect { importer.import! }.to update_index(StatusesIndex)
