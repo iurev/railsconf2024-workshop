@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe RemoteFollow do
-  before_all do
+  before do
     stub_request(:get, 'https://quitter.no/.well-known/webfinger?resource=acct:gargron@quitter.no').to_return(request_fixture('webfinger.txt'))
   end
 
