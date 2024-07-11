@@ -1,14 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::PicturesController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
-  before do
+  before_all do
     sign_in user, scope: :user
   end
 
