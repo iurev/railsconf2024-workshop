@@ -10,14 +10,14 @@ RSpec.describe DomainBlock do
 
   describe 'validations' do
     it 'is invalid without a domain' do
-      domain_block = build(:domain_block, domain: nil)
+      domain_block = Fabricate.build(:domain_block, domain: nil)
       domain_block.valid?
       expect(domain_block).to model_have_error_on_field(:domain)
     end
 
     it 'is invalid if the same normalized domain already exists' do
-      create(:domain_block, domain: 'にゃん')
-      domain_block_with_normalized_value = build(:domain_block, domain: 'xn--r9j5b5b')
+      Fabricate(:domain_block, domain: 'にゃん')
+      domain_block_with_normalized_value = Fabricate.build(:domain_block, domain: 'xn--r9j5b5b')
       domain_block_with_normalized_value.valid?
       expect(domain_block_with_normalized_value).to model_have_error_on_field(:domain)
     end
@@ -60,7 +60,7 @@ RSpec.describe DomainBlock do
   end
 
   describe '#stricter_than?' do
-    let(:noop) { build(:domain_block, domain: 'noop.com', severity: :noop) }
+    let(:noop) { Fabricate.build(:domain_block, domain: 'noop.com', severity: :noop) }
 
     it 'returns true if the new block has suspend severity while the old has lower severity' do
       expect(suspend_block.stricter_than?(silence_block)).to be true
@@ -74,26 +74,26 @@ RSpec.describe DomainBlock do
     end
 
     it 'returns false if the new block is less strict regarding reports' do
-      older = build(:domain_block, domain: 'older.com', severity: :silence, reject_reports: true)
-      newer = build(:domain_block, domain: 'newer.com', severity: :silence, reject_reports: false)
+      older = Fabricate.build(:domain_block, domain: 'older.com', severity: :silence, reject_reports: true)
+      newer = Fabricate.build(:domain_block, domain: 'newer.com', severity: :silence, reject_reports: false)
       expect(newer.stricter_than?(older)).to be false
     end
 
     it 'returns false if the new block is less strict regarding media' do
-      older = build(:domain_block, domain: 'older.com', severity: :silence, reject_media: true)
-      newer = build(:domain_block, domain: 'newer.com', severity: :silence, reject_media: false)
+      older = Fabricate.build(:domain_block, domain: 'older.com', severity: :silence, reject_media: true)
+      newer = Fabricate.build(:domain_block, domain: 'newer.com', severity: :silence, reject_media: false)
       expect(newer.stricter_than?(older)).to be false
     end
   end
 
   describe '#public_domain' do
     it 'garbles the domain when obfuscated' do
-      domain_block = build(:domain_block, domain: 'hostname.example.com', obfuscate: true)
+      domain_block = Fabricate.build(:domain_block, domain: 'hostname.example.com', obfuscate: true)
       expect(domain_block.public_domain).to eq 'hostna**.******e.com'
     end
 
     it 'returns the domain value when not obfuscated' do
-      domain_block = build(:domain_block, domain: 'example.com', obfuscate: false)
+      domain_block = Fabricate.build(:domain_block, domain: 'example.com', obfuscate: false)
       expect(domain_block.public_domain).to eq 'example.com'
     end
   end
