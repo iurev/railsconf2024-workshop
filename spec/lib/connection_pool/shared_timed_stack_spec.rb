@@ -3,9 +3,7 @@
 require 'rails_helper'
 
 describe ConnectionPool::SharedTimedStack do
-  subject { described_class.new(5) { |site| mini_connection_class.new(site) } }
-
-  let(:mini_connection_class) do
+  let_it_be(:mini_connection_class) do
     Class.new do
       attr_reader :site
 
@@ -14,6 +12,8 @@ describe ConnectionPool::SharedTimedStack do
       end
     end
   end
+
+  let(:subject) { described_class.new(5) { |site| mini_connection_class.new(site) } }
 
   describe '#push' do
     it 'keeps the connection in the stack' do
