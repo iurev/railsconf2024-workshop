@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::LoginActivitiesController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
-  let!(:login_activity) { Fabricate :login_activity, user: user }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:login_activity) { Fabricate :login_activity, user: user }
 
-  before do
+  before_all do
     sign_in user, scope: :user
   end
 
