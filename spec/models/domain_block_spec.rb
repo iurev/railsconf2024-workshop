@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe DomainBlock do
-  let_it_be(:suspend_block) { Fabricate(:domain_block, domain: 'example.com', severity: :suspend) }
-  let_it_be(:silence_block) { Fabricate(:domain_block, domain: 'example.com', severity: :silence) }
+  let_it_be(:suspend_block) { Fabricate(:domain_block, domain: 'suspended.com', severity: :suspend) }
+  let_it_be(:silence_block) { Fabricate(:domain_block, domain: 'silenced.com', severity: :silence) }
 
   describe 'validations' do
     it 'is invalid without a domain' do
@@ -23,16 +23,15 @@ RSpec.describe DomainBlock do
 
   describe '.blocked?' do
     it 'returns true if the domain is suspended' do
-      expect(described_class.blocked?('example.com')).to be true
+      expect(described_class.blocked?('suspended.com')).to be true
     end
 
     it 'returns false even if the domain is silenced' do
-      silence_block
-      expect(described_class.blocked?('example.com')).to be false
+      expect(described_class.blocked?('silenced.com')).to be false
     end
 
     it 'returns false if the domain is not suspended nor silenced' do
-      expect(described_class.blocked?('other.com')).to be false
+      expect(described_class.blocked?('example.com')).to be false
     end
   end
 
@@ -41,11 +40,11 @@ RSpec.describe DomainBlock do
     let_it_be(:tld_block) { Fabricate(:domain_block, domain: 'google') }
 
     it 'returns rule matching a blocked domain' do
-      expect(described_class.rule_for('example.com')).to eq suspend_block
+      expect(described_class.rule_for('suspended.com')).to eq suspend_block
     end
 
     it 'returns a rule matching a subdomain of a blocked domain' do
-      expect(described_class.rule_for('sub.example.com')).to eq suspend_block
+      expect(described_class.rule_for('sub.suspended.com')).to eq suspend_block
     end
 
     it 'returns a rule matching a blocked subdomain' do
@@ -62,7 +61,7 @@ RSpec.describe DomainBlock do
   end
 
   describe '#stricter_than?' do
-    let(:noop) { described_class.new(domain: 'domain', severity: :noop) }
+    let(:noop) { described_class.new(domain: 'noop.com', severity: :noop) }
 
     it 'returns true if the new block has suspend severity while the old has lower severity' do
       expect(suspend_block.stricter_than?(silence_block)).to be true
@@ -76,14 +75,14 @@ RSpec.describe DomainBlock do
     end
 
     it 'returns false if the new block is less strict regarding reports' do
-      older = described_class.new(domain: 'domain', severity: :silence, reject_reports: true)
-      newer = described_class.new(domain: 'domain', severity: :silence, reject_reports: false)
+      older = described_class.new(domain: 'older.com', severity: :silence, reject_reports: true)
+      newer = described_class.new(domain: 'newer.com', severity: :silence, reject_reports: false)
       expect(newer.stricter_than?(older)).to be false
     end
 
     it 'returns false if the new block is less strict regarding media' do
-      older = described_class.new(domain: 'domain', severity: :silence, reject_media: true)
-      newer = described_class.new(domain: 'domain', severity: :silence, reject_media: false)
+      older = described_class.new(domain: 'older.com', severity: :silence, reject_media: true)
+      newer = described_class.new(domain: 'newer.com', severity: :silence, reject_media: false)
       expect(newer.stricter_than?(older)).to be false
     end
   end
