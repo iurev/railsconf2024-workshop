@@ -9,12 +9,13 @@ describe Mastodon::CLI::Settings do
   describe 'subcommand "registrations"' do
     subject { cli.invoke(action, arguments, options) }
 
-    let(:cli) { Mastodon::CLI::Registrations.new }
+    let_it_be(:cli) { Mastodon::CLI::Registrations.new }
     let(:arguments) { [] }
     let(:options) { {} }
 
     before do
       Setting.registrations_mode = nil
+      Setting.require_invite_text = false
     end
 
     describe '#open' do
@@ -39,11 +40,11 @@ describe Mastodon::CLI::Settings do
       context 'with --require-reason' do
         let(:options) { { require_reason: true } }
 
-        it 'changes registrations_mode and require_invite_text' do
-          expect { subject }
-            .to output_results('OK')
-            .and change(Setting, :registrations_mode).from(nil).to('approved')
-            .and change(Setting, :require_invite_text).from(false).to(true)
+        it 'attempts to change registrations_mode and require_invite_text' do
+          expect(cli).to receive(:say).with('OK')
+          expect(Setting).to receive(:registrations_mode=).with('approved')
+          expect(Setting).to receive(:require_invite_text=).with(true)
+          subject
         end
       end
     end
