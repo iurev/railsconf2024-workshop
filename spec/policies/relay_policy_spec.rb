@@ -6,8 +6,8 @@ require 'pundit/rspec'
 RSpec.describe RelayPolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)  { Fabricate(:account) }
 
   permissions :update? do
     context 'when admin?' do
