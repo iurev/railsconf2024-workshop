@@ -4,11 +4,10 @@ require 'rails_helper'
 
 describe Admin::DisputesHelper do
   describe 'strike_action_label' do
-    let_it_be(:adam) { Account.new(username: 'Adam') }
-    let_it_be(:becky) { Account.new(username: 'Becky') }
-    let_it_be(:strike) { AccountWarning.new(account: adam, action: :suspend) }
-
     it 'returns html describing the appeal' do
+      adam = Account.new(username: 'Adam')
+      becky = Account.new(username: 'Becky')
+      strike = AccountWarning.new(account: adam, action: :suspend)
       appeal = Appeal.new(strike: strike, account: becky)
 
       expected = <<~OUTPUT.strip
