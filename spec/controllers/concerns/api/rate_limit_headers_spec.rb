@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -32,7 +31,7 @@ describe Api::RateLimitHeaders do
     end
 
     context 'when throttling is on' do
-      let(:start_time) { DateTime.new(2017, 1, 1, 12, 0, 0).utc }
+      let_it_be(:start_time) { DateTime.new(2017, 1, 1, 12, 0, 0).utc }
 
       before do
         request.env['rack.attack.throttle_data'] = { 'throttle_authenticated_api' => { limit: 100, count: 20, period: 10 } }
