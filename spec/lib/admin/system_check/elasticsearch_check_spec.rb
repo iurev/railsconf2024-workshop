@@ -11,7 +11,7 @@ describe Admin::SystemCheck::ElasticsearchCheck do
 
   describe 'pass?' do
     context 'when chewy is enabled' do
-      before_all do
+      before do
         allow(Chewy).to receive(:enabled?).and_return(true)
         allow(Chewy.client.cluster).to receive(:health).and_return({ 'status' => 'green', 'number_of_nodes' => 1 })
         allow(Chewy.client.indices).to receive_messages(get_mapping: {
@@ -85,7 +85,7 @@ describe Admin::SystemCheck::ElasticsearchCheck do
   end
 
   describe 'message' do
-    before_all do
+    before do
       allow(Chewy).to receive(:enabled?).and_return(true)
       allow(Chewy.client.cluster).to receive(:health).and_return({ 'status' => 'green', 'number_of_nodes' => 1 })
       allow(Chewy.client.indices).to receive(:get_mapping).and_return({
