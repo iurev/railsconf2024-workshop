@@ -68,8 +68,8 @@ describe Auth::ConfirmationsController do
         get :show, params: { confirmation_token: 'foobar' }
       end
 
-      it 'redirects to settings' do
-        expect(response).to redirect_to(edit_user_registration_path)
+      it 'redirects to root path' do
+        expect(response).to redirect_to(root_path)
       end
     end
 
