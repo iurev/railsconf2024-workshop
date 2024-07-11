@@ -48,7 +48,7 @@ RSpec.describe ActivityPub::LinkedDataSignature do
       before(:all) do
         @old_key = sender.public_key
         @old_private_key = sender.private_key
-        sender.update!(private_key: nil, public_key: nil)
+        sender.update!(private_key: '', public_key: '')
       end
 
       after(:all) do
