@@ -13,7 +13,7 @@ describe Mastodon::CLI::Settings do
     let(:arguments) { [] }
     let(:options) { {} }
 
-    before_all do
+    before do
       Setting.registrations_mode = nil
     end
 
