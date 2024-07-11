@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe LinkDetailsExtractor do
   subject { described_class.new(original_url, html, nil) }
 
-  let(:original_url) { 'https://example.com/dog.html?tracking=123' }
+  let_it_be(:original_url) { 'https://example.com/dog.html?tracking=123' }
 
   describe '#canonical_url' do
     let(:html) { "<!doctype html><link rel='canonical' href='#{url}'>" }
