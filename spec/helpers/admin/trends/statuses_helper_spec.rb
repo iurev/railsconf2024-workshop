@@ -1,12 +1,13 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Trends::StatusesHelper do
   describe '.one_line_preview' do
-    before do
-      allow(helper).to receive(:current_user).and_return(Fabricate.build(:user))
+    let_it_be(:user) { Fabricate(:user) }
+
+    before_all do
+      allow(helper).to receive(:current_user).and_return(user)
     end
 
     context 'with a local status' do
@@ -40,8 +41,7 @@ describe Admin::Trends::StatusesHelper do
     end
 
     context 'with a status that has emoji' do
-      before { Fabricate(:custom_emoji, shortcode: 'florpy') }
-
+      let_it_be(:custom_emoji) { Fabricate(:custom_emoji, shortcode: 'florpy') }
       let(:status) { Fabricate(:status, text: 'hello there :florpy:') }
 
       it 'renders a correct preview text' do
