@@ -6,7 +6,7 @@ describe Admin::Trends::StatusesHelper do
   describe '.one_line_preview' do
     let_it_be(:user) { Fabricate(:user) }
 
-    before_all do
+    before do
       allow(helper).to receive(:current_user).and_return(user)
     end
 
