@@ -1,19 +1,18 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Metrics::Measure::InstanceAccountsMeasure do
   subject { described_class.new(start_at, end_at, params) }
 
-  let(:domain) { 'example.com' }
+  let_it_be(:domain) { 'example.com' }
 
   let(:start_at) { 2.days.ago }
   let(:end_at)   { Time.now.utc }
 
   let(:params) { ActionController::Parameters.new(domain: domain) }
 
-  before do
+  before_all do
     Fabricate(:account, domain: domain, created_at: 1.year.ago)
     Fabricate(:account, domain: domain, created_at: 1.month.ago)
     Fabricate(:account, domain: domain)
