@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Admin::ChangeEmailsController do
   render_views
 
-  let(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in admin
