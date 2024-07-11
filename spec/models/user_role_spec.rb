@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe UserRole do
-  subject { described_class.create(name: 'Foo', position: 1) }
+  let_it_be(:user_role) { described_class.create(name: 'Foo', position: 1) }
+
+  subject { user_role }
 
   describe '#can?' do
     context 'with a single flag' do
