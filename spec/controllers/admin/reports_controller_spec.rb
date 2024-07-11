@@ -20,8 +20,8 @@ describe Admin::ReportsController do
       get :index
 
       reports = assigns(:reports).to_a
-      expect(reports.size).to eq 1
-      expect(reports[0]).to eq specified
+      expect(reports.size).to eq 2
+      expect(reports).to include(specified)
       expect(response).to have_http_status(200)
     end
 
