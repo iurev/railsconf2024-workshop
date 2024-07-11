@@ -1,9 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe DomainBlock do
+  let_it_be(:suspend_block) { Fabricate(:domain_block, domain: 'example.com', severity: :suspend) }
+  let_it_be(:silence_block) { Fabricate(:domain_block, domain: 'example.com', severity: :silence) }
+
   describe 'validations' do
     it 'is invalid without a domain' do
       domain_block = Fabricate.build(:domain_block, domain: nil)
@@ -12,7 +14,7 @@ RSpec.describe DomainBlock do
     end
 
     it 'is invalid if the same normalized domain already exists' do
-      _domain_block = Fabricate(:domain_block, domain: 'にゃん')
+      Fabricate(:domain_block, domain: 'にゃん')
       domain_block_with_normalized_value = Fabricate.build(:domain_block, domain: 'xn--r9j5b5b')
       domain_block_with_normalized_value.valid?
       expect(domain_block_with_normalized_value).to model_have_error_on_field(:domain)
@@ -21,72 +23,65 @@ RSpec.describe DomainBlock do
 
   describe '.blocked?' do
     it 'returns true if the domain is suspended' do
-      Fabricate(:domain_block, domain: 'example.com', severity: :suspend)
       expect(described_class.blocked?('example.com')).to be true
     end
 
     it 'returns false even if the domain is silenced' do
-      Fabricate(:domain_block, domain: 'example.com', severity: :silence)
+      silence_block
       expect(described_class.blocked?('example.com')).to be false
     end
 
     it 'returns false if the domain is not suspended nor silenced' do
-      expect(described_class.blocked?('example.com')).to be false
+      expect(described_class.blocked?('other.com')).to be false
     end
   end
 
   describe '.rule_for' do
+    let_it_be(:subdomain_block) { Fabricate(:domain_block, domain: 'sub.example.com') }
+    let_it_be(:tld_block) { Fabricate(:domain_block, domain: 'google') }
+
     it 'returns rule matching a blocked domain' do
-      block = Fabricate(:domain_block, domain: 'example.com')
-      expect(described_class.rule_for('example.com')).to eq block
+      expect(described_class.rule_for('example.com')).to eq suspend_block
     end
 
     it 'returns a rule matching a subdomain of a blocked domain' do
-      block = Fabricate(:domain_block, domain: 'example.com')
-      expect(described_class.rule_for('sub.example.com')).to eq block
+      expect(described_class.rule_for('sub.example.com')).to eq suspend_block
     end
 
     it 'returns a rule matching a blocked subdomain' do
-      block = Fabricate(:domain_block, domain: 'sub.example.com')
-      expect(described_class.rule_for('sub.example.com')).to eq block
+      expect(described_class.rule_for('sub.example.com')).to eq subdomain_block
     end
 
     it 'returns a rule matching a blocked TLD' do
-      block = Fabricate(:domain_block, domain: 'google')
-      expect(described_class.rule_for('google')).to eq block
+      expect(described_class.rule_for('google')).to eq tld_block
     end
 
     it 'returns a rule matching a subdomain of a blocked TLD' do
-      block = Fabricate(:domain_block, domain: 'google')
-      expect(described_class.rule_for('maps.google')).to eq block
+      expect(described_class.rule_for('maps.google')).to eq tld_block
     end
   end
 
   describe '#stricter_than?' do
+    let(:noop) { described_class.new(domain: 'domain', severity: :noop) }
+
     it 'returns true if the new block has suspend severity while the old has lower severity' do
-      suspend = described_class.new(domain: 'domain', severity: :suspend)
-      silence = described_class.new(domain: 'domain', severity: :silence)
-      noop = described_class.new(domain: 'domain', severity: :noop)
-      expect(suspend.stricter_than?(silence)).to be true
-      expect(suspend.stricter_than?(noop)).to be true
+      expect(suspend_block.stricter_than?(silence_block)).to be true
+      expect(suspend_block.stricter_than?(noop)).to be true
     end
 
     it 'returns false if the new block has lower severity than the old one' do
-      suspend = described_class.new(domain: 'domain', severity: :suspend)
-      silence = described_class.new(domain: 'domain', severity: :silence)
-      noop = described_class.new(domain: 'domain', severity: :noop)
-      expect(silence.stricter_than?(suspend)).to be false
-      expect(noop.stricter_than?(suspend)).to be false
-      expect(noop.stricter_than?(silence)).to be false
+      expect(silence_block.stricter_than?(suspend_block)).to be false
+      expect(noop.stricter_than?(suspend_block)).to be false
+      expect(noop.stricter_than?(silence_block)).to be false
     end
 
-    it 'returns false if the new block does is less strict regarding reports' do
+    it 'returns false if the new block is less strict regarding reports' do
       older = described_class.new(domain: 'domain', severity: :silence, reject_reports: true)
       newer = described_class.new(domain: 'domain', severity: :silence, reject_reports: false)
       expect(newer.stricter_than?(older)).to be false
     end
 
-    it 'returns false if the new block does is less strict regarding media' do
+    it 'returns false if the new block is less strict regarding media' do
       older = described_class.new(domain: 'domain', severity: :silence, reject_media: true)
       newer = described_class.new(domain: 'domain', severity: :silence, reject_media: false)
       expect(newer.stricter_than?(older)).to be false
