@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe WebauthnCredential do
-  let_it_be(:user) { Fabricate(:user) }
-
   describe 'validations' do
     it 'is invalid without an external id' do
       webauthn_credential = Fabricate.build(:webauthn_credential, external_id: nil)
@@ -48,6 +46,7 @@ RSpec.describe WebauthnCredential do
     end
 
     it 'is invalid if user already registered a webauthn credential with the same nickname' do
+      user = Fabricate(:user)
       Fabricate(:webauthn_credential, user_id: user.id, nickname: 'USB Key')
       new_webauthn_credential = Fabricate.build(:webauthn_credential, user_id: user.id, nickname: 'USB Key')
 
