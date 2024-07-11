@@ -5,6 +5,7 @@ require 'rails_helper'
 describe Report do
   let_it_be(:target_account) { Fabricate(:account) }
   let_it_be(:status) { Fabricate(:status) }
+  let_it_be(:acting_account) { Fabricate(:account) }
 
   describe 'statuses' do
     it 'returns the statuses for the report' do
@@ -30,11 +31,8 @@ describe Report do
     let_it_be(:current_account) { Fabricate(:account) }
     let(:report) { Fabricate(:report, assigned_account_id: original_account.id) }
 
-    before do
-      report.assign_to_self!(current_account)
-    end
-
     it 'assigns to a given account' do
+      report.assign_to_self!(current_account)
       expect(report.assigned_account_id).to eq current_account.id
     end
   end
@@ -42,38 +40,27 @@ describe Report do
   describe 'unassign!' do
     let(:report) { Fabricate(:report, assigned_account_id: Fabricate(:account).id) }
 
-    before do
-      report.unassign!
-    end
-
     it 'unassigns' do
+      report.unassign!
       expect(report.assigned_account_id).to be_nil
     end
   end
 
   describe 'resolve!' do
-    let_it_be(:acting_account) { Fabricate(:account) }
     let(:report) { Fabricate(:report, action_taken_at: nil, action_taken_by_account_id: nil) }
 
-    before do
-      report.resolve!(acting_account)
-    end
-
     it 'records action taken' do
+      report.resolve!(acting_account)
       expect(report.action_taken?).to be true
       expect(report.action_taken_by_account_id).to eq acting_account.id
     end
   end
 
   describe 'unresolve!' do
-    let_it_be(:acting_account) { Fabricate(:account) }
     let(:report) { Fabricate(:report, action_taken_at: Time.now.utc, action_taken_by_account_id: acting_account.id) }
 
-    before do
-      report.unresolve!
-    end
-
     it 'unresolves' do
+      report.unresolve!
       expect(report.action_taken?).to be false
       expect(report.action_taken_by_account_id).to be_nil
     end
