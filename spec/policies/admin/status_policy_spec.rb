@@ -7,8 +7,7 @@ describe Admin::StatusPolicy do
   let(:policy) { described_class }
   let_it_be(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
   let_it_be(:john)    { Fabricate(:account) }
-  let(:status) { Fabricate(:status, visibility: status_visibility) }
-  let(:status_visibility) { :public }
+  let_it_be(:status)  { Fabricate(:status) }
 
   permissions :index?, :update?, :review?, :destroy? do
     context 'with an admin' do
@@ -27,26 +26,22 @@ describe Admin::StatusPolicy do
   permissions :show? do
     context 'with an admin' do
       context 'with a public visible status' do
-        let(:status_visibility) { :public }
-
         it 'permits' do
+          status.update!(visibility: :public)
           expect(policy).to permit(admin, status)
         end
       end
 
       context 'with a not public visible status' do
-        let(:status_visibility) { :direct }
-
         it 'denies' do
+          status.update!(visibility: :direct)
           expect(policy).to_not permit(admin, status)
         end
 
         context 'when the status mentions the admin' do
-          before do
-            status.mentions.create!(account: admin)
-          end
-
           it 'permits' do
+            status.update!(visibility: :direct)
+            status.mentions.create!(account: admin)
             expect(policy).to permit(admin, status)
           end
         end
