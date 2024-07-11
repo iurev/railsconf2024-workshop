@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe SeveredRelationship do
-  let(:local_account)  { Fabricate(:account) }
-  let(:remote_account) { Fabricate(:account, domain: 'example.com') }
-  let(:event)          { Fabricate(:relationship_severance_event) }
+  let_it_be(:local_account)  { Fabricate(:account) }
+  let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
+  let_it_be(:event)          { Fabricate(:relationship_severance_event) }
 
   describe '#account' do
     context 'when the local account is the follower' do
