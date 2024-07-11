@@ -1,20 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Dereferencer do
+  let_it_be(:object) { { '@context': 'https://www.w3.org/ns/activitystreams', id: 'https://example.com/foo', type: 'Note', content: 'Hoge' } }
+  let(:permitted_origin) { 'https://example.com' }
+  let(:signature_actor) { nil }
+  let(:uri) { nil }
+
+  before do
+    stub_request(:get, 'https://example.com/foo').to_return(body: Oj.dump(object), headers: { 'Content-Type' => 'application/activity+json' })
+  end
+
   describe '#object' do
     subject { described_class.new(uri, permitted_origin: permitted_origin, signature_actor: signature_actor).object }
-
-    let(:object) { { '@context': 'https://www.w3.org/ns/activitystreams', id: 'https://example.com/foo', type: 'Note', content: 'Hoge' } }
-    let(:permitted_origin) { 'https://example.com' }
-    let(:signature_actor) { nil }
-    let(:uri) { nil }
-
-    before do
-      stub_request(:get, 'https://example.com/foo').to_return(body: Oj.dump(object), headers: { 'Content-Type' => 'application/activity+json' })
-    end
 
     context 'with a URI' do
       let(:uri) { 'https://example.com/foo' }
