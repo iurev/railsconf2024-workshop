@@ -1,15 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe WebfingerResource do
-  around do |example|
-    before_local = Rails.configuration.x.local_domain
-    before_web = Rails.configuration.x.web_domain
-    example.run
-    Rails.configuration.x.local_domain = before_local
-    Rails.configuration.x.web_domain = before_web
+  before_all do
+    @before_local = Rails.configuration.x.local_domain
+    @before_web = Rails.configuration.x.web_domain
+  end
+
+  after_all do
+    Rails.configuration.x.local_domain = @before_local
+    Rails.configuration.x.web_domain = @before_web
   end
 
   describe '#username' do
