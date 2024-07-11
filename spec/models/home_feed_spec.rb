@@ -1,21 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe HomeFeed do
   subject { described_class.new(account) }
 
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:status1) { Fabricate(:status, account: account, id: 1) }
+  let_it_be(:status2) { Fabricate(:status, account: account, id: 2) }
+  let_it_be(:status3) { Fabricate(:status, account: account, id: 3) }
+  let_it_be(:status10) { Fabricate(:status, account: account, id: 10) }
 
   describe '#get' do
-    before do
-      Fabricate(:status, account: account, id: 1)
-      Fabricate(:status, account: account, id: 2)
-      Fabricate(:status, account: account, id: 3)
-      Fabricate(:status, account: account, id: 10)
-    end
-
     context 'when feed is generated' do
       before do
         redis.zadd(
