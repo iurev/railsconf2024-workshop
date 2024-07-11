@@ -5,9 +5,10 @@ require 'rails_helper'
 describe Settings::TwoFactorAuthentication::RecoveryCodesController do
   render_views
 
+  let_it_be(:user) { Fabricate(:user) }
+
   describe 'POST #create' do
     it 'updates the codes and shows them on a view when signed in' do
-      user = Fabricate(:user)
       otp_backup_codes = user.generate_otp_backup_codes!
       allow(user).to receive(:generate_otp_backup_codes!).and_return(otp_backup_codes)
       allow(controller).to receive(:current_user).and_return(user)
