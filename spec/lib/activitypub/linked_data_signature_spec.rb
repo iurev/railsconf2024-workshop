@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,7 @@ RSpec.describe ActivityPub::LinkedDataSignature do
 
   subject { described_class.new(json) }
 
-  let!(:sender) { Fabricate(:account, uri: 'http://example.com/alice', domain: 'example.com') }
+  let_it_be(:sender) { Fabricate(:account, uri: 'http://example.com/alice', domain: 'example.com') }
 
   let(:raw_json) do
     {
@@ -47,18 +46,16 @@ RSpec.describe ActivityPub::LinkedDataSignature do
 
       let(:service_stub) { instance_double(ActivityPub::FetchRemoteKeyService) }
 
-      before do
-        # Ensure signature is computed with the old key
-        signature
-
-        # Unset key
-        old_key = sender.public_key
+      before_all do
+        @old_key = sender.public_key
         sender.update!(private_key: '', public_key: '')
+      end
 
+      before do
         allow(ActivityPub::FetchRemoteKeyService).to receive(:new).and_return(service_stub)
 
         allow(service_stub).to receive(:call).with('http://example.com/alice') do
-          sender.update!(public_key: old_key)
+          sender.update!(public_key: @old_key)
           sender
         end
       end
