@@ -3,11 +3,15 @@
 require 'rails_helper'
 
 describe ThemeHelper do
+  let_it_be(:system_theme) { 'system' }
+  let_it_be(:contrast_theme) { 'contrast' }
+  let_it_be(:mastodon_light_theme) { 'mastodon-light' }
+
   describe 'theme_style_tags' do
     let(:result) { helper.theme_style_tags(theme) }
 
     context 'when using system theme' do
-      let(:theme) { 'system' }
+      let(:theme) { system_theme }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -24,7 +28,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:theme) { 'contrast' }
+      let(:theme) { contrast_theme }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_links.first.attributes.symbolize_keys)
@@ -40,7 +44,7 @@ describe ThemeHelper do
     let(:result) { helper.theme_color_tags(theme) }
 
     context 'when using system theme' do
-      let(:theme) { 'system' }
+      let(:theme) { system_theme }
 
       it 'returns the mastodon-light and default stylesheets with correct color schemes' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -57,7 +61,7 @@ describe ThemeHelper do
     end
 
     context 'when using mastodon-light theme' do
-      let(:theme) { 'mastodon-light' }
+      let(:theme) { mastodon_light_theme }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
@@ -68,7 +72,7 @@ describe ThemeHelper do
     end
 
     context 'when using other theme' do
-      let(:theme) { 'contrast' }
+      let(:theme) { contrast_theme }
 
       it 'returns the theme stylesheet without color scheme information' do
         expect(html_theme_colors.first.attributes.symbolize_keys)
