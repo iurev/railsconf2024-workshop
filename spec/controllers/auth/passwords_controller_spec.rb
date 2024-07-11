@@ -84,6 +84,9 @@ describe Auth::PasswordsController do
     end
 
     context 'with invalid reset_password_token' do
+      let(:fresh_user) { Fabricate(:user) }
+      let(:original_password) { fresh_user.password }
+
       before do
         post :update, params: { user: { password: password, password_confirmation: password, reset_password_token: 'some_invalid_value' } }
       end
@@ -93,10 +96,10 @@ describe Auth::PasswordsController do
       end
 
       it 'retains password' do
-        this_user = User.find(user.id)
+        this_user = User.find(fresh_user.id)
 
         expect(this_user).to_not be_nil
-        expect(this_user.external_or_valid_password?(user.password)).to be true
+        expect(this_user.valid_password?(original_password)).to be true
       end
     end
   end
