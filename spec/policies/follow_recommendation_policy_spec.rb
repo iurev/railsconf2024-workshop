@@ -5,8 +5,9 @@ require 'pundit/rspec'
 
 describe FollowRecommendationPolicy do
   let(:policy) { described_class }
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin_role) { UserRole.find_by(name: 'Admin') }
+  let_it_be(:admin) { Fabricate(:user, role: admin_role).account }
+  let_it_be(:john)  { Fabricate(:account) }
 
   permissions :show?, :suppress?, :unsuppress? do
     context 'with an admin' do
