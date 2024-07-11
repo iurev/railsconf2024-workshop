@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Remove do
-  let(:sender) { Fabricate(:account, featured_collection_url: 'https://example.com/featured') }
-  let(:status) { Fabricate(:status, account: sender) }
+  let_it_be(:sender) { Fabricate(:account, featured_collection_url: 'https://example.com/featured') }
+  let_it_be(:status) { Fabricate(:status, account: sender) }
 
   let(:json) do
     {
