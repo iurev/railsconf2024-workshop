@@ -6,8 +6,8 @@ require 'pundit/rspec'
 RSpec.describe InvitePolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:user).account }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)  { Fabricate(:user).account }
 
   permissions :index? do
     context 'when staff?' do
@@ -19,7 +19,7 @@ RSpec.describe InvitePolicy do
 
   permissions :create? do
     context 'with privilege' do
-      before do
+      before_all do
         UserRole.everyone.update(permissions: UserRole::FLAGS[:invite_users])
       end
 
@@ -29,7 +29,7 @@ RSpec.describe InvitePolicy do
     end
 
     context 'when does not have privilege' do
-      before do
+      before_all do
         UserRole.everyone.update(permissions: UserRole::Flags::NONE)
       end
 
