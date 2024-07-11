@@ -3,12 +3,9 @@
 require 'rails_helper'
 
 describe InstanceHelper do
-  let_it_be(:setting) { Setting.new }
-
   describe 'site_title' do
     it 'Uses the Setting.site_title value when it exists' do
-      setting.site_title = 'New site title'
-      allow(Setting).to receive(:site_title).and_return(setting.site_title)
+      Setting.site_title = 'New site title'
 
       expect(helper.site_title).to eq 'New site title'
     end
