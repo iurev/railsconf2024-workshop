@@ -6,7 +6,7 @@ require 'mastodon/cli/email_domain_blocks'
 describe Mastodon::CLI::EmailDomainBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -44,7 +44,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
       let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
-      before_all { Fabricate(:email_domain_block, domain: 'host.example') }
+      before { Fabricate(:email_domain_block, domain: domain) }
 
       it 'does not add a new block' do
         expect { subject }
@@ -79,7 +79,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
       let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
-      before_all { Fabricate(:email_domain_block, domain: 'host.example') }
+      before { Fabricate(:email_domain_block, domain: domain) }
 
       it 'removes the block' do
         expect { subject }
