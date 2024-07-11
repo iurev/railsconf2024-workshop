@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::DeletesController do
   render_views
 
+  let_it_be(:user) { Fabricate(:user, password: 'petsmoldoggos') }
+
   describe 'GET #show' do
     context 'when signed in' do
-      let(:user) { Fabricate(:user) }
-
       before do
         sign_in user, scope: :user
         get :show
@@ -21,7 +20,12 @@ describe Settings::DeletesController do
       end
 
       context 'when suspended' do
-        let(:user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
+        let(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
+
+        before do
+          sign_in suspended_user, scope: :user
+          get :show
+        end
 
         it 'returns http forbidden with private cache control headers', :aggregate_failures do
           expect(response).to have_http_status(403)
@@ -40,8 +44,6 @@ describe Settings::DeletesController do
 
   describe 'DELETE #destroy' do
     context 'when signed in' do
-      let(:user) { Fabricate(:user, password: 'petsmoldoggos') }
-
       before do
         sign_in user, scope: :user
       end
@@ -59,7 +61,12 @@ describe Settings::DeletesController do
         end
 
         context 'when suspended' do
-          let(:user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
+          let(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
+
+          before do
+            sign_in suspended_user, scope: :user
+            delete :destroy, params: { form_delete_confirmation: { password: 'petsmoldoggos' } }
+          end
 
           it 'returns http forbidden' do
             expect(response).to have_http_status(403)
