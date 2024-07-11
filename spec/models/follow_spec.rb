@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Follow do
-  let(:alice) { Fabricate(:account, username: 'alice') }
-  let(:bob)   { Fabricate(:account, username: 'bob') }
+  let_it_be(:alice) { Fabricate(:account, username: 'alice') }
+  let_it_be(:bob)   { Fabricate(:account, username: 'bob') }
 
   describe 'validations' do
     subject { described_class.new(account: alice, target_account: bob, rate_limit: true) }
@@ -38,22 +37,24 @@ RSpec.describe Follow do
   end
 
   describe 'recent' do
-    it 'sorts so that more recent follows comes earlier' do
-      follow0 = described_class.create!(account: alice, target_account: bob)
-      follow1 = described_class.create!(account: bob, target_account: alice)
+    before_all do
+      @follow0 = described_class.create!(account: alice, target_account: bob)
+      @follow1 = described_class.create!(account: bob, target_account: alice)
+    end
 
+    it 'sorts so that more recent follows comes earlier' do
       a = described_class.recent.to_a
 
       expect(a.size).to eq 2
-      expect(a[0]).to eq follow1
-      expect(a[1]).to eq follow0
+      expect(a[0]).to eq @follow1
+      expect(a[1]).to eq @follow0
     end
   end
 
   describe 'revoke_request!' do
-    let(:follow)         { Fabricate(:follow, account: account, target_account: target_account) }
-    let(:account)        { Fabricate(:account) }
-    let(:target_account) { Fabricate(:account) }
+    let_it_be(:account)        { Fabricate(:account) }
+    let_it_be(:target_account) { Fabricate(:account) }
+    let_it_be(:follow)         { Fabricate(:follow, account: account, target_account: target_account) }
 
     it 'revokes the follow relation' do
       follow.revoke_request!
