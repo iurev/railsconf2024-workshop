@@ -1,28 +1,26 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe PreviewCard do
+RSpec.describe PreviewCard do
+  let_it_be(:preview_card) { described_class.new }
+
   describe 'validations' do
     describe 'urls' do
       it 'allows http schemes' do
-        record = described_class.new(url: 'http://example.host/path')
-
-        expect(record).to be_valid
+        preview_card.url = 'http://example.host/path'
+        expect(preview_card).to be_valid
       end
 
       it 'allows https schemes' do
-        record = described_class.new(url: 'https://example.host/path')
-
-        expect(record).to be_valid
+        preview_card.url = 'https://example.host/path'
+        expect(preview_card).to be_valid
       end
 
       it 'does not allow javascript: schemes' do
-        record = described_class.new(url: 'javascript:alert()')
-
-        expect(record).to_not be_valid
-        expect(record).to model_have_error_on_field(:url)
+        preview_card.url = 'javascript:alert()'
+        expect(preview_card).to_not be_valid
+        expect(preview_card).to model_have_error_on_field(:url)
       end
     end
   end
