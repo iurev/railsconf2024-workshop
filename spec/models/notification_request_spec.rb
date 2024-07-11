@@ -6,7 +6,7 @@ RSpec.describe NotificationRequest do
   describe '#reconsider_existence!' do
     let_it_be(:notification_request) { Fabricate(:notification_request) }
 
-    subject { notification_request }
+    subject { notification_request.dup }
 
     context 'when there are remaining notifications' do
       before do
@@ -29,7 +29,7 @@ RSpec.describe NotificationRequest do
       end
 
       context 'when dismissed' do
-        before { subject.update(dismissed: true) }
+        before { subject.update!(dismissed: true) }
 
         it 'leaves request intact' do
           expect(subject.destroyed?).to be false
