@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::Preferences::OtherController do
   render_views
 
-  let(:user) { Fabricate(:user, chosen_languages: []) }
+  let_it_be(:user) { Fabricate(:user, chosen_languages: []) }
 
-  before do
-    sign_in user, scope: :user
+  before_all do
+    RSpec.current_example.example_group_instance.sign_in user, scope: :user
   end
 
   describe 'GET #show' do
