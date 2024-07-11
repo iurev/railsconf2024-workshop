@@ -12,8 +12,9 @@ RSpec.describe FollowRequest do
     context 'when the to-be-followed person has been added to a list' do
       let_it_be(:list) { Fabricate(:list, account: account) }
 
-      before_all do
+      before do
         list.accounts << target_account
+        Fabricate(:follow_request, account: account, target_account: target_account)
       end
 
       it 'updates the ListAccount' do
@@ -56,8 +57,9 @@ RSpec.describe FollowRequest do
     context 'when the to-be-followed person has been added to a list' do
       let_it_be(:list) { Fabricate(:list, account: account) }
 
-      before_all do
+      before do
         list.accounts << target_account
+        Fabricate(:follow_request, account: account, target_account: target_account)
       end
 
       it 'deletes the ListAccount record' do
