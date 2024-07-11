@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Settings::PrivacyController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
-  let(:account) { user.account }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:account) { user.account }
 
-  before do
+  before(:all) do
     sign_in user, scope: :user
   end
 
