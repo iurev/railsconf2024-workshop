@@ -14,8 +14,8 @@ RSpec.describe AccountsHelper do
   end
 
   describe '#display_name' do
-    let_it_be(:account_with_display_name) { Account.new(display_name: 'Display', username: 'Username') }
-    let_it_be(:account_without_display_name) { Account.new(display_name: nil, username: 'Username') }
+    let(:account_with_display_name) { Account.new(display_name: 'Display', username: 'Username') }
+    let(:account_without_display_name) { Account.new(display_name: nil, username: 'Username') }
 
     it 'uses the display name when it exists' do
       expect(helper.display_name(account_with_display_name)).to eq 'Display'
@@ -27,8 +27,8 @@ RSpec.describe AccountsHelper do
   end
 
   describe '#acct' do
-    let_it_be(:local_account) { Account.new(domain: nil, username: 'user') }
-    let_it_be(:foreign_account) { Account.new(domain: 'foreign_server.com', username: 'user') }
+    let(:local_account) { Account.new(domain: nil, username: 'user') }
+    let(:foreign_account) { Account.new(domain: 'foreign_server.com', username: 'user') }
 
     before do
       allow(Rails.configuration.x).to receive(:local_domain).and_return('local_domain')
