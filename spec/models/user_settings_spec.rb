@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe UserSettings do
   subject { described_class.new(json) }
 
-  let(:json) { {} }
+  let_it_be(:json) { {} }
 
   describe '#[]' do
     context 'when setting is not set' do
