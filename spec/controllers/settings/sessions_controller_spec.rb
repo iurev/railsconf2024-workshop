@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Settings::SessionsController do
   render_views
 
-  let(:user) { Fabricate(:user) }
-  let(:session_activation) { Fabricate(:session_activation, user: user) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:session_activation) { Fabricate(:session_activation, user: user) }
 
   before { sign_in user, scope: :user }
 
