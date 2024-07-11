@@ -8,7 +8,7 @@ describe Settings::Migration::RedirectsController do
   let_it_be(:user) { Fabricate(:user, password: 'testtest') }
   let_it_be(:account) { Fabricate(:account) }
 
-  before_all do
+  before do
     sign_in user, scope: :user
   end
 
