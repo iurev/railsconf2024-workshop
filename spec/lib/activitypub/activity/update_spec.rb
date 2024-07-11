@@ -50,7 +50,7 @@ RSpec.describe ActivityPub::Activity::Update do
       end
 
       before_all do
-        stub_request(:get, 'https://example.com/users/dfsdf/outbox').to_return(status: 404)
+        stub_request(:get, 'https://example.com/foo/outbox').to_return(status: 404)
         stub_request(:get, 'https://example.com/users/dfsdf/followers').to_return(status: 404)
         stub_request(:get, 'https://example.com/users/dfsdf/following').to_return(status: 404)
         stub_request(:get, 'https://example.com/users/dfsdf/featured').to_return(status: 404)
