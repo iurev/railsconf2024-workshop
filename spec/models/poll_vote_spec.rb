@@ -13,7 +13,7 @@ RSpec.describe PollVote do
 
   describe 'validations' do
     context 'with a vote on an expired poll' do
-      let(:poll) { Fabricate(:poll, expires_at: 30.days.ago) }
+      let(:poll) { Fabricate(:poll, expires_at: 30.days.ago, created_at: 31.days.ago) }
       let(:vote) { Fabricate.build(:poll_vote, poll: poll) }
 
       it 'marks the vote invalid' do
