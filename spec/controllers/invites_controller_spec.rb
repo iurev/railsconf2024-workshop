@@ -5,16 +5,14 @@ require 'rails_helper'
 describe InvitesController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   before do
     sign_in user
   end
 
   describe 'GET #index' do
-    before do
-      Fabricate(:invite, user: user)
-    end
+    let_it_be(:invite) { Fabricate(:invite, user: user) }
 
     context 'when everyone can invite' do
       before do
@@ -70,7 +68,7 @@ describe InvitesController do
   end
 
   describe 'DELETE #create' do
-    let(:invite) { Fabricate(:invite, user: user, expires_at: nil) }
+    let_it_be(:invite) { Fabricate(:invite, user: user, expires_at: nil) }
 
     before do
       delete :destroy, params: { id: invite.id }
