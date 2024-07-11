@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,7 @@ describe Importer::TagsIndexImporter do
     let(:pool) { Concurrent::FixedThreadPool.new(5) }
     let(:importer) { described_class.new(batch_size: 123, executor: pool) }
 
-    before { Fabricate(:tag) }
+    let_it_be(:tag) { Fabricate(:tag) }
 
     it 'indexes relevant tags' do
       expect { importer.import! }.to update_index(TagsIndex)
