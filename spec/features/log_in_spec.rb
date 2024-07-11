@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,12 +7,15 @@ describe 'Log in' do
 
   subject { page }
 
-  let(:email)        { 'test@example.com' }
-  let(:password)     { 'password' }
-  let(:confirmed_at) { Time.zone.now }
+  let_it_be(:email)        { 'test@example.com' }
+  let_it_be(:password)     { 'password' }
+  let_it_be(:confirmed_at) { Time.zone.now }
+
+  before_all do
+    as_a_registered_user
+  end
 
   before do
-    as_a_registered_user
     visit new_user_session_path
   end
 
@@ -34,7 +36,7 @@ describe 'Log in' do
   end
 
   context 'when confirmed at is nil' do
-    let(:confirmed_at) { nil }
+    let_it_be(:confirmed_at) { nil }
 
     it 'A unconfirmed user is able to log in' do
       fill_in 'user_email', with: email
