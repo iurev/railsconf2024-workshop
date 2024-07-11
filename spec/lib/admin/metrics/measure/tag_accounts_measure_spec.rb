@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Metrics::Measure::TagAccountsMeasure do
   subject { described_class.new(start_at, end_at, params) }
 
-  let!(:tag) { Fabricate(:tag) }
+  let_it_be(:tag) { Fabricate(:tag) }
 
   let(:start_at) { 2.days.ago }
   let(:end_at)   { Time.now.utc }
@@ -14,8 +13,8 @@ describe Admin::Metrics::Measure::TagAccountsMeasure do
 
   describe '#data' do
     context 'with tagged accounts' do
-      let(:alice) { Fabricate(:account, domain: 'alice.example') }
-      let(:bob) { Fabricate(:account, domain: 'bob.example') }
+      let_it_be(:alice) { Fabricate(:account, domain: 'alice.example') }
+      let_it_be(:bob) { Fabricate(:account, domain: 'bob.example') }
 
       before do
         3.times do
