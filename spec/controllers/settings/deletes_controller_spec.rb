@@ -9,16 +9,20 @@ describe Settings::DeletesController do
   let_it_be(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
 
   describe 'GET #show' do
+    shared_examples 'returns expected response' do |status, cache_control|
+      it "returns http #{status} with expected cache control headers", :aggregate_failures do
+        expect(response).to have_http_status(status)
+        expect(response.headers['Cache-Control']).to include(cache_control)
+      end
+    end
+
     context 'when signed in' do
       before do
         sign_in user, scope: :user
         get :show
       end
 
-      it 'renders confirmation page with private cache control headers', :aggregate_failures do
-        expect(response).to have_http_status(200)
-        expect(response.headers['Cache-Control']).to include('private, no-store')
-      end
+      it_behaves_like 'returns expected response', 200, 'private, no-store'
 
       context 'when suspended' do
         before do
@@ -26,16 +30,14 @@ describe Settings::DeletesController do
           get :show
         end
 
-        it 'returns http forbidden with private cache control headers', :aggregate_failures do
-          expect(response).to have_http_status(403)
-          expect(response.headers['Cache-Control']).to include('private, no-store')
-        end
+        it_behaves_like 'returns expected response', 403, 'private, no-store'
       end
     end
 
     context 'when not signed in' do
-      it 'redirects' do
-        get :show
+      before { get :show }
+
+      it 'redirects to sign in page' do
         expect(response).to redirect_to '/auth/sign_in'
       end
     end
@@ -83,8 +85,9 @@ describe Settings::DeletesController do
     end
 
     context 'when not signed in' do
-      it 'redirects' do
-        delete :destroy
+      before { delete :destroy }
+
+      it 'redirects to sign in page' do
         expect(response).to redirect_to '/auth/sign_in'
       end
     end
