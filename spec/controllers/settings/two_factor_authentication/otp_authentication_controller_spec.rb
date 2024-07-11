@@ -8,7 +8,11 @@ describe Settings::TwoFactorAuthentication::OtpAuthenticationController do
   let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #show' do
-    context 'when signed in', :user do
+    context 'when signed in' do
+      before do
+        sign_in user, scope: :user
+      end
+
       describe 'when user has OTP enabled' do
         before do
           user.update(otp_required_for_login: true)
@@ -44,7 +48,11 @@ describe Settings::TwoFactorAuthentication::OtpAuthenticationController do
   end
 
   describe 'POST #create' do
-    context 'when signed in', :user do
+    context 'when signed in' do
+      before do
+        sign_in user, scope: :user
+      end
+
       describe 'when user has OTP enabled' do
         before do
           user.update(otp_required_for_login: true)
