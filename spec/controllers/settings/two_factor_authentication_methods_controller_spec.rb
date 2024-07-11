@@ -1,9 +1,8 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe Settings::TwoFactorAuthenticationMethodsController do
+describe Settings::TwoFactorAuthenticationMethodsController, :account do
   render_views
 
   context 'when not signed in' do
@@ -17,7 +16,7 @@ describe Settings::TwoFactorAuthenticationMethodsController do
   end
 
   context 'when signed in' do
-    let(:user) { Fabricate(:user) }
+    let_it_be(:user) { Fabricate(:user) }
 
     before do
       sign_in user, scope: :user
