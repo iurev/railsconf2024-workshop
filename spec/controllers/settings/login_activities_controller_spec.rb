@@ -8,7 +8,7 @@ describe Settings::LoginActivitiesController do
   let_it_be(:user) { Fabricate(:user) }
   let_it_be(:login_activity) { Fabricate :login_activity, user: user }
 
-  before_all do
+  before do
     sign_in user, scope: :user
   end
 
