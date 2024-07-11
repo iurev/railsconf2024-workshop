@@ -6,6 +6,7 @@ describe Settings::DeletesController do
   render_views
 
   let_it_be(:user) { Fabricate(:user, password: 'petsmoldoggos') }
+  let_it_be(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
 
   describe 'GET #show' do
     context 'when signed in' do
@@ -20,8 +21,6 @@ describe Settings::DeletesController do
       end
 
       context 'when suspended' do
-        let(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
-
         before do
           sign_in suspended_user, scope: :user
           get :show
@@ -61,8 +60,6 @@ describe Settings::DeletesController do
         end
 
         context 'when suspended' do
-          let(:suspended_user) { Fabricate(:user, account_attributes: { suspended_at: Time.now.utc }) }
-
           before do
             sign_in suspended_user, scope: :user
             delete :destroy, params: { form_delete_confirmation: { password: 'petsmoldoggos' } }
