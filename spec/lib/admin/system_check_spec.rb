@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::SystemCheck do
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'perform' do
     let(:result) { described_class.perform(user) }
