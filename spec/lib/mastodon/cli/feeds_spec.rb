@@ -6,7 +6,7 @@ require 'mastodon/cli/feeds'
 describe Mastodon::CLI::Feeds do
   subject { cli.invoke(action, arguments, options) }
 
-  let_it_be(:cli) { described_class.new }
+  let(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
