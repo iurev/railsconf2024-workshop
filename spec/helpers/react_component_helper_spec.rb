@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe ReactComponentHelper do
+  let_it_be(:helper) { Class.new { include ReactComponentHelper }.new }
+
   describe 'react_component' do
     context 'with no block passed in' do
       let(:result) { helper.react_component('name', { one: :two }) }
