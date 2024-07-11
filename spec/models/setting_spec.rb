@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Setting do
   describe '#to_param' do
-    let(:setting) { Fabricate(:setting, var: var) }
-    let(:var)     { 'var' }
+    let_it_be(:var) { 'var' }
+    let_it_be(:setting) { Fabricate(:setting, var: var) }
 
     it 'returns setting.var' do
       expect(setting.to_param).to eq var
@@ -13,28 +13,25 @@ RSpec.describe Setting do
   end
 
   describe '.[]' do
-    let(:key)         { 'key' }
-    let(:cache_key)   { 'cache-key' }
-    let(:cache_value) { 'cache-value' }
+    let_it_be(:key)         { 'key' }
+    let_it_be(:cache_key)   { 'cache-key' }
+    let_it_be(:cache_value) { 'cache-value' }
+    let_it_be(:default_value) { 'default_value' }
+    let_it_be(:default_settings) { { key => default_value } }
 
     before do
       allow(described_class).to receive(:cache_key).with(key).and_return(cache_key)
+      allow(described_class).to receive(:default_settings).and_return(default_settings)
     end
 
-    context 'when Rails.cache does not exists' do
+    context 'when Rails.cache does not exist' do
       before do
-        allow(described_class).to receive(:default_settings).and_return(default_settings)
-
-        Fabricate(:setting, var: key, value: 42) if save_setting
-
         Rails.cache.delete(cache_key)
       end
 
-      let(:default_value)    { 'default_value' }
-      let(:default_settings) { { key => default_value } }
-      let(:save_setting)     { true }
-
       context 'when the setting has been saved to database' do
+        let_it_be(:saved_setting) { Fabricate(:setting, var: key, value: 42) }
+
         it 'returns the value from database' do
           callback = double
           allow(callback).to receive(:call)
@@ -48,8 +45,6 @@ RSpec.describe Setting do
       end
 
       context 'when the setting has not been saved to database' do
-        let(:save_setting) { false }
-
         it 'returns default_settings[key]' do
           expect(described_class[key]).to be default_settings[key]
         end
@@ -59,6 +54,10 @@ RSpec.describe Setting do
     context 'when Rails.cache exists' do
       before do
         Rails.cache.write(cache_key, cache_value)
+      end
+
+      after do
+        Rails.cache.delete(cache_key)
       end
 
       it 'does not query the database' do
