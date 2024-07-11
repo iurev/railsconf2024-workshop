@@ -7,14 +7,13 @@ RSpec.describe Disputes::StrikesController do
 
   let_it_be(:current_user) { Fabricate(:user) }
 
-  before { sign_in current_user, scope: :user }
-
   describe '#show' do
-    let(:strike) { Fabricate(:account_warning, target_account: current_user.account) }
-
     before do
+      sign_in current_user, scope: :user
       get :show, params: { id: strike.id }
     end
+
+    let(:strike) { Fabricate(:account_warning, target_account: current_user.account) }
 
     context 'when meant for the user' do
       it 'returns http success' do
