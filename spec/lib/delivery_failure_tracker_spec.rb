@@ -38,9 +38,7 @@ describe DeliveryFailureTracker do
   end
 
   describe '.without_unavailable' do
-    before do
-      Fabricate(:unavailable_domain, domain: 'foo.bar')
-    end
+    let_it_be(:unavailable_domain) { Fabricate(:unavailable_domain, domain: 'foo.bar') }
 
     it 'removes URLs that are unavailable' do
       results = described_class.without_unavailable(['http://example.com/good/inbox', 'http://foo.bar/unavailable/inbox'])
@@ -51,8 +49,9 @@ describe DeliveryFailureTracker do
   end
 
   describe '.reset!' do
+    let_it_be(:unavailable_domain) { Fabricate(:unavailable_domain, domain: 'foo.bar') }
+
     before do
-      Fabricate(:unavailable_domain, domain: 'foo.bar')
       described_class.reset!('https://foo.bar/inbox')
     end
 
