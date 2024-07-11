@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -48,7 +47,7 @@ describe Sanitize::Config do
     end
 
     it 'removes a with unparsable href' do
-      expect(Sanitize.fragment('<a href=" https://google.fr">Test</a>', subject)).to eq 'Test'
+      expect(Sanitize.fragment('<a href=" https://google.fr">Test</a>', subject)).to eq 'Test'
     end
 
     it 'keeps a with supported scheme and no host' do
