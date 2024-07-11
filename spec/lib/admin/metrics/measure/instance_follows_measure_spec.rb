@@ -15,7 +15,7 @@ describe Admin::Metrics::Measure::InstanceFollowsMeasure do
 
   describe '#total' do
     context 'without include_subdomains' do
-      before_all do
+      before do
         2.times { local_account.follow!(Fabricate(:account, domain: domain)) }
         Fabricate(:account, domain: domain)
       end
@@ -28,7 +28,7 @@ describe Admin::Metrics::Measure::InstanceFollowsMeasure do
     context 'with include_subdomains' do
       let(:params) { ActionController::Parameters.new(domain: domain, include_subdomains: 'true') }
 
-      before_all do
+      before do
         2.times { local_account.follow!(Fabricate(:account, domain: domain)) }
         2.times { local_account.follow!(Fabricate(:account, domain: "foo.#{domain}")) }
         Fabricate(:account, domain: domain)
@@ -42,7 +42,7 @@ describe Admin::Metrics::Measure::InstanceFollowsMeasure do
   end
 
   describe '#data' do
-    before_all do
+    before do
       2.times { local_account.follow!(Fabricate(:account, domain: domain)) }
     end
 
