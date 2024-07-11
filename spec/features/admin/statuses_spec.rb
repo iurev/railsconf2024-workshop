@@ -3,15 +3,18 @@
 require 'rails_helper'
 
 describe 'Admin::Statuses' do
-  let(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in current_user
   end
 
   describe 'Performing batch updates' do
+    before_all do
+      Fabricate(:status, account: current_user.account)
+    end
+
     before do
-      _status = Fabricate(:status, account: current_user.account)
       visit admin_account_statuses_path(account_id: current_user.account_id)
     end
 
