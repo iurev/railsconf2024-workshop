@@ -1,14 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::WarningPresetsController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account_warning_preset) { Fabricate(:account_warning_preset) }
 
-  before do
+  before_all do
     sign_in user, scope: :user
   end
 
@@ -21,8 +21,6 @@ describe Admin::WarningPresetsController do
   end
 
   describe 'GET #edit' do
-    let(:account_warning_preset) { Fabricate(:account_warning_preset) }
-
     it 'returns http success and renders edit' do
       get :edit, params: { id: account_warning_preset.id }
 
@@ -54,8 +52,6 @@ describe Admin::WarningPresetsController do
   end
 
   describe 'PUT #update' do
-    let(:account_warning_preset) { Fabricate(:account_warning_preset, text: 'Original text') }
-
     context 'with valid data' do
       it 'updates the account_warning_preset and redirects' do
         put :update, params: { id: account_warning_preset.id, account_warning_preset: { text: 'Updated text.' } }
@@ -74,8 +70,6 @@ describe Admin::WarningPresetsController do
   end
 
   describe 'DELETE #destroy' do
-    let!(:account_warning_preset) { Fabricate(:account_warning_preset) }
-
     it 'destroys the account_warning_preset and redirects' do
       delete :destroy, params: { id: account_warning_preset.id }
 
