@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -13,10 +12,10 @@ describe Admin::Metrics::Dimension::InstanceLanguagesDimension do
 
   describe '#data' do
     let(:domain) { 'host.example' }
-    let(:alice) { Fabricate(:account, domain: domain) }
-    let(:bob) { Fabricate(:account) }
+    let_it_be(:alice) { Fabricate(:account, domain: domain) }
+    let_it_be(:bob) { Fabricate(:account) }
 
-    before do
+    before_all do
       Fabricate :status, account: alice, language: 'en'
       Fabricate :status, account: bob, language: 'es'
     end
