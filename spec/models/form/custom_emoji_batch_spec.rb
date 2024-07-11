@@ -9,6 +9,7 @@ describe Form::CustomEmojiBatch do
     let(:options) { {} }
     let_it_be(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
     let_it_be(:custom_emoji_category) { Fabricate(:custom_emoji_category) }
+    let_it_be(:custom_emoji) { Fabricate(:custom_emoji, category: Fabricate(:custom_emoji_category)) }
 
     context 'with empty custom_emoji_ids' do
       let(:options) { { custom_emoji_ids: [] } }
@@ -19,8 +20,6 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the update action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji, category: Fabricate(:custom_emoji_category)) }
-
       context 'without anything to change' do
         let(:options) { { action: 'update' } }
 
@@ -51,10 +50,10 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the list action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji, visible_in_picker: false) }
       let(:options) { { action: 'list', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'updates the picker visibility of the emoji' do
+        custom_emoji.update(visible_in_picker: false)
         subject.save
 
         expect(custom_emoji.reload.visible_in_picker).to be(true)
@@ -62,10 +61,10 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the unlist action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji, visible_in_picker: true) }
       let(:options) { { action: 'unlist', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'updates the picker visibility of the emoji' do
+        custom_emoji.update(visible_in_picker: true)
         subject.save
 
         expect(custom_emoji.reload.visible_in_picker).to be(false)
@@ -73,10 +72,10 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the enable action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji, disabled: true) }
       let(:options) { { action: 'enable', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'updates the disabled value of the emoji' do
+        custom_emoji.update(disabled: true)
         subject.save
 
         expect(custom_emoji.reload).to_not be_disabled
@@ -84,10 +83,10 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the disable action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji, visible_in_picker: false) }
       let(:options) { { action: 'disable', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'updates the disabled value of the emoji' do
+        custom_emoji.update(visible_in_picker: false)
         subject.save
 
         expect(custom_emoji.reload).to be_disabled
@@ -95,7 +94,6 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the copy action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji) }
       let(:options) { { action: 'copy', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'makes a copy of the emoji' do
@@ -105,7 +103,6 @@ describe Form::CustomEmojiBatch do
     end
 
     describe 'the delete action' do
-      let(:custom_emoji) { Fabricate(:custom_emoji) }
       let(:options) { { action: 'delete', custom_emoji_ids: [custom_emoji.id] } }
 
       it 'destroys the emoji' do
