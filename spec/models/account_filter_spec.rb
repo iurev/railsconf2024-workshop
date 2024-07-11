@@ -20,9 +20,9 @@ describe AccountFilter do
   end
 
   describe 'with origin and by_domain interacting' do
-    let!(:local_account) { Fabricate(:account, domain: nil) }
-    let!(:remote_account_one) { Fabricate(:account, domain: 'example.org') }
-    let(:remote_account_two) { Fabricate(:account, domain: 'other.domain') }
+    let_it_be(:local_account) { Fabricate(:account, domain: nil) }
+    let_it_be(:remote_account_one) { Fabricate(:account, domain: 'example.org') }
+    let_it_be(:remote_account_two) { Fabricate(:account, domain: 'other.domain') }
 
     it 'works with domain first and origin remote' do
       filter = described_class.new(by_domain: 'example.org', origin: 'remote')
@@ -46,7 +46,7 @@ describe AccountFilter do
   end
 
   describe 'with username' do
-    let!(:local_account) { Fabricate(:account, domain: nil, username: 'validUserName') }
+    let_it_be(:local_account) { Fabricate(:account, domain: nil, username: 'validUserName') }
 
     it 'works with @ at the beginning of the username' do
       filter = described_class.new(username: '@validUserName')
