@@ -7,7 +7,6 @@ describe Mastodon::CLI::EmailDomainBlocks do
   subject { cli.invoke(action, arguments, options) }
 
   let_it_be(:cli) { described_class.new }
-  let_it_be(:domain) { 'host.example' }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -41,6 +40,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
     end
 
     context 'when blocks exist' do
+      let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
       before { Fabricate(:email_domain_block, domain: domain) }
@@ -53,6 +53,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
     end
 
     context 'when no blocks exist' do
+      let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
       it 'adds a new block' do
@@ -74,6 +75,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
     end
 
     context 'when blocks exist' do
+      let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
       before { Fabricate(:email_domain_block, domain: domain) }
@@ -86,6 +88,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
     end
 
     context 'when no blocks exist' do
+      let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
       it 'does not remove a block' do
