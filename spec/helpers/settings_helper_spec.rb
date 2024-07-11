@@ -5,7 +5,7 @@ require 'rails_helper'
 describe SettingsHelper do
   describe 'session_device_icon' do
     context 'with a mobile device' do
-      let_it_be(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (iPhone)') }
+      let(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (iPhone)') }
 
       it 'detects the device and returns a descriptive string' do
         result = helper.session_device_icon(session)
@@ -15,7 +15,7 @@ describe SettingsHelper do
     end
 
     context 'with a tablet device' do
-      let_it_be(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (iPad)') }
+      let(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (iPad)') }
 
       it 'detects the device and returns a descriptive string' do
         result = helper.session_device_icon(session)
@@ -25,7 +25,7 @@ describe SettingsHelper do
     end
 
     context 'with a desktop device' do
-      let_it_be(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (Macintosh)') }
+      let(:session) { SessionActivation.new(user_agent: 'Mozilla/5.0 (Macintosh)') }
 
       it 'detects the device and returns a descriptive string' do
         result = helper.session_device_icon(session)
