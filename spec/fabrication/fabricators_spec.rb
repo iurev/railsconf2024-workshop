@@ -1,14 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-Fabrication.manager.load_definitions if Fabrication.manager.empty?
+RSpec.describe "Fabricators", :fabrication do
+  before_all do
+    Fabrication.manager.load_definitions if Fabrication.manager.empty?
+  end
 
-Fabrication.manager.schematics.map(&:first).each do |factory_name|
-  describe "The #{factory_name} factory" do
-    it 'is able to create valid records' do
-      records = Fabricate.times(2, factory_name) # Create multiple of each to uncover uniqueness issues
+  let_it_be(:factory_names) { Fabrication.manager.schematics.map(&:first) }
+
+  factory_names.each do |factory_name|
+    it "is able to create valid records for #{factory_name}" do
+      records = Fabricate.times(2, factory_name)
       expect(records).to all(be_valid)
     end
   end
