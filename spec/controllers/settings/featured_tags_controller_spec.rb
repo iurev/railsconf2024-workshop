@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -19,9 +18,9 @@ describe Settings::FeaturedTagsController do
   end
 
   context 'when user is signed in' do
-    let(:user) { Fabricate(:user, password: '12345678') }
+    let_it_be(:user) { Fabricate(:user, password: '12345678') }
 
-    before { sign_in user, scope: :user }
+    before_all { sign_in user, scope: :user }
 
     describe 'POST #create' do
       subject { post :create, params: { featured_tag: params } }
@@ -44,9 +43,9 @@ describe Settings::FeaturedTagsController do
     end
 
     describe 'GET to #index' do
-      let(:tag) { Fabricate(:tag) }
+      let_it_be(:tag) { Fabricate(:tag) }
 
-      before do
+      before_all do
         status = Fabricate :status, account: user.account
         status.tags << tag
       end
@@ -62,7 +61,7 @@ describe Settings::FeaturedTagsController do
     end
 
     describe 'DELETE to #destroy' do
-      let(:featured_tag) { Fabricate(:featured_tag, account: user.account) }
+      let_it_be(:featured_tag) { Fabricate(:featured_tag, account: user.account) }
 
       it 'removes the featured tag' do
         delete :destroy, params: { id: featured_tag.id }
