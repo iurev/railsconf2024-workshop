@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/email_domain_blocks'
@@ -7,7 +6,7 @@ require 'mastodon/cli/email_domain_blocks'
 describe Mastodon::CLI::EmailDomainBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -17,8 +16,8 @@ describe Mastodon::CLI::EmailDomainBlocks do
     let(:action) { :list }
 
     context 'with email domain block records' do
-      let!(:parent_block) { Fabricate(:email_domain_block) }
-      let!(:child_block) { Fabricate(:email_domain_block, parent: parent_block) }
+      let_it_be(:parent_block) { Fabricate(:email_domain_block) }
+      let_it_be(:child_block) { Fabricate(:email_domain_block, parent: parent_block) }
 
       it 'lists the blocks' do
         expect { subject }
@@ -45,7 +44,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
       let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
-      before { Fabricate(:email_domain_block, domain: domain) }
+      before_all { Fabricate(:email_domain_block, domain: 'host.example') }
 
       it 'does not add a new block' do
         expect { subject }
@@ -80,7 +79,7 @@ describe Mastodon::CLI::EmailDomainBlocks do
       let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
-      before { Fabricate(:email_domain_block, domain: domain) }
+      before_all { Fabricate(:email_domain_block, domain: 'host.example') }
 
       it 'removes the block' do
         expect { subject }
