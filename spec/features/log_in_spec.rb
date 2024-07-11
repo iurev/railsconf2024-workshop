@@ -7,15 +7,11 @@ describe 'Log in' do
 
   subject { page }
 
-  let_it_be(:email)        { 'test@example.com' }
-  let_it_be(:password)     { 'password' }
-  let_it_be(:confirmed_at) { Time.zone.now }
-
-  before_all do
-    as_a_registered_user
-  end
+  let_it_be(:email)    { 'test@example.com' }
+  let_it_be(:password) { 'password' }
 
   before do
+    as_a_registered_user
     visit new_user_session_path
   end
 
@@ -36,7 +32,10 @@ describe 'Log in' do
   end
 
   context 'when confirmed at is nil' do
-    let_it_be(:confirmed_at) { nil }
+    before do
+      User.last.update(confirmed_at: nil)
+      visit new_user_session_path
+    end
 
     it 'A unconfirmed user is able to log in' do
       fill_in 'user_email', with: email
