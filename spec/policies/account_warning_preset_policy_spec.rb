@@ -4,8 +4,6 @@ require 'rails_helper'
 require 'pundit/rspec'
 
 describe AccountWarningPresetPolicy do
-  let(:policy) { described_class }
-  
   before_all do
     UserRole.find_or_create_by(name: 'Admin')
   end
@@ -16,13 +14,13 @@ describe AccountWarningPresetPolicy do
   permissions :index?, :create?, :update?, :destroy? do
     context 'with an admin' do
       it 'permits' do
-        expect(policy).to permit(admin, Tag)
+        expect(described_class).to permit(admin, Tag)
       end
     end
 
     context 'with a non-admin' do
       it 'denies' do
-        expect(policy).to_not permit(john, Tag)
+        expect(described_class).to_not permit(john, Tag)
       end
     end
   end
