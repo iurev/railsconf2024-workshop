@@ -1,10 +1,9 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Import do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
   let(:type) { 'following' }
   let(:data) { attachment_fixture('imports.txt') }
 
