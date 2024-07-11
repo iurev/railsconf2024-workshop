@@ -119,7 +119,7 @@ RSpec.describe SessionActivation do
       described_class.purge_old
 
       expect { oldest_session_activation.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      expect { newest_session_activation.reload }.not_to raise_error
+      expect(described_class.find_by(id: newest_session_activation.id)).to eq(newest_session_activation)
     end
   end
 
