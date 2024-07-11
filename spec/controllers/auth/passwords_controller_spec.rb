@@ -16,7 +16,7 @@ describe Auth::PasswordsController do
   describe 'GET #edit' do
     let_it_be(:user) { Fabricate(:user) }
 
-    before_all do
+    before do
       request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
@@ -42,7 +42,7 @@ describe Auth::PasswordsController do
     let_it_be(:user) { Fabricate(:user) }
     let_it_be(:password) { 'reset0password' }
 
-    before_all do
+    before do
       request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
