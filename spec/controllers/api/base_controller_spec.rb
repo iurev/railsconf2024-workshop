@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -33,8 +32,8 @@ describe Api::BaseController do
   end
 
   describe 'non-functional accounts handling' do
-    let(:user)  { Fabricate(:user) }
-    let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+    let_it_be(:user)  { Fabricate(:user) }
+    let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
 
     controller do
       before_action :require_user!
