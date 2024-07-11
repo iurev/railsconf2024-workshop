@@ -6,15 +6,17 @@ RSpec.describe Vacuum::FeedsVacuum do
   subject { described_class.new }
 
   describe '#perform' do
-    let!(:active_user) { Fabricate(:user, current_sign_in_at: 2.days.ago) }
-    let!(:inactive_user) { Fabricate(:user, current_sign_in_at: 22.days.ago) }
+    let_it_be(:active_user) { Fabricate(:user, current_sign_in_at: 2.days.ago) }
+    let_it_be(:inactive_user) { Fabricate(:user, current_sign_in_at: 22.days.ago) }
 
-    before do
+    before_all do
       redis.zadd(feed_key_for(inactive_user), 1, 1)
       redis.zadd(feed_key_for(active_user), 1, 1)
       redis.zadd(feed_key_for(inactive_user, 'reblogs'), 2, 2)
       redis.sadd(feed_key_for(inactive_user, 'reblogs:2'), 3)
+    end
 
+    before do
       subject.perform
     end
 
