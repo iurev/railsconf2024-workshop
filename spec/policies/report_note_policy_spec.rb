@@ -8,6 +8,8 @@ RSpec.describe ReportNotePolicy do
 
   let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
   let_it_be(:john)  { Fabricate(:account) }
+  let_it_be(:report_note) { Fabricate(:report_note) }
+  let_it_be(:owner_report_note) { Fabricate(:report_note, account: john) }
 
   permissions :create? do
     context 'when staff?' do
@@ -24,8 +26,6 @@ RSpec.describe ReportNotePolicy do
   end
 
   permissions :destroy? do
-    let_it_be(:report_note) { Fabricate(:report_note) }
-
     context 'when admin?' do
       it 'permit' do
         expect(subject).to permit(admin, report_note)
@@ -33,8 +33,6 @@ RSpec.describe ReportNotePolicy do
     end
 
     context 'when owner?' do
-      let_it_be(:owner_report_note) { Fabricate(:report_note, account: john) }
-
       it 'permit' do
         expect(subject).to permit(john, owner_report_note)
       end
