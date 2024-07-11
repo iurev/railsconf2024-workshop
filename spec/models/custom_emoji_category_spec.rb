@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe CustomEmojiCategory, :aggregate_failures do
+describe CustomEmojiCategory do
   describe 'validations' do
-    let_it_be(:invalid_category) { described_class.new(name: nil) }
-
     it 'validates name presence' do
-      expect(invalid_category).to_not be_valid
-      expect(invalid_category).to model_have_error_on_field(:name)
+      record = described_class.new(name: nil)
+
+      expect(record).to_not be_valid
+      expect(record).to model_have_error_on_field(:name)
     end
   end
 end
