@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/settings'
@@ -10,11 +9,11 @@ describe Mastodon::CLI::Settings do
   describe 'subcommand "registrations"' do
     subject { cli.invoke(action, arguments, options) }
 
-    let(:cli) { Mastodon::CLI::Registrations.new }
+    let_it_be(:cli) { Mastodon::CLI::Registrations.new }
     let(:arguments) { [] }
     let(:options) { {} }
 
-    before do
+    before_all do
       Setting.registrations_mode = nil
     end
 
