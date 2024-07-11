@@ -2,10 +2,14 @@
 
 require 'rails_helper'
 
-describe InvitesController, :user do
+describe InvitesController do
   render_views
 
   let_it_be(:user) { Fabricate(:user) }
+
+  before do
+    sign_in user
+  end
 
   describe 'GET #index' do
     let_it_be(:invite) { Fabricate(:invite, user: user) }
