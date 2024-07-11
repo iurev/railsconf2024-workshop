@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Auth::ChallengesController do
   render_views
 
-  let(:password) { 'foobar12345' }
-  let(:user) { Fabricate(:user, password: password) }
+  let_it_be(:password) { 'foobar12345' }
+  let_it_be(:user) { Fabricate(:user, password: password) }
 
   before do
     sign_in user
