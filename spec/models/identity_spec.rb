@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Identity do
   describe '.find_for_omniauth' do
-    let(:auth) { Fabricate(:identity, user: Fabricate(:user)) }
+    let_it_be(:auth) { Fabricate(:identity, user: Fabricate(:user)) }
 
     it 'calls .find_or_create_by' do
       allow(described_class).to receive(:find_or_create_by)
