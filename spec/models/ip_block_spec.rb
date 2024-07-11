@@ -29,7 +29,7 @@ describe IpBlock do
   end
 
   describe '#to_log_human_identifier' do
-    let_it_be(:ip_block) { described_class.new(ip: '192.168.0.1') }
+    let(:ip_block) { described_class.new(ip: '192.168.0.1') }
 
     it 'combines the IP and prefix into a string' do
       result = ip_block.to_log_human_identifier
