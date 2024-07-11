@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'mastodon/cli/search'
@@ -7,7 +6,7 @@ require 'mastodon/cli/search'
 describe Mastodon::CLI::Search do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -83,7 +82,6 @@ describe Mastodon::CLI::Search do
         estimate!: 100,
         import!: nil,
         on_failure: nil,
-        # on_progress: nil,
         optimize_for_import!: nil,
         optimize_for_search!: nil
       )
