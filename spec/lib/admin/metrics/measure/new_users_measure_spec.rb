@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,10 +11,15 @@ describe Admin::Metrics::Measure::NewUsersMeasure do
 
   describe '#data' do
     context 'with user records' do
-      before do
-        3.times { Fabricate :user, created_at: 2.days.ago }
-        2.times { Fabricate :user, created_at: 1.day.ago }
-        Fabricate :user, created_at: 0.days.ago
+      let_it_be(:users) do
+        [
+          Fabricate(:user, created_at: 2.days.ago),
+          Fabricate(:user, created_at: 2.days.ago),
+          Fabricate(:user, created_at: 2.days.ago),
+          Fabricate(:user, created_at: 1.day.ago),
+          Fabricate(:user, created_at: 1.day.ago),
+          Fabricate(:user, created_at: 0.days.ago)
+        ]
       end
 
       it 'returns correct user counts' do
