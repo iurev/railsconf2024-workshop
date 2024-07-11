@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -10,7 +9,7 @@ describe StatusFinder do
     subject { described_class.new(url) }
 
     context 'with a status url' do
-      let(:status) { Fabricate(:status) }
+      let_it_be(:status) { Fabricate(:status) }
       let(:url) { short_account_status_url(account_username: status.account.username, id: status.id) }
 
       it 'finds the stream entry' do
@@ -30,7 +29,7 @@ describe StatusFinder do
     end
 
     context 'with a remote url even if id exists on local' do
-      let(:status) { Fabricate(:status) }
+      let_it_be(:status) { Fabricate(:status) }
       let(:url) { "https://example.com/users/test/statuses/#{status.id}" }
 
       it 'raises an error' do
