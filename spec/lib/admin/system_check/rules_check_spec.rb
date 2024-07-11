@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::SystemCheck::RulesCheck do
   subject(:check) { described_class.new(user) }
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'skip?' do
     context 'when user can manage rules' do
@@ -34,7 +33,7 @@ describe Admin::SystemCheck::RulesCheck do
     end
 
     context 'when there is a kept rule' do
-      before { Fabricate(:rule) }
+      let_it_be(:rule) { Fabricate(:rule) }
 
       it 'returns true' do
         expect(check.pass?).to be true
