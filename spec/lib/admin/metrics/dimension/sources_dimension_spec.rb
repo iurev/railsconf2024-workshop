@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,9 +11,9 @@ describe Admin::Metrics::Dimension::SourcesDimension do
   let(:params) { ActionController::Parameters.new }
 
   describe '#data' do
-    let(:app) { Fabricate(:application) }
-    let(:alice) { Fabricate(:user) }
-    let(:bob) { Fabricate(:user) }
+    let_it_be(:app) { Fabricate(:application) }
+    let_it_be(:alice) { Fabricate(:user) }
+    let_it_be(:bob) { Fabricate(:user) }
 
     before do
       alice.update(created_by_application: app)
