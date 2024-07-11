@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Account::StatusesSearch do
   let_it_be(:account) { Fabricate(:account) }
 
-  before_all do
+  before do
     allow(Chewy).to receive(:enabled?).and_return(true)
   end
 
