@@ -1,13 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Account::Field do
+  let_it_be(:account) { instance_double(Account, local?: true) }
+
   describe '#verified?' do
     subject { described_class.new(account, 'name' => 'Foo', 'value' => 'Bar', 'verified_at' => verified_at) }
-
-    let(:account) { instance_double(Account, local?: true) }
 
     context 'when verified_at is set' do
       let(:verified_at) { Time.now.utc.iso8601 }
@@ -29,7 +28,6 @@ RSpec.describe Account::Field do
   describe '#mark_verified!' do
     subject { described_class.new(account, original_hash) }
 
-    let(:account) { instance_double(Account, local?: true) }
     let(:original_hash) { { 'name' => 'Foo', 'value' => 'Bar' } }
 
     before do
@@ -48,11 +46,7 @@ RSpec.describe Account::Field do
   describe '#verifiable?' do
     subject { described_class.new(account, 'name' => 'Foo', 'value' => value) }
 
-    let(:account) { instance_double(Account, local?: local) }
-
     context 'with local accounts' do
-      let(:local) { true }
-
       context 'with a URL with misleading authentication' do
         let(:value) { 'https://spacex.com                                                                                            @h.43z.one' }
 
@@ -111,7 +105,7 @@ RSpec.describe Account::Field do
     end
 
     context 'with remote accounts' do
-      let(:local) { false }
+      let_it_be(:account) { instance_double(Account, local?: false) }
 
       context 'with a link' do
         let(:value) { '<a href="https://www.patreon.com/mastodon" target="_blank" rel="nofollow noopener noreferrer me"><span class="invisible">https://www.</span><span class="">patreon.com/mastodon</span><span class="invisible"></span></a>' }
