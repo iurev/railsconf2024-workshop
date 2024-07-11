@@ -20,7 +20,7 @@ describe Settings::FeaturedTagsController do
   context 'when user is signed in' do
     let_it_be(:user) { Fabricate(:user, password: '12345678') }
 
-    before_all { sign_in user, scope: :user }
+    before { sign_in user, scope: :user }
 
     describe 'POST #create' do
       subject { post :create, params: { featured_tag: params } }
@@ -44,9 +44,9 @@ describe Settings::FeaturedTagsController do
 
     describe 'GET to #index' do
       let_it_be(:tag) { Fabricate(:tag) }
+      let_it_be(:status) { Fabricate(:status, account: user.account) }
 
-      before_all do
-        status = Fabricate :status, account: user.account
+      before do
         status.tags << tag
       end
 
