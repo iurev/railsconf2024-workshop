@@ -1,22 +1,21 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Metrics::Dimension::ServersDimension do
   subject { described_class.new(start_at, end_at, limit, params) }
 
-  let(:start_at) { 2.days.ago }
-  let(:end_at) { Time.now.utc }
-  let(:limit) { 10 }
-  let(:params) { ActionController::Parameters.new }
+  let_it_be(:start_at) { 2.days.ago }
+  let_it_be(:end_at) { Time.now.utc }
+  let_it_be(:limit) { 10 }
+  let_it_be(:params) { ActionController::Parameters.new }
 
   describe '#data' do
-    let(:domain) { 'host.example' }
-    let(:alice) { Fabricate(:account, domain: domain) }
-    let(:bob) { Fabricate(:account) }
+    let_it_be(:domain) { 'host.example' }
+    let_it_be(:alice) { Fabricate(:account, domain: domain) }
+    let_it_be(:bob) { Fabricate(:account) }
 
-    before do
+    before(:all) do
       Fabricate :status, account: alice, created_at: 1.day.ago
       Fabricate :status, account: alice, created_at: 30.days.ago
       Fabricate :status, account: bob, created_at: 1.day.ago
