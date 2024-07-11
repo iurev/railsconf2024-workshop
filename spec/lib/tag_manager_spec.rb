@@ -6,12 +6,12 @@ RSpec.describe TagManager do
   describe '#local_domain?' do
     # The following comparisons MUST be case-insensitive.
 
-    before_all do
+    before(:context) do
       @original_local_domain = Rails.configuration.x.local_domain
       Rails.configuration.x.local_domain = 'domain.example.com'
     end
 
-    after_all do
+    after(:context) do
       Rails.configuration.x.local_domain = @original_local_domain
     end
 
@@ -31,12 +31,12 @@ RSpec.describe TagManager do
   describe '#web_domain?' do
     # The following comparisons MUST be case-insensitive.
 
-    before_all do
+    before(:context) do
       @original_web_domain = Rails.configuration.x.web_domain
       Rails.configuration.x.web_domain = 'domain.example.com'
     end
 
-    after_all do
+    after(:context) do
       Rails.configuration.x.web_domain = @original_web_domain
     end
 
@@ -64,11 +64,11 @@ RSpec.describe TagManager do
   end
 
   describe '#local_url?' do
-    before_all do
+    before(:context) do
       @original_web_domain = Rails.configuration.x.web_domain
     end
 
-    after_all do
+    after(:context) do
       Rails.configuration.x.web_domain = @original_web_domain
     end
 
