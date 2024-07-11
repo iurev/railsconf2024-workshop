@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe UserSettings::Namespace do
   subject { described_class.new(name) }
 
-  let(:name) { :foo }
+  let_it_be(:name) { :foo }
 
   describe '#setting' do
     before do
