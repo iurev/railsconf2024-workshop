@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -15,9 +14,9 @@ describe Auth::PasswordsController do
   end
 
   describe 'GET #edit' do
-    let(:user) { Fabricate(:user) }
+    let_it_be(:user) { Fabricate(:user) }
 
-    before do
+    before_all do
       request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
@@ -40,17 +39,17 @@ describe Auth::PasswordsController do
   end
 
   describe 'POST #update' do
-    let(:user) { Fabricate(:user) }
-    let(:password) { 'reset0password' }
+    let_it_be(:user) { Fabricate(:user) }
+    let_it_be(:password) { 'reset0password' }
 
-    before do
+    before_all do
       request.env['devise.mapping'] = Devise.mappings[:user]
     end
 
     context 'with valid reset_password_token' do
-      let!(:session_activation) { Fabricate(:session_activation, user: user) }
-      let!(:access_token) { Fabricate(:access_token, resource_owner_id: user.id) }
-      let!(:web_push_subscription) { Fabricate(:web_push_subscription, access_token: access_token) }
+      let_it_be(:session_activation) { Fabricate(:session_activation, user: user) }
+      let_it_be(:access_token) { Fabricate(:access_token, resource_owner_id: user.id) }
+      let_it_be(:web_push_subscription) { Fabricate(:web_push_subscription, access_token: access_token) }
 
       before do
         token = user.send_reset_password_instructions
