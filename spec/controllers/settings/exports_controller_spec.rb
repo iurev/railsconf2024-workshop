@@ -1,15 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe Settings::ExportsController do
+describe Settings::ExportsController, :user do
   render_views
+
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #show' do
     context 'when signed in' do
-      let(:user) { Fabricate(:user) }
-
       before do
         sign_in user, scope: :user
         get :show
@@ -31,7 +30,7 @@ describe Settings::ExportsController do
 
   describe 'POST #create' do
     before do
-      sign_in Fabricate(:user), scope: :user
+      sign_in user, scope: :user
     end
 
     it 'redirects to settings_export_path' do
