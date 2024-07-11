@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe EmojisController do
   render_views
 
-  let(:emoji) { Fabricate(:custom_emoji, shortcode: 'coolcat') }
+  let_it_be(:emoji) { Fabricate(:custom_emoji, shortcode: 'coolcat') }
 
   describe 'GET #show' do
     let(:response) { get :show, params: { id: emoji.id, format: :json } }
