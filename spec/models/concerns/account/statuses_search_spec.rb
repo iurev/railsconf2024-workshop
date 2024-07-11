@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe Account::StatusesSearch do
-  let_it_be(:account) { Fabricate(:account) }
+  let(:account) { Fabricate(:account) }
 
   before do
     allow(Chewy).to receive(:enabled?).and_return(true)
@@ -21,7 +21,7 @@ describe Account::StatusesSearch do
       it 'enqueues add_to_public_statuses_index and not to remove_from_public_statuses_index' do
         account.enqueue_update_public_statuses_index
         expect(account).to have_received(:enqueue_add_to_public_statuses_index).once
-        expect(account).to_not have_received(:enqueue_remove_from_public_statuses_index)
+        expect(account).not_to have_received(:enqueue_remove_from_public_statuses_index)
       end
     end
 
@@ -31,7 +31,7 @@ describe Account::StatusesSearch do
       it 'enqueues remove_from_public_statuses_index and not to add_to_public_statuses_index' do
         account.enqueue_update_public_statuses_index
         expect(account).to have_received(:enqueue_remove_from_public_statuses_index).once
-        expect(account).to_not have_received(:enqueue_add_to_public_statuses_index)
+        expect(account).not_to have_received(:enqueue_add_to_public_statuses_index)
       end
     end
   end
