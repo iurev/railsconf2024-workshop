@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Admin::WebhooksController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
@@ -48,7 +48,7 @@ describe Admin::WebhooksController do
   end
 
   context 'with an existing record' do
-    let!(:webhook) { Fabricate(:webhook, events: ['account.created', 'report.created']) }
+    let_it_be(:webhook) { Fabricate(:webhook, events: ['account.created', 'report.created']) }
 
     describe 'GET #show' do
       it 'returns http success and renders view' do
