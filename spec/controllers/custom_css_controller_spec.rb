@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,7 +6,7 @@ describe CustomCssController do
   render_views
 
   describe 'GET #show' do
-    before do
+    before_all do
       get :show
     end
 
