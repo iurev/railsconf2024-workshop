@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Setting do
   describe '#to_param' do
-    let(:setting) { Fabricate(:setting, var: var) }
-    let(:var)     { 'var' }
+    let_it_be(:var) { 'var' }
+    let_it_be(:setting) { Fabricate(:setting, var: var) }
 
     it 'returns setting.var' do
       expect(setting.to_param).to eq var
@@ -14,15 +13,18 @@ RSpec.describe Setting do
   end
 
   describe '.[]' do
-    let(:key)         { 'key' }
-    let(:cache_key)   { 'cache-key' }
-    let(:cache_value) { 'cache-value' }
+    let_it_be(:key)         { 'key' }
+    let_it_be(:cache_key)   { 'cache-key' }
+    let_it_be(:cache_value) { 'cache-value' }
 
     before do
       allow(described_class).to receive(:cache_key).with(key).and_return(cache_key)
     end
 
     context 'when Rails.cache does not exists' do
+      let_it_be(:default_value)    { 'default_value' }
+      let_it_be(:default_settings) { { key => default_value } }
+
       before do
         allow(described_class).to receive(:default_settings).and_return(default_settings)
 
@@ -31,11 +33,9 @@ RSpec.describe Setting do
         Rails.cache.delete(cache_key)
       end
 
-      let(:default_value)    { 'default_value' }
-      let(:default_settings) { { key => default_value } }
-      let(:save_setting)     { true }
-
       context 'when the setting has been saved to database' do
+        let(:save_setting) { true }
+
         it 'returns the value from database' do
           callback = double
           allow(callback).to receive(:call)
