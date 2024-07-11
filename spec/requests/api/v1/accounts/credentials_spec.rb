@@ -1,17 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'credentials API' do
-  let(:user)     { Fabricate(:user, account_attributes: { discoverable: false, locked: true, indexable: false }) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)     { Fabricate(:user, account_attributes: { discoverable: false, locked: true, indexable: false }) }
+  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)   { 'read:accounts write:accounts' }
-  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
+
+  before_all do
+    @headers  = { 'Authorization' => "Bearer #{token.token}" }
+  end
 
   describe 'GET /api/v1/accounts/verify_credentials' do
     subject do
-      get '/api/v1/accounts/verify_credentials', headers: headers
+      get '/api/v1/accounts/verify_credentials', headers: @headers
     end
 
     it_behaves_like 'forbidden for wrong scope', 'write write:accounts'
@@ -33,7 +35,7 @@ RSpec.describe 'credentials API' do
 
   describe 'PATCH /api/v1/accounts/update_credentials' do
     subject do
-      patch '/api/v1/accounts/update_credentials', headers: headers, params: params
+      patch '/api/v1/accounts/update_credentials', headers: @headers, params: params
     end
 
     before { allow(ActivityPub::UpdateDistributionWorker).to receive(:perform_async) }
