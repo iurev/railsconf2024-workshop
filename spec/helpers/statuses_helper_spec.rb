@@ -30,44 +30,25 @@ describe StatusesHelper do
   end
 
   describe 'fa_visibility_icon' do
-    context 'with a status that is public' do
-      let(:status) { Status.new(visibility: 'public') }
+    let(:public_status) { Status.new(visibility: 'public') }
+    let(:unlisted_status) { Status.new(visibility: 'unlisted') }
+    let(:private_status) { Status.new(visibility: 'private') }
+    let(:direct_status) { Status.new(visibility: 'direct') }
 
-      it 'returns the correct fa icon' do
-        result = helper.fa_visibility_icon(status)
-
-        expect(result).to match('fa-globe')
-      end
+    it 'returns the correct fa icon for public status' do
+      expect(helper.fa_visibility_icon(public_status)).to match('fa-globe')
     end
 
-    context 'with a status that is unlisted' do
-      let(:status) { Status.new(visibility: 'unlisted') }
-
-      it 'returns the correct fa icon' do
-        result = helper.fa_visibility_icon(status)
-
-        expect(result).to match('fa-unlock')
-      end
+    it 'returns the correct fa icon for unlisted status' do
+      expect(helper.fa_visibility_icon(unlisted_status)).to match('fa-unlock')
     end
 
-    context 'with a status that is private' do
-      let(:status) { Status.new(visibility: 'private') }
-
-      it 'returns the correct fa icon' do
-        result = helper.fa_visibility_icon(status)
-
-        expect(result).to match('fa-lock')
-      end
+    it 'returns the correct fa icon for private status' do
+      expect(helper.fa_visibility_icon(private_status)).to match('fa-lock')
     end
 
-    context 'with a status that is direct' do
-      let(:status) { Status.new(visibility: 'direct') }
-
-      it 'returns the correct fa icon' do
-        result = helper.fa_visibility_icon(status)
-
-        expect(result).to match('fa-at')
-      end
+    it 'returns the correct fa icon for direct status' do
+      expect(helper.fa_visibility_icon(direct_status)).to match('fa-at')
     end
   end
 
