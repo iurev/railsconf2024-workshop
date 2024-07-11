@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'pundit/rspec'
@@ -7,7 +6,7 @@ require 'pundit/rspec'
 RSpec.describe BackupPolicy do
   subject { described_class }
 
-  let(:john) { Fabricate(:account) }
+  let_it_be(:john) { Fabricate(:account) }
 
   permissions :create? do
     context 'when not user_signed_in?' do
@@ -24,21 +23,25 @@ RSpec.describe BackupPolicy do
       end
 
       context 'when backups are too old' do
-        it 'permits' do
+        before_all do
           travel(-8.days) do
             Fabricate(:backup, user: john.user)
           end
+        end
 
+        it 'permits' do
           expect(subject).to permit(john, Backup)
         end
       end
 
       context 'when backups are newer' do
-        it 'denies' do
+        before_all do
           travel(-3.days) do
             Fabricate(:backup, user: john.user)
           end
+        end
 
+        it 'denies' do
           expect(subject).to_not permit(john, Backup)
         end
       end
