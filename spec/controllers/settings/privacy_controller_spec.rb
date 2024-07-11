@@ -8,7 +8,7 @@ RSpec.describe Settings::PrivacyController do
   let_it_be(:user) { Fabricate(:user) }
   let_it_be(:account) { user.account }
 
-  before(:all) do
+  before do
     sign_in user, scope: :user
   end
 
