@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Api::Web::SettingsController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'PATCH #update' do
     it 'redirects to about page' do
