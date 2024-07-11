@@ -1,25 +1,29 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe Admin::Metrics::Measure::InstanceStatusesMeasure do
   subject { described_class.new(start_at, end_at, params) }
 
-  let(:domain) { 'example.com' }
+  let_it_be(:domain) { 'example.com' }
 
   let(:start_at) { 2.days.ago }
   let(:end_at)   { Time.now.utc }
 
   let(:params) { ActionController::Parameters.new(domain: domain) }
 
-  before do
-    Fabricate(:status, account: Fabricate(:account, domain: domain))
-    Fabricate(:status, account: Fabricate(:account, domain: domain))
+  let_it_be(:account1) { Fabricate(:account, domain: domain) }
+  let_it_be(:account2) { Fabricate(:account, domain: domain) }
+  let_it_be(:account3) { Fabricate(:account, domain: "foo.#{domain}") }
+  let_it_be(:account4) { Fabricate(:account, domain: "foo.#{domain}") }
+  let_it_be(:account5) { Fabricate(:account, domain: "bar.#{domain}") }
 
-    Fabricate(:status, account: Fabricate(:account, domain: "foo.#{domain}"))
-    Fabricate(:status, account: Fabricate(:account, domain: "foo.#{domain}"))
-    Fabricate(:status, account: Fabricate(:account, domain: "bar.#{domain}"))
+  before_all do
+    Fabricate(:status, account: account1)
+    Fabricate(:status, account: account2)
+    Fabricate(:status, account: account3)
+    Fabricate(:status, account: account4)
+    Fabricate(:status, account: account5)
   end
 
   describe '#total' do
