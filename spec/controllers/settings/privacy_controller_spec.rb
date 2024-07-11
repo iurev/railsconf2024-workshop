@@ -8,11 +8,15 @@ RSpec.describe Settings::PrivacyController do
   let_it_be(:user) { Fabricate(:user) }
   let_it_be(:account) { user.account }
 
-  before do
-    sign_in user, scope: :user
+  shared_context 'with signed in user' do
+    before do
+      sign_in user, scope: :user
+    end
   end
 
   describe 'GET #show' do
+    include_context 'with signed in user'
+
     before do
       get :show
     end
@@ -29,6 +33,8 @@ RSpec.describe Settings::PrivacyController do
   end
 
   describe 'PUT #update' do
+    include_context 'with signed in user'
+
     context 'when update succeeds' do
       before do
         allow(ActivityPub::UpdateDistributionWorker).to receive(:perform_async)
