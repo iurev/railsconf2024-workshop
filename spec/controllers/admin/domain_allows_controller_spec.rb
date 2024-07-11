@@ -5,10 +5,12 @@ require 'rails_helper'
 RSpec.describe Admin::DomainAllowsController do
   render_views
 
-  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  before_all do
+    @admin = Fabricate(:user, role: UserRole.find_by(name: 'Admin'))
+  end
 
   before do
-    sign_in admin, scope: :user
+    sign_in @admin, scope: :user
   end
 
   describe 'GET #new' do
