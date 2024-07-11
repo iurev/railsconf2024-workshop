@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -12,13 +11,8 @@ describe Admin::Metrics::Dimension::LanguagesDimension do
   let(:params) { ActionController::Parameters.new }
 
   describe '#data' do
-    let(:alice) { Fabricate(:user, locale: 'en', current_sign_in_at: 1.day.ago) }
-    let(:bob) { Fabricate(:user, locale: 'en', current_sign_in_at: 30.days.ago) }
-
-    before do
-      alice.update(current_sign_in_at: 1.day.ago)
-      bob.update(current_sign_in_at: 30.days.ago)
-    end
+    let_it_be(:alice) { Fabricate(:user, locale: 'en', current_sign_in_at: 1.day.ago) }
+    let_it_be(:bob) { Fabricate(:user, locale: 'en', current_sign_in_at: 30.days.ago) }
 
     it 'returns locales with sign in counts' do
       expect(subject.data.size)
