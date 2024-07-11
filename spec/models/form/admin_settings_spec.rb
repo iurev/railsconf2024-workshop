@@ -15,7 +15,7 @@ describe Form::AdminSettings do
       end
 
       context 'with an account' do
-        before { Fabricate(:account, username: 'Glorp') }
+        let_it_be(:account) { Fabricate(:account, username: 'Glorp') }
 
         it 'is not valid when account doesnt match' do
           setting = described_class.new(site_contact_username: 'Test')
