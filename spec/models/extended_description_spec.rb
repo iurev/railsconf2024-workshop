@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ExtendedDescription, :account do
+RSpec.describe ExtendedDescription do
   describe '.current' do
     context 'with the default values' do
       it 'makes a new instance' do
@@ -14,9 +14,8 @@ RSpec.describe ExtendedDescription, :account do
     end
 
     context 'with a custom setting value' do
-      let_it_be(:setting) { instance_double(Setting, value: 'Extended text', updated_at: 10.days.ago) }
-
       before do
+        setting = instance_double(Setting, value: 'Extended text', updated_at: 10.days.ago)
         allow(Setting).to receive(:find_by).with(var: 'site_extended_description').and_return(setting)
       end
 
