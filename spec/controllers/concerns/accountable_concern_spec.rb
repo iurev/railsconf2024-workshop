@@ -14,8 +14,8 @@ RSpec.describe AccountableConcern do
     end
   end
 
-  let(:user)   { Fabricate(:account) }
-  let(:target) { Fabricate(:account) }
+  let_it_be(:user)   { Fabricate(:account) }
+  let_it_be(:target) { Fabricate(:account) }
   let(:hoge)   { hoge_class.new(user) }
 
   describe '#log_action' do
