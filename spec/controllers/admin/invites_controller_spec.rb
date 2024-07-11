@@ -8,10 +8,8 @@ describe Admin::InvitesController do
   let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
   let_it_be(:invite) { Fabricate(:invite, expires_at: nil) }
 
-  before_all do
-    RSpec::Mocks.with_temporary_scope do
-      sign_in user, scope: :user
-    end
+  before do
+    sign_in user, scope: :user
   end
 
   describe 'GET #index' do
