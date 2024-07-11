@@ -1,17 +1,19 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe Form::AccountBatch do
+  let_it_be(:account) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:target_account) { Fabricate(:account) }
+  let_it_be(:target_account2) { Fabricate(:account) }
+
   let(:account_batch) { described_class.new }
 
   describe '#save' do
-    subject           { account_batch.save }
+    subject { account_batch.save }
 
-    let(:account)     { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
     let(:account_ids) { [] }
-    let(:query)       { Account.none }
+    let(:query) { Account.none }
 
     before do
       account_batch.assign_attributes(
@@ -26,17 +28,14 @@ RSpec.describe Form::AccountBatch do
     context 'when action is "suspend"' do
       let(:action) { 'suspend' }
 
-      let(:target_account)  { Fabricate(:account) }
-      let(:target_account2) { Fabricate(:account) }
-
-      before do
+      before_all do
         Fabricate(:report, target_account: target_account)
         Fabricate(:report, target_account: target_account2)
       end
 
       context 'when accounts are passed as account_ids' do
         let(:select_all_matching) { '0' }
-        let(:account_ids)         { [target_account.id, target_account2.id] }
+        let(:account_ids) { [target_account.id, target_account2.id] }
 
         it 'suspends the expected users and closes open reports' do
           expect { subject }
@@ -47,7 +46,7 @@ RSpec.describe Form::AccountBatch do
 
       context 'when accounts are passed as a query' do
         let(:select_all_matching) { '1' }
-        let(:query)               { Account.where(id: [target_account.id, target_account2.id]) }
+        let(:query) { Account.where(id: [target_account.id, target_account2.id]) }
 
         it 'suspends the expected users and closes open reports' do
           expect { subject }
