@@ -1,18 +1,18 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe FollowRequest do
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:target_account) { Fabricate(:account) }
+
   describe '#authorize!' do
-    let!(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
-    let(:account)         { Fabricate(:account) }
-    let(:target_account)  { Fabricate(:account) }
+    let_it_be(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
 
     context 'when the to-be-followed person has been added to a list' do
-      let!(:list) { Fabricate(:list, account: account) }
+      let_it_be(:list) { Fabricate(:list, account: account) }
 
-      before do
+      before_all do
         list.accounts << target_account
       end
 
@@ -51,14 +51,12 @@ RSpec.describe FollowRequest do
   end
 
   describe '#reject!' do
-    let!(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
-    let(:account)         { Fabricate(:account) }
-    let(:target_account)  { Fabricate(:account) }
+    let_it_be(:follow_request) { Fabricate(:follow_request, account: account, target_account: target_account) }
 
     context 'when the to-be-followed person has been added to a list' do
-      let!(:list) { Fabricate(:list, account: account) }
+      let_it_be(:list) { Fabricate(:list, account: account) }
 
-      before do
+      before_all do
         list.accounts << target_account
       end
 
