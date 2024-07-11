@@ -4,9 +4,9 @@ require 'rails_helper'
 require 'pundit/rspec'
 
 describe PreviewCardPolicy do
-  let(:policy) { described_class }
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:policy) { described_class }
+  let_it_be(:admin)  { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)   { Fabricate(:account) }
 
   permissions :index?, :review? do
     context 'with an admin' do
