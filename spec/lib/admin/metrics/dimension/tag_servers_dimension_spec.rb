@@ -11,15 +11,15 @@ describe Admin::Metrics::Dimension::TagServersDimension do
   let(:params) { ActionController::Parameters.new(id: tag.id) }
 
   describe '#data' do
-    let(:alice) { Fabricate(:account, domain: domain) }
-    let(:bob) { Fabricate(:account) }
-    let(:domain) { 'host.example' }
-    let(:tag) { Fabricate(:tag) }
+    let_it_be(:domain) { 'host.example' }
+    let_it_be(:tag) { Fabricate(:tag) }
+    let_it_be(:alice) { Fabricate(:account, domain: domain) }
+    let_it_be(:bob) { Fabricate(:account) }
 
-    before do
-      alice_status_recent = Fabricate :status, account: alice, created_at: 1.day.ago
-      alice_status_older = Fabricate :status, account: alice, created_at: 30.days.ago
-      bob_status_recent = Fabricate :status, account: bob, created_at: 1.day.ago
+    before_all do
+      alice_status_recent = Fabricate(:status, account: alice, created_at: 1.day.ago)
+      alice_status_older = Fabricate(:status, account: alice, created_at: 30.days.ago)
+      bob_status_recent = Fabricate(:status, account: bob, created_at: 1.day.ago)
 
       alice_status_older.tags << tag
       alice_status_recent.tags << tag
