@@ -7,14 +7,12 @@ RSpec.describe RemoteFollow do
     stub_request(:get, 'https://quitter.no/.well-known/webfinger?resource=acct:gargron@quitter.no').to_return(request_fixture('webfinger.txt'))
   end
 
-  let(:attrs)         { nil }
-  let(:remote_follow) { described_class.new(attrs) }
+  let_it_be(:remote_follow_with_acct) { described_class.new(acct: 'gargron@quitter.no') }
+  let_it_be(:remote_follow_without_acct) { described_class.new }
 
   describe '.initialize' do
-    subject { remote_follow.acct }
-
     context 'when attrs with acct' do
-      let(:attrs) { { acct: 'gargron@quitter.no' } }
+      subject { remote_follow_with_acct.acct }
 
       it 'returns acct' do
         expect(subject).to eq 'gargron@quitter.no'
@@ -22,7 +20,7 @@ RSpec.describe RemoteFollow do
     end
 
     context 'when attrs without acct' do
-      let(:attrs) { {} }
+      subject { remote_follow_without_acct.acct }
 
       it do
         expect(subject).to be_nil
@@ -31,10 +29,8 @@ RSpec.describe RemoteFollow do
   end
 
   describe '#valid?' do
-    subject { remote_follow.valid? }
-
     context 'when attrs with acct' do
-      let(:attrs) { { acct: 'gargron@quitter.no' } }
+      subject { remote_follow_with_acct.valid? }
 
       it do
         expect(subject).to be true
@@ -42,7 +38,7 @@ RSpec.describe RemoteFollow do
     end
 
     context 'when attrs without acct' do
-      let(:attrs) { {} }
+      subject { remote_follow_without_acct.valid? }
 
       it do
         expect(subject).to be false
@@ -51,13 +47,12 @@ RSpec.describe RemoteFollow do
   end
 
   describe '#subscribe_address_for' do
-    subject { remote_follow.subscribe_address_for(account) }
+    subject { remote_follow_with_acct.subscribe_address_for(account) }
 
     let(:account) { Fabricate(:account, username: 'alice') }
-    let(:attrs) { { acct: 'gargron@quitter.no' } }
 
     before do
-      remote_follow.valid?
+      remote_follow_with_acct.valid?
     end
 
     it 'returns subscribe address' do
