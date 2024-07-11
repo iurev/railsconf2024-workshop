@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'email confirmation flow when captcha is enabled' do
-  let(:user)        { Fabricate(:user, confirmed_at: nil, confirmation_token: 'foobar', created_by_application: client_app) }
-  let(:client_app)  { nil }
+  let_it_be(:user) { Fabricate(:user, confirmed_at: nil, confirmation_token: 'foobar', created_by_application: client_app) }
+  let(:client_app) { nil }
 
   before do
     allow(Auth::ConfirmationsController).to receive(:new).and_return(stubbed_controller)
