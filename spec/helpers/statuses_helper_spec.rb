@@ -5,7 +5,7 @@ require 'rails_helper'
 describe StatusesHelper do
   describe 'status_text_summary' do
     context 'with blank text' do
-      let_it_be(:status) { Status.new(spoiler_text: '') }
+      let(:status) { Status.new(spoiler_text: '') }
 
       it 'returns immediately with nil' do
         result = helper.status_text_summary(status)
@@ -14,7 +14,7 @@ describe StatusesHelper do
     end
 
     context 'with present text' do
-      let_it_be(:status) { Status.new(spoiler_text: 'SPOILERS!!!') }
+      let(:status) { Status.new(spoiler_text: 'SPOILERS!!!') }
 
       it 'returns the content warning' do
         result = helper.status_text_summary(status)
@@ -30,10 +30,10 @@ describe StatusesHelper do
   end
 
   describe 'fa_visibility_icon' do
-    let_it_be(:public_status) { Status.new(visibility: 'public') }
-    let_it_be(:unlisted_status) { Status.new(visibility: 'unlisted') }
-    let_it_be(:private_status) { Status.new(visibility: 'private') }
-    let_it_be(:direct_status) { Status.new(visibility: 'direct') }
+    let(:public_status) { Status.new(visibility: 'public') }
+    let(:unlisted_status) { Status.new(visibility: 'unlisted') }
+    let(:private_status) { Status.new(visibility: 'private') }
+    let(:direct_status) { Status.new(visibility: 'direct') }
 
     it 'returns the correct fa icon for public status' do
       expect(helper.fa_visibility_icon(public_status)).to match('fa-globe')
