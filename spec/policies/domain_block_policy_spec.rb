@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 require 'pundit/rspec'
@@ -7,8 +6,8 @@ require 'pundit/rspec'
 RSpec.describe DomainBlockPolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)    { Fabricate(:account) }
 
   permissions :index?, :show?, :create?, :destroy? do
     context 'when admin' do
