@@ -3,15 +3,13 @@
 require 'rails_helper'
 
 describe 'API V1 Statuses Mutes' do
-  let(:user)  { Fabricate(:user) }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'write:mutes' }
+  let_it_be(:user)  { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write:mutes') }
+  let_it_be(:status) { Fabricate(:status, account: user.account) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   context 'with an oauth token' do
     describe 'POST /api/v1/statuses/:status_id/mute' do
-      let(:status) { Fabricate(:status, account: user.account) }
-
       before do
         post "/api/v1/statuses/#{status.id}/mute", headers: headers
       end
@@ -23,8 +21,6 @@ describe 'API V1 Statuses Mutes' do
     end
 
     describe 'POST /api/v1/statuses/:status_id/unmute' do
-      let(:status) { Fabricate(:status, account: user.account) }
-
       before do
         user.account.mute_conversation!(status.conversation)
         post "/api/v1/statuses/#{status.id}/unmute", headers: headers
