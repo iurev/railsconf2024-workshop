@@ -17,8 +17,6 @@ describe 'Translation Languages' do
     end
 
     context 'when a translation service is configured' do
-      let_it_be(:service_double) { instance_double(TranslationService::DeepL, languages: { nil => %w(en de), 'en' => ['de'] }) }
-
       before { configure_translation_service }
 
       it 'returns language matrix', :aggregate_failures do
@@ -35,6 +33,10 @@ describe 'Translation Languages' do
 
       def configure_translation_service
         allow(TranslationService).to receive_messages(configured?: true, configured: service_double)
+      end
+
+      def service_double
+        instance_double(TranslationService::DeepL, languages: { nil => %w(en de), 'en' => ['de'] })
       end
     end
   end
