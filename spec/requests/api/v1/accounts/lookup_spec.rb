@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -8,7 +7,7 @@ describe 'Accounts Lookup API' do
   let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)   { 'read:accounts' }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
 
   describe 'GET /api/v1/accounts/lookup' do
     it 'returns http success' do
