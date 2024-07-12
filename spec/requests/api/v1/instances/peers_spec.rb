@@ -4,6 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Peers' do
   describe 'GET /api/v1/instance/peers' do
+    let_it_be(:original_setting) { Setting.peers_api_enabled }
+
+    after { Setting.peers_api_enabled = original_setting }
+
     context 'with peers api enabled' do
       before { Setting.peers_api_enabled = true }
 
