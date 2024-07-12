@@ -1,12 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Endorsements' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts') }
+
+  before_all do
+    @headers = { 'Authorization' => "Bearer #{token.token}" }
+  end
 
   describe 'GET /api/v1/endorsements' do
     context 'when not authorized' do
@@ -20,20 +22,19 @@ describe 'Endorsements' do
 
     context 'with wrong scope' do
       before do
-        get api_v1_endorsements_path, headers: headers
+        token.update!(scopes: 'write write:accounts')
+        get api_v1_endorsements_path, headers: @headers
       end
 
       it_behaves_like 'forbidden for wrong scope', 'write write:accounts'
     end
 
     context 'with correct scope' do
-      let(:scopes) { 'read:accounts' }
-
       context 'with endorsed accounts' do
         let!(:account_pin) { Fabricate(:account_pin, account: user.account) }
 
         it 'returns http success and accounts json' do
-          get api_v1_endorsements_path, headers: headers
+          get api_v1_endorsements_path, headers: @headers
 
           expect(response)
             .to have_http_status(200)
@@ -48,7 +49,7 @@ describe 'Endorsements' do
 
       context 'without endorsed accounts without json' do
         it 'returns http success' do
-          get api_v1_endorsements_path, headers: headers
+          get api_v1_endorsements_path, headers: @headers
 
           expect(response)
             .to have_http_status(200)
