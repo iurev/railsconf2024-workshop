@@ -7,9 +7,8 @@ describe 'API V1 Accounts FollowerAccounts' do
   let_it_be(:account) { Fabricate(:account) }
   let_it_be(:alice)   { Fabricate(:account) }
   let_it_be(:bob)     { Fabricate(:account) }
+  let_it_be(:token, reload: true) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts') }
 
-  let(:scopes)   { 'read:accounts' }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   before_all do
@@ -47,7 +46,7 @@ describe 'API V1 Accounts FollowerAccounts' do
     end
 
     context 'when requesting user is the account owner' do
-      let(:user) { account.user }
+      let_it_be(:user, reload: true) { account.user }
 
       it 'returns all accounts, including muted accounts' do
         account.mute!(bob)
