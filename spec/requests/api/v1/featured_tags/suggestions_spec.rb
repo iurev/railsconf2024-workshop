@@ -14,7 +14,7 @@ describe 'Featured Tags Suggestions API' do
     let_it_be(:used_tag) { Fabricate(:tag, name: 'used_tag') }
     let_it_be(:used_featured_tag) { Fabricate(:tag, name: 'used_featured_tag') }
 
-    before_all do
+    before do
       _unused_tag = Fabricate(:tag, name: 'unused_tag')
 
       # Make relevant tags used by account
