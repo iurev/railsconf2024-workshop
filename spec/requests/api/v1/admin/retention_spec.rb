@@ -1,13 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Admin Retention' do
-  let(:user)    { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account) }
+  let_it_be(:user)    { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account) { Fabricate(:account) }
 
   describe 'GET /api/v1/admin/retention' do
     context 'when not authorized' do
@@ -22,8 +19,13 @@ describe 'Admin Retention' do
     context 'with correct scope' do
       let(:scopes) { 'admin:read' }
 
+      before do
+        token = Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes)
+        @headers = { 'Authorization' => "Bearer #{token.token}" }
+      end
+
       it 'returns http success and status json' do
-        post '/api/v1/admin/retention', params: { account_id: account.id, limit: 2 }, headers: headers
+        post '/api/v1/admin/retention', params: { account_id: account.id, limit: 2 }, headers: @headers
 
         expect(response)
           .to have_http_status(200)
