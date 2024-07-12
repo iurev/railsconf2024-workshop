@@ -11,7 +11,7 @@ describe 'API V1 Accounts FollowingAccounts' do
   let_it_be(:alice)   { Fabricate(:account) }
   let_it_be(:bob)     { Fabricate(:account) }
 
-  before_all do
+  before do
     account.follow!(alice)
     account.follow!(bob)
   end
