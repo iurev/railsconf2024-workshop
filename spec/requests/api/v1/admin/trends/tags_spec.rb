@@ -1,16 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'API V1 Admin Trends Tags' do
-  let(:role)   { UserRole.find_by(name: 'Admin') }
-  let(:user)   { Fabricate(:user, role: role) }
-  let(:scopes) { 'admin:read admin:write' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:account) { Fabricate(:account) }
-  let(:tag)     { Fabricate(:tag) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:role)   { UserRole.find_by(name: 'Admin') }
+  let_it_be(:user)   { Fabricate(:user, role: role) }
+  let_it_be(:scopes) { 'admin:read admin:write' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:tag)     { Fabricate(:tag) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/admin/trends/tags' do
     it 'returns http success' do
