@@ -5,6 +5,7 @@ require 'rails_helper'
 describe 'Endorsements' do
   let_it_be(:user) { Fabricate(:user) }
   let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:accounts') }
+  let_it_be(:account_pin) { Fabricate(:account_pin, account: user.account) }
 
   before_all do
     @headers = { 'Authorization' => "Bearer #{token.token}" }
@@ -31,8 +32,6 @@ describe 'Endorsements' do
 
     context 'with correct scope' do
       context 'with endorsed accounts' do
-        let!(:account_pin) { Fabricate(:account_pin, account: user.account) }
-
         it 'returns http success and accounts json' do
           get api_v1_endorsements_path, headers: @headers
 
@@ -48,6 +47,8 @@ describe 'Endorsements' do
       end
 
       context 'without endorsed accounts without json' do
+        before { account_pin.destroy }
+
         it 'returns http success' do
           get api_v1_endorsements_path, headers: @headers
 
