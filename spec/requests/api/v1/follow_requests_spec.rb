@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Follow requests' do
   let_it_be(:user)     { Fabricate(:user, account_attributes: { locked: true }) }
-  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)   { 'read:follows write:follows' }
+  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/follow_requests' do
