@@ -1,11 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'API V1 Push Subscriptions' do
-  let(:user) { Fabricate(:user) }
-  let(:create_payload) do
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:create_payload) do
     {
       subscription: {
         endpoint: 'https://fcm.googleapis.com/fcm/send/fiuH06a27qE:APA91bHnSiGcLwdaxdyqVXNDR9w1NlztsHb6lyt5WDKOC_Z_Q8BlFxQoR8tWFSXUIDdkyw0EdvxTu63iqamSaqVSevW5LfoFwojws8XYDXv_NRRLH6vo2CdgiN4jgHv5VLt2A8ah6lUX',
@@ -16,7 +15,7 @@ describe 'API V1 Push Subscriptions' do
       },
     }.with_indifferent_access
   end
-  let(:alerts_payload) do
+  let_it_be(:alerts_payload) do
     {
       data: {
         policy: 'all',
@@ -33,9 +32,9 @@ describe 'API V1 Push Subscriptions' do
       },
     }.with_indifferent_access
   end
-  let(:scopes) { 'push' }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:scopes) { 'push' }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/push/subscription' do
     subject { post '/api/v1/push/subscription', params: create_payload, headers: headers }
@@ -69,7 +68,7 @@ describe 'API V1 Push Subscriptions' do
   describe 'PUT /api/v1/push/subscription' do
     subject { put '/api/v1/push/subscription', params: alerts_payload, headers: headers }
 
-    before { create_subscription_with_token }
+    before_all { create_subscription_with_token }
 
     it 'changes data policy and alert settings and returns expected JSON' do
       expect { subject }
@@ -95,7 +94,7 @@ describe 'API V1 Push Subscriptions' do
   describe 'DELETE /api/v1/push/subscription' do
     subject { delete '/api/v1/push/subscription', headers: headers }
 
-    before { create_subscription_with_token }
+    before_all { create_subscription_with_token }
 
     it 'removes the subscription' do
       expect { subject }
