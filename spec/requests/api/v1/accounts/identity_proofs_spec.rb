@@ -1,14 +1,12 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
-describe 'Accounts Identity Proofs API' do
-  let(:user)     { Fabricate(:user) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)   { 'read:accounts' }
-  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account) }
+describe 'Accounts Identity Proofs API', :account do
+  let_it_be(:user)     { Fabricate(:user) }
+  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:scopes)   { 'read:accounts' }
+  let_it_be(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/accounts/identity_proofs' do
     it 'returns http success' do
