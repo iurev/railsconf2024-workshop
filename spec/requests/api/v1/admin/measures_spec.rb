@@ -3,10 +3,13 @@
 require 'rails_helper'
 
 describe 'Admin Measures' do
-  let(:user)    { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account) }
+  let_it_be(:user)    { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account) { Fabricate(:account) }
+
+  shared_context 'with authorized user' do
+    let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  end
 
   describe 'GET /api/v1/admin/measures' do
     context 'when not authorized' do
@@ -19,6 +22,7 @@ describe 'Admin Measures' do
     end
 
     context 'with correct scope' do
+      include_context 'with authorized user'
       let(:scopes) { 'admin:read' }
 
       it 'returns http success and status json' do
