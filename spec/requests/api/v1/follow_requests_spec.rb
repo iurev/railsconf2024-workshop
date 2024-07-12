@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Follow requests' do
-  let(:user)     { Fabricate(:user, account_attributes: { locked: true }) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)     { Fabricate(:user, account_attributes: { locked: true }) }
   let(:scopes)   { 'read:follows write:follows' }
+  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/follow_requests' do
@@ -13,7 +13,7 @@ RSpec.describe 'Follow requests' do
       get '/api/v1/follow_requests', headers: headers, params: params
     end
 
-    let(:accounts) { Fabricate.times(2, :account) }
+    let_it_be(:accounts) { Fabricate.times(2, :account) }
     let(:params)   { {} }
 
     let(:expected_response) do
@@ -26,7 +26,7 @@ RSpec.describe 'Follow requests' do
       end
     end
 
-    before do
+    before_all do
       accounts.each { |account| FollowService.new.call(account, user.account) }
     end
 
@@ -55,9 +55,9 @@ RSpec.describe 'Follow requests' do
       post "/api/v1/follow_requests/#{follower.id}/authorize", headers: headers
     end
 
-    let(:follower) { Fabricate(:account) }
+    let_it_be(:follower) { Fabricate(:account) }
 
-    before do
+    before_all do
       FollowService.new.call(follower, user.account)
     end
 
@@ -75,9 +75,9 @@ RSpec.describe 'Follow requests' do
       post "/api/v1/follow_requests/#{follower.id}/reject", headers: headers
     end
 
-    let(:follower) { Fabricate(:account) }
+    let_it_be(:follower) { Fabricate(:account) }
 
-    before do
+    before_all do
       FollowService.new.call(follower, user.account)
     end
 
