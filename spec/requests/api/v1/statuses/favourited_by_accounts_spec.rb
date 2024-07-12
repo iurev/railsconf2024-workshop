@@ -1,26 +1,24 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'API V1 Statuses Favourited by Accounts' do
-  let(:user) { Fabricate(:user) }
-  let(:scopes)  { 'read:accounts' }
-  # let(:app)   { Fabricate(:application, name: 'Test app', website: 'http://testapp.com') }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:alice) { Fabricate(:account) }
-  let(:bob)   { Fabricate(:account) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:accounts' }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:alice) { Fabricate(:account) }
+  let_it_be(:bob)   { Fabricate(:account) }
 
   context 'with an oauth token' do
+    let_it_be(:status) { Fabricate(:status, account: user.account) }
+
     subject do
       get "/api/v1/statuses/#{status.id}/favourited_by", headers: headers, params: { limit: 2 }
     end
 
     describe 'GET /api/v1/statuses/:status_id/favourited_by' do
-      let(:status) { Fabricate(:status, account: user.account) }
-
-      before do
+      before_all do
         Favourite.create!(account: alice, status: status)
         Favourite.create!(account: bob, status: status)
       end
@@ -60,10 +58,10 @@ RSpec.describe 'API V1 Statuses Favourited by Accounts' do
     end
 
     context 'with a private status' do
-      let(:status) { Fabricate(:status, account: user.account, visibility: :private) }
+      let_it_be(:status) { Fabricate(:status, account: user.account, visibility: :private) }
 
       describe 'GET #index' do
-        before do
+        before_all do
           Fabricate(:favourite, status: status)
         end
 
@@ -76,10 +74,10 @@ RSpec.describe 'API V1 Statuses Favourited by Accounts' do
     end
 
     context 'with a public status' do
-      let(:status) { Fabricate(:status, account: user.account, visibility: :public) }
+      let_it_be(:status) { Fabricate(:status, account: user.account, visibility: :public) }
 
       describe 'GET #index' do
-        before do
+        before_all do
           Fabricate(:favourite, status: status)
         end
 
