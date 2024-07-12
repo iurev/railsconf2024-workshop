@@ -4,9 +4,10 @@ require 'rails_helper'
 
 describe 'API V1 Timelines List' do
   let_it_be(:user) { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
   let_it_be(:list) { Fabricate(:list, account: user.account) }
+  let_it_be(:other_user) { Fabricate(:user) }
 
+  let(:scopes)  { 'read:statuses' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
@@ -29,8 +30,7 @@ describe 'API V1 Timelines List' do
   end
 
   context 'with the wrong user context' do
-    let_it_be(:other_user) { Fabricate(:user) }
-    let(:token)      { Fabricate(:accessible_access_token, resource_owner_id: other_user.id, scopes: 'read') }
+    let(:token) { Fabricate(:accessible_access_token, resource_owner_id: other_user.id, scopes: 'read') }
 
     describe 'GET #show' do
       it 'returns http not found' do
