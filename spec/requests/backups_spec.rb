@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -7,8 +6,8 @@ describe 'Backups' do
   include RoutingHelper
 
   describe 'GET backups#download' do
-    let(:user) { Fabricate(:user) }
-    let(:backup) { Fabricate(:backup, user: user) }
+    let_it_be(:user) { Fabricate(:user) }
+    let_it_be(:backup) { Fabricate(:backup, user: user) }
 
     before do
       sign_in user
