@@ -3,17 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe 'Sources' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let(:scopes)        { 'read:statuses' }
+  let(:token)         { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:status)  { Fabricate(:status) }
+
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/statuses/:status_id/source' do
     subject do
       get "/api/v1/statuses/#{status.id}/source", headers: headers
     end
-
-    let(:status) { Fabricate(:status) }
 
     it_behaves_like 'forbidden for wrong scope', 'write write:statuses'
 
@@ -31,7 +31,7 @@ RSpec.describe 'Sources' do
     end
 
     context 'with private status of non-followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
+      before { status.update!(visibility: :private) }
 
       it 'returns http not found' do
         subject
@@ -41,9 +41,8 @@ RSpec.describe 'Sources' do
     end
 
     context 'with private status of followed account' do
-      let(:status) { Fabricate(:status, visibility: :private) }
-
       before do
+        status.update!(visibility: :private)
         user.account.follow!(status.account)
       end
 
