@@ -5,9 +5,9 @@ require 'rails_helper'
 describe 'Accounts Pins API' do
   let_it_be(:user)     { Fabricate(:user) }
   let_it_be(:kevin)    { Fabricate(:user) }
-  let(:scopes)   { 'write:accounts' }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:scopes)   { 'write:accounts' }
+  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   before_all do
     kevin.account.followers << user.account
@@ -27,9 +27,7 @@ describe 'Accounts Pins API' do
   describe 'POST /api/v1/accounts/:account_id/unpin' do
     subject { post "/api/v1/accounts/#{kevin.account.id}/unpin", headers: headers }
 
-    before do
-      Fabricate(:account_pin, account: user.account, target_account: kevin.account)
-    end
+    let_it_be(:account_pin) { Fabricate(:account_pin, account: user.account, target_account: kevin.account) }
 
     it 'destroys account_pin', :aggregate_failures do
       expect do
