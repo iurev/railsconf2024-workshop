@@ -5,8 +5,8 @@ require 'rails_helper'
 describe 'Accounts Pins API' do
   let_it_be(:user)     { Fabricate(:user) }
   let_it_be(:kevin)    { Fabricate(:user) }
-  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)   { 'write:accounts' }
+  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   before_all do
