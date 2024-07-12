@@ -1,16 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Accounts Pins API' do
-  let(:user)     { Fabricate(:user) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)     { Fabricate(:user) }
+  let_it_be(:kevin)    { Fabricate(:user) }
+  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)   { 'write:accounts' }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:kevin) { Fabricate(:user) }
 
-  before do
+  before_all do
     kevin.account.followers << user.account
   end
 
