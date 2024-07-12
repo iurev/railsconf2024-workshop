@@ -1,17 +1,14 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Custom Emojis' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/custom_emojis' do
-    before do
-      Fabricate(:custom_emoji, domain: nil, disabled: false, visible_in_picker: true, shortcode: 'coolcat')
-    end
+    let_it_be(:custom_emoji) { Fabricate(:custom_emoji, domain: nil, disabled: false, visible_in_picker: true, shortcode: 'coolcat') }
 
     context 'when logged out' do
       it 'returns http success and json' do
