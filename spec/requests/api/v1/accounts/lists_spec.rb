@@ -1,17 +1,17 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Accounts Lists API' do
-  let(:user)     { Fabricate(:user) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:list)    { Fabricate(:list, account: user.account) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+
   let(:scopes)   { 'read:lists' }
   let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account) }
-  let(:list)    { Fabricate(:list, account: user.account) }
 
-  before do
+  let_it_be(:setup) do
     user.account.follow!(account)
     list.accounts << account
   end
