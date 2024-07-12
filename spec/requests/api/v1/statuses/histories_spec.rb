@@ -1,17 +1,15 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'API V1 Statuses Histories' do
-  let(:user)  { Fabricate(:user) }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:statuses' }
+  let_it_be(:user)  { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:statuses') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   context 'with an oauth token' do
     describe 'GET /api/v1/statuses/:status_id/history' do
-      let(:status) { Fabricate(:status, account: user.account) }
+      let_it_be(:status) { Fabricate(:status, account: user.account) }
 
       before do
         get "/api/v1/statuses/#{status.id}/history", headers: headers
