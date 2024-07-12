@@ -1,9 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'Disabled OAuth routes' do
+  let_it_be(:application) { Fabricate(:application, scopes: 'read') }
+
   # These routes are disabled via the doorkeeper configuration for
   # `admin_authenticator`, as these routes should only be accessible by server
   # administrators. For now, these routes are not properly designed and
@@ -33,8 +34,6 @@ describe 'Disabled OAuth routes' do
   end
 
   describe 'GET /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
     it 'returns 403 forbidden' do
       get oauth_application_path(application)
 
@@ -43,8 +42,6 @@ describe 'Disabled OAuth routes' do
   end
 
   describe 'PATCH /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
     it 'returns 403 forbidden' do
       patch oauth_application_path(application)
 
@@ -53,8 +50,6 @@ describe 'Disabled OAuth routes' do
   end
 
   describe 'PUT /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
     it 'returns 403 forbidden' do
       put oauth_application_path(application)
 
@@ -63,8 +58,6 @@ describe 'Disabled OAuth routes' do
   end
 
   describe 'DELETE /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
     it 'returns 403 forbidden' do
       delete oauth_application_path(application)
 
@@ -73,8 +66,6 @@ describe 'Disabled OAuth routes' do
   end
 
   describe 'GET /oauth/applications/:id/edit' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
     it 'returns 403 forbidden' do
       get edit_oauth_application_path(application)
 
