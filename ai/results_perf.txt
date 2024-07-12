@@ -1,0 +1,648 @@
+--- ---
+Testing file: spec/controllers/admin/settings/about_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: -0.01%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/settings/branding_controller_spec.rb
+Current version average time: 1.74 seconds
+Previous version average time: 1.73 seconds
+Percentage difference: 0.59%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/settings/content_retention_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -2.41%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/settings/discovery_controller_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: -0.85%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/settings/registrations_controller_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: 1.08%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/site_uploads_controller_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: -3.06%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/tags_controller_spec.rb
+Current version average time: 1.74 seconds
+Previous version average time: 1.7 seconds
+Percentage difference: 2.45%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/trends/links/preview_card_providers_controller_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.65 seconds
+Percentage difference: 0.81%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/trends/links_controller_spec.rb
+Current version average time: 1.66 seconds
+Previous version average time: 1.63 seconds
+Percentage difference: 1.49%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/trends/statuses_controller_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.65 seconds
+Percentage difference: -0.4%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/trends/tags_controller_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.64 seconds
+Percentage difference: 0.84%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/users/two_factor_authentications_controller_spec.rb
+Current version average time: 1.66 seconds
+Previous version average time: 1.69 seconds
+Percentage difference: -1.82%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/warning_presets_controller_spec.rb
+Current version average time: 1.77 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: -2.02%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/webhooks/secrets_controller_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.59 seconds
+Percentage difference: -0.22%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/admin/webhooks_controller_spec.rb
+Current version average time: 1.76 seconds
+Previous version average time: 1.87 seconds
+Percentage difference: -6.05%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/api/base_controller_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.7 seconds
+Percentage difference: -6.26%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/api/oembed_controller_spec.rb
+Current version average time: 1.64 seconds
+Previous version average time: 1.63 seconds
+Percentage difference: 0.89%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/api/web/push_subscriptions_controller_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.64 seconds
+Percentage difference: -0.62%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/api/web/settings_controller_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.57 seconds
+Percentage difference: 1.54%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/auth/challenges_controller_spec.rb
+Current version average time: 1.64 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: -1.75%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/auth/confirmations_controller_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.73 seconds
+Percentage difference: -1.45%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/auth/passwords_controller_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.78 seconds
+Percentage difference: -5.18%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/auth/setup_controller_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.6 seconds
+Percentage difference: -0.74%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/account_controller_concern_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.65 seconds
+Percentage difference: -1.89%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/accountable_concern_spec.rb
+Current version average time: 1.55 seconds
+Previous version average time: 1.59 seconds
+Percentage difference: -2.63%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/api/rate_limit_headers_spec.rb
+Current version average time: 1.31 seconds
+Previous version average time: 1.3 seconds
+Percentage difference: 0.91%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/cache_concern_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.78 seconds
+Percentage difference: -6.03%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/challengable_concern_spec.rb
+Current version average time: 1.82 seconds
+Previous version average time: 1.83 seconds
+Percentage difference: -0.39%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/localized_spec.rb
+Current version average time: 1.75 seconds
+Previous version average time: 1.69 seconds
+Percentage difference: 3.18%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/concerns/settings/export_controller_concern_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.69 seconds
+Percentage difference: -3.84%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/disputes/strikes_controller_spec.rb
+Current version average time: 1.77 seconds
+Previous version average time: 1.74 seconds
+Percentage difference: 1.78%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/filters/statuses_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.75 seconds
+Percentage difference: -2.25%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/oauth/authorizations_controller_spec.rb
+^[Current version average time: 1.69 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -4.11%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/oauth/authorized_applications_controller_spec.rb
+Current version average time: 1.79 seconds
+Previous version average time: 1.8 seconds
+Percentage difference: -0.44%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/oauth/tokens_controller_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: -3.47%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/aliases_controller_spec.rb
+Current version average time: 1.86 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: 2.53%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/deletes_controller_spec.rb
+Current version average time: 2.01 seconds
+Previous version average time: 2.0 seconds
+Percentage difference: 0.9%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/blocked_accounts_controller_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.69 seconds
+Percentage difference: 0.37%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/blocked_domains_controller_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: 1.84%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/bookmarks_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: -0.21%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/following_accounts_controller_spec.rb
+Current version average time: 1.8 seconds
+Previous version average time: 1.74 seconds
+Percentage difference: 3.44%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/lists_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: 1.44%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports/muted_accounts_controller_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: 0.49%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/exports_controller_spec.rb
+Current version average time: 1.83 seconds
+Previous version average time: 1.74 seconds
+Percentage difference: 5.05%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/featured_tags_controller_spec.rb
+Current version average time: 1.86 seconds
+Previous version average time: 1.9 seconds
+Percentage difference: -2.17%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/login_activities_controller_spec.rb
+Current version average time: 1.66 seconds
+Previous version average time: 1.66 seconds
+Percentage difference: 0.23%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/migration/redirects_controller_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.73 seconds
+Percentage difference: -0.79%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/pictures_controller_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: -0.69%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/preferences/notifications_controller_spec.rb
+Current version average time: 1.75 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -0.62%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/preferences/other_controller_spec.rb
+Current version average time: 1.8 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: 2.03%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/privacy_controller_spec.rb
+Current version average time: 1.74 seconds
+Previous version average time: 1.75 seconds
+Percentage difference: -0.56%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/profiles_controller_spec.rb
+Current version average time: 1.93 seconds
+Previous version average time: 1.8 seconds
+Percentage difference: 7.51%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/sessions_controller_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: 1.13%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/two_factor_authentication/otp_authentication_controller_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.74 seconds
+Percentage difference: -3.33%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/two_factor_authentication/recovery_codes_controller_spec.rb
+Current version average time: 1.75 seconds
+Previous version average time: 1.73 seconds
+Percentage difference: 0.98%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/two_factor_authentication_methods_controller_spec.rb
+Current version average time: 1.87 seconds
+Previous version average time: 1.82 seconds
+Percentage difference: 2.69%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/controllers/settings/verifications_controller_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: -0.39%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/fabrication/fabricators_spec.rb
+Current version average time: 1.3 seconds
+Previous version average time: 5.84 seconds
+Percentage difference: -77.77%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/custom_emojis_spec.rb
+Current version average time: 1.73 seconds
+Previous version average time: 2.23 seconds
+Percentage difference: -22.11%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/domain_blocks_spec.rb
+Current version average time: 2.43 seconds
+Previous version average time: 2.09 seconds
+Percentage difference: 16.33%
+Success! Performance is acceptable.
+--- ---
+Testing file: spec/features/admin/email_domain_blocks_spec.rb
+Current version average time: 1.78 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: 4.13%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/ip_blocks_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.8 seconds
+Percentage difference: -5.26%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/software_updates_spec.rb
+Current version average time: 1.75 seconds
+Previous version average time: 1.83 seconds
+Percentage difference: -4.36%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/statuses_spec.rb
+Current version average time: 1.75 seconds
+Previous version average time: 1.85 seconds
+Percentage difference: -5.37%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/trends/links/preview_card_providers_spec.rb
+Current version average time: 1.82 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: 0.72%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/trends/links_spec.rb
+Current version average time: 1.82 seconds
+Previous version average time: 1.86 seconds
+Percentage difference: -2.22%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/trends/statuses_spec.rb
+Current version average time: 1.78 seconds
+Previous version average time: 1.78 seconds
+Percentage difference: -0.06%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/admin/trends/tags_spec.rb
+Current version average time: 1.77 seconds
+Previous version average time: 1.82 seconds
+Percentage difference: -2.9%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/captcha_spec.rb
+Current version average time: 1.78 seconds
+Previous version average time: 1.82 seconds
+Percentage difference: -2.17%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/log_in_spec.rb
+Current version average time: 1.95 seconds
+Previous version average time: 1.94 seconds
+Percentage difference: 0.17%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/redirections_spec.rb
+Current version average time: 1.73 seconds
+Previous version average time: 1.75 seconds
+Percentage difference: -0.84%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/features/severed_relationships_spec.rb
+Current version average time: 1.8 seconds
+Previous version average time: 1.95 seconds
+Percentage difference: -8.07%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/helpers/accounts_helper_spec.rb
+Current version average time: 1.36 seconds
+Previous version average time: 1.36 seconds
+Percentage difference: -0.03%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/helpers/admin/account_moderation_notes_helper_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.64 seconds
+Percentage difference: 1.11%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/helpers/admin/dashboard_helper_spec.rb
+Current version average time: 1.63 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: -4.52%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/helpers/admin/trends/statuses_helper_spec.rb
+Current version average time: 1.84 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: 1.9%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/helpers/home_helper_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.64 seconds
+Percentage difference: 0.61%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/activity/accept_spec.rb
+Current version average time: 1.71 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: -5.29%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/activity/add_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.7 seconds
+Percentage difference: 0.0%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/activity/like_spec.rb
+Current version average time: 1.7 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -3.61%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/activity/remove_spec.rb
+Current version average time: 1.68 seconds
+Previous version average time: 1.72 seconds
+Percentage difference: -1.82%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/activity/update_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.68 seconds
+Percentage difference: -0.28%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/dereferencer_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.66 seconds
+Percentage difference: -3.86%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/activitypub/tag_manager_spec.rb
+Current version average time: 2.05 seconds
+Previous version average time: 2.23 seconds
+Percentage difference: -8.31%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/instance_accounts_dimension_spec.rb
+Current version average time: 1.69 seconds
+Previous version average time: 1.75 seconds
+Percentage difference: -3.72%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/instance_languages_dimension_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.72 seconds
+Percentage difference: -2.79%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/languages_dimension_spec.rb
+Current version average time: 1.6 seconds
+Previous version average time: 1.66 seconds
+Percentage difference: -3.87%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/servers_dimension_spec.rb
+Current version average time: 1.68 seconds
+Previous version average time: 1.72 seconds
+Percentage difference: -2.19%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/software_versions_dimension_spec.rb
+Current version average time: 1.34 seconds
+Previous version average time: 1.33 seconds
+Percentage difference: 0.81%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/space_usage_dimension_spec.rb
+Current version average time: 1.59 seconds
+Previous version average time: 1.64 seconds
+Percentage difference: -2.82%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/tag_languages_dimension_spec.rb
+Current version average time: 1.72 seconds
+Previous version average time: 1.8 seconds
+Percentage difference: -4.36%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/dimension/tag_servers_dimension_spec.rb
+Current version average time: 1.73 seconds
+Previous version average time: 1.74 seconds
+Percentage difference: -0.72%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/active_users_measure_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.73 seconds
+Percentage difference: -4.6%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/instance_accounts_measure_spec.rb
+Current version average time: 1.66 seconds
+Previous version average time: 1.7 seconds
+Percentage difference: -2.45%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/instance_follows_measure_spec.rb
+Current version average time: 1.72 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: -4.84%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/instance_statuses_measure_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -6.29%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/new_users_measure_spec.rb
+Current version average time: 1.66 seconds
+Previous version average time: 1.7 seconds
+Percentage difference: -2.04%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/tag_accounts_measure_spec.rb
+Current version average time: 1.61 seconds
+Previous version average time: 1.6 seconds
+Percentage difference: 0.58%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/tag_servers_measure_spec.rb
+Current version average time: 1.67 seconds
+Previous version average time: 1.65 seconds
+Percentage difference: 1.3%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/metrics/measure/tag_uses_measure_spec.rb
+Current version average time: 1.63 seconds
+Previous version average time: 1.61 seconds
+Percentage difference: 1.13%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/base_check_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.71 seconds
+Percentage difference: -5.02%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/database_schema_check_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.72 seconds
+Percentage difference: -4.36%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/elasticsearch_check_spec.rb
+Current version average time: 1.62 seconds
+Previous version average time: 1.76 seconds
+Percentage difference: -7.66%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/media_privacy_check_spec.rb
+Current version average time: 1.83 seconds
+Previous version average time: 1.9 seconds
+Percentage difference: -3.47%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/rules_check_spec.rb
+Current version average time: 1.64 seconds
+Previous version average time: 1.72 seconds
+Percentage difference: -4.43%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check/software_version_check_spec.rb
+Current version average time: 1.65 seconds
+Previous version average time: 1.81 seconds
+Percentage difference: -8.75%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/admin/system_check_spec.rb
+Current version average time: 1.64 seconds
+Previous version average time: 1.67 seconds
+Percentage difference: -1.75%
+Performance degradation detected. Failing.
+--- ---
+Testing file: spec/lib/cache_buster_spec.rb
+Current version average time: 1.35 seconds
+Previous version average time: 1.34 seconds
+Percentage difference: 0.43%
+Performance degradation detected. Failing.

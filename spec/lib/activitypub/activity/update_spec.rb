@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe ActivityPub::Activity::Update do
   subject { described_class.new(json, sender) }
 
-  let!(:sender) { Fabricate(:account, domain: 'example.com', inbox_url: 'https://example.com/foo/inbox', outbox_url: 'https://example.com/foo/outbox') }
+  let_it_be(:sender) { Fabricate(:account, domain: 'example.com', inbox_url: 'https://example.com/foo/inbox', outbox_url: 'https://example.com/foo/outbox') }
 
   describe '#perform' do
     context 'with an Actor object' do
@@ -49,13 +49,15 @@ RSpec.describe ActivityPub::Activity::Update do
         }.with_indifferent_access
       end
 
-      before do
-        stub_request(:get, actor_json[:outbox]).to_return(status: 404)
-        stub_request(:get, actor_json[:followers]).to_return(status: 404)
-        stub_request(:get, actor_json[:following]).to_return(status: 404)
-        stub_request(:get, actor_json[:featured]).to_return(status: 404)
-        stub_request(:get, actor_json[:featuredTags]).to_return(status: 404)
+      before_all do
+        stub_request(:get, 'https://example.com/foo/outbox').to_return(status: 404)
+        stub_request(:get, 'https://example.com/users/dfsdf/followers').to_return(status: 404)
+        stub_request(:get, 'https://example.com/users/dfsdf/following').to_return(status: 404)
+        stub_request(:get, 'https://example.com/users/dfsdf/featured').to_return(status: 404)
+        stub_request(:get, 'https://example.com/users/dfsdf/tags').to_return(status: 404)
+      end
 
+      before do
         subject.perform
       end
 
@@ -65,8 +67,8 @@ RSpec.describe ActivityPub::Activity::Update do
     end
 
     context 'with a Question object' do
-      let!(:at_time) { Time.now.utc }
-      let!(:status) { Fabricate(:status, uri: 'https://example.com/statuses/poll', account: sender, poll: Poll.new(account: sender, options: %w(Bar Baz), cached_tallies: [0, 0], expires_at: at_time + 5.days)) }
+      let_it_be(:at_time) { Time.now.utc }
+      let_it_be(:status) { Fabricate(:status, uri: 'https://example.com/statuses/poll', account: sender, poll: Poll.new(account: sender, options: %w(Bar Baz), cached_tallies: [0, 0], expires_at: at_time + 5.days)) }
 
       let(:json) do
         {

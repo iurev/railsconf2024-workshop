@@ -8,14 +8,14 @@ describe Admin::Metrics::Dimension::TagLanguagesDimension do
   let(:start_at) { 2.days.ago }
   let(:end_at) { Time.now.utc }
   let(:limit) { 10 }
+  let_it_be(:tag) { Fabricate(:tag) }
   let(:params) { ActionController::Parameters.new(id: tag.id) }
 
   describe '#data' do
-    let(:alice) { Fabricate(:account) }
-    let(:bob) { Fabricate(:account) }
-    let(:tag) { Fabricate(:tag) }
+    let_it_be(:alice) { Fabricate(:account) }
+    let_it_be(:bob) { Fabricate(:account) }
 
-    before do
+    before_all do
       alice_status_recent = Fabricate :status, account: alice, created_at: 1.day.ago, language: 'en'
       alice_status_older = Fabricate :status, account: alice, created_at: 30.days.ago, language: 'en'
       bob_status_recent = Fabricate :status, account: bob, created_at: 1.day.ago, language: 'es'
