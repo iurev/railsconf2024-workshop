@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -11,7 +10,7 @@ describe 'API V1 Streaming' do
     Rails.configuration.x.streaming_api_base_url = before
   end
 
-  let(:headers) { { 'Host' => Rails.configuration.x.web_domain } }
+  let_it_be(:headers) { { 'Host' => Rails.configuration.x.web_domain } }
 
   context 'with streaming api on same host' do
     describe 'GET /api/v1/streaming' do
