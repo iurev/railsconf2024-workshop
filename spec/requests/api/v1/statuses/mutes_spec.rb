@@ -1,12 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 describe 'API V1 Statuses Mutes' do
-  let(:user)  { Fabricate(:user) }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'write:mutes' }
+  let_it_be(:user)  { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write:mutes') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   context 'with an oauth token' do
