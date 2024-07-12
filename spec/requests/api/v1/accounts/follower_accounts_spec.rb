@@ -4,12 +4,13 @@ require 'rails_helper'
 
 describe 'API V1 Accounts FollowerAccounts' do
   let_it_be(:user)    { Fabricate(:user) }
-  let(:scopes)   { 'read:accounts' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
   let_it_be(:account) { Fabricate(:account) }
   let_it_be(:alice)   { Fabricate(:account) }
   let_it_be(:bob)     { Fabricate(:account) }
+
+  let(:scopes)   { 'read:accounts' }
+  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
 
   before_all do
     alice.follow!(account)
