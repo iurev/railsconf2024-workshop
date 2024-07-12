@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Activity' do
+RSpec.describe 'Activity', :no_transaction do
   describe 'GET /api/v1/instance/activity' do
     context 'with activity api enabled' do
-      before { Setting.activity_api_enabled = true }
+      before_all { Setting.activity_api_enabled = true }
 
       it 'returns http success' do
         get api_v1_instance_activity_path
@@ -20,8 +20,8 @@ RSpec.describe 'Activity' do
       end
     end
 
-    context 'with activity api diabled' do
-      before { Setting.activity_api_enabled = false }
+    context 'with activity api disabled' do
+      before_all { Setting.activity_api_enabled = false }
 
       it 'returns not found' do
         get api_v1_instance_activity_path
