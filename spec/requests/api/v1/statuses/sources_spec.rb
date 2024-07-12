@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Sources' do
   let_it_be(:user)    { Fabricate(:user) }
-  let_it_be(:scopes)  { 'read:statuses' }
-  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes)        { 'read:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:statuses') }
   let_it_be(:status)  { Fabricate(:status) }
 
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
