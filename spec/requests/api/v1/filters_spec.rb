@@ -11,7 +11,7 @@ RSpec.describe 'API V1 Filters' do
     let_it_be(:filter) { Fabricate(:custom_filter, account: user.account) }
     let_it_be(:custom_filter_keyword) { Fabricate(:custom_filter_keyword, custom_filter: filter) }
 
-    before_all do
+    before do
       token.update!(scopes: 'read:filters')
     end
 
@@ -26,7 +26,7 @@ RSpec.describe 'API V1 Filters' do
   end
 
   describe 'POST /api/v1/filters' do
-    before_all do
+    before do
       token.update!(scopes: 'write:filters')
     end
 
@@ -69,7 +69,7 @@ RSpec.describe 'API V1 Filters' do
     let_it_be(:filter)  { Fabricate(:custom_filter, account: user.account) }
     let_it_be(:keyword) { Fabricate(:custom_filter_keyword, custom_filter: filter) }
 
-    before_all do
+    before do
       token.update!(scopes: 'read:filters')
     end
 
@@ -84,11 +84,8 @@ RSpec.describe 'API V1 Filters' do
     let_it_be(:filter)  { Fabricate(:custom_filter, account: user.account) }
     let_it_be(:keyword) { Fabricate(:custom_filter_keyword, custom_filter: filter) }
 
-    before_all do
-      token.update!(scopes: 'write:filters')
-    end
-
     before do
+      token.update!(scopes: 'write:filters')
       put "/api/v1/filters/#{keyword.id}", headers: headers, params: { phrase: 'updated' }
     end
 
@@ -102,11 +99,8 @@ RSpec.describe 'API V1 Filters' do
     let_it_be(:filter)  { Fabricate(:custom_filter, account: user.account) }
     let_it_be(:keyword) { Fabricate(:custom_filter_keyword, custom_filter: filter) }
 
-    before_all do
-      token.update!(scopes: 'write:filters')
-    end
-
     before do
+      token.update!(scopes: 'write:filters')
       delete "/api/v1/filters/#{keyword.id}", headers: headers
     end
 
