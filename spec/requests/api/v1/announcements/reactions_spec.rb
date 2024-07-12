@@ -1,15 +1,16 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'API V1 Announcements Reactions' do
-  let(:user)   { Fabricate(:user) }
-  let(:scopes) { 'write:favourites' }
-  let(:token)  { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)   { Fabricate(:user) }
+  let_it_be(:scopes) { 'write:favourites' }
+  let_it_be(:token)  { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:announcement) { Fabricate(:announcement) }
 
-  let!(:announcement) { Fabricate(:announcement) }
+  shared_context 'with token' do
+    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  end
 
   describe 'PUT /api/v1/announcements/:announcement_id/reactions/:id' do
     context 'without token' do
@@ -21,6 +22,8 @@ RSpec.describe 'API V1 Announcements Reactions' do
     end
 
     context 'with token' do
+      include_context 'with token'
+
       before do
         put "/api/v1/announcements/#{announcement.id}/reactions/#{escaped_emoji}", headers: headers
       end
@@ -45,6 +48,8 @@ RSpec.describe 'API V1 Announcements Reactions' do
     end
 
     context 'with token' do
+      include_context 'with token'
+
       before do
         delete "/api/v1/announcements/#{announcement.id}/reactions/#{escaped_emoji}", headers: headers
       end
