@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe 'redirection confirmations' do
-  let(:account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/foo', url: 'https://example.com/@foo') }
-  let(:status)  { Fabricate(:status, account: account, uri: 'https://example.com/users/foo/statuses/1', url: 'https://example.com/@foo/1') }
+  let_it_be(:account) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/foo', url: 'https://example.com/@foo') }
+  let_it_be(:status)  { Fabricate(:status, account: account, uri: 'https://example.com/users/foo/statuses/1', url: 'https://example.com/@foo/1') }
 
   context 'when a logged out user visits a local page for a remote account' do
     it 'shows a confirmation page' do
