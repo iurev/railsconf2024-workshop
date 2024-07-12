@@ -4,8 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Extended Descriptions' do
   describe 'GET /api/v1/instance/extended_description' do
+    let_it_be(:path) { api_v1_instance_extended_description_path }
+
     it 'returns http success' do
-      get api_v1_instance_extended_description_path
+      get path
 
       expect(response)
         .to have_http_status(200)
