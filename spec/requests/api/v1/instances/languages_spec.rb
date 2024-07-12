@@ -1,13 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Languages' do
   describe 'GET /api/v1/instance/languages' do
-    before do
-      get '/api/v1/instance/languages'
-    end
+    let_it_be(:response) { get '/api/v1/instance/languages' }
 
     it 'returns http success' do
       expect(response).to have_http_status(200)
