@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
@@ -28,7 +27,8 @@ RSpec.describe 'API V1 Trends Statuses' do
       end
 
       def prepare_trends
-        Fabricate.times(3, :status, trendable: true, language: 'en').each do |status|
+        statuses = Array.new(3) { Fabricate(:status, trendable: true, language: 'en') }
+        statuses.each do |status|
           2.times { |i| Trends.statuses.add(status, i) }
         end
         Trends::Statuses.new(threshold: 1, decay_threshold: -1).refresh
