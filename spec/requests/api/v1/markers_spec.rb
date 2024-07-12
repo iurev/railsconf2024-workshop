@@ -1,19 +1,20 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'API Markers' do
-  let(:user)    { Fabricate(:user) }
-  let(:scopes)  { 'read:statuses write:statuses' }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:statuses write:statuses' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/markers' do
-    before do
+    before_all do
       Fabricate(:marker, timeline: 'home', last_read_id: 123, user: user)
       Fabricate(:marker, timeline: 'notifications', last_read_id: 456, user: user)
+    end
 
+    before do
       get '/api/v1/markers', headers: headers, params: { timeline: %w(home notifications) }
     end
 
