@@ -1,12 +1,10 @@
 # frozen_string_literal: true
-# aiptimize started
 
 require 'rails_helper'
 
 RSpec.describe 'Domain blocks' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:blocks write:blocks' }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:blocks write:blocks') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/domain_blocks' do
@@ -14,10 +12,10 @@ RSpec.describe 'Domain blocks' do
       get '/api/v1/domain_blocks', headers: headers, params: params
     end
 
-    let(:blocked_domains) { ['example.com', 'example.net', 'example.org', 'example.com.br'] }
+    let_it_be(:blocked_domains) { ['example.com', 'example.net', 'example.org', 'example.com.br'] }
     let(:params) { {} }
 
-    before do
+    before_all do
       blocked_domains.each { |domain| user.account.block_domain!(domain) }
     end
 
