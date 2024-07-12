@@ -4,7 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'Languages' do
   describe 'GET /api/v1/instance/languages' do
-    let_it_be(:response) { get '/api/v1/instance/languages' }
+    before do
+      get '/api/v1/instance/languages'
+    end
 
     it 'returns http success' do
       expect(response).to have_http_status(200)
