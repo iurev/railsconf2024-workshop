@@ -4,7 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'Policies' do
   let_it_be(:user) { Fabricate(:user, account_attributes: { username: 'alice' }) }
-  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:notifications write:notifications') }
+  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes) { 'read:notifications write:notifications' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/notifications/policy' do
