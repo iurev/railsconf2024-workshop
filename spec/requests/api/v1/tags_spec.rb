@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Tags' do
-  let(:user)    { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
   let(:scopes)  { 'write:follows' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
@@ -14,7 +14,7 @@ RSpec.describe 'Tags' do
     end
 
     context 'when the tag exists' do
-      let!(:tag) { Fabricate(:tag) }
+      let_it_be(:tag) { Fabricate(:tag) }
       let(:name) { tag.name }
 
       it 'returns the tag', :aggregate_failures do
@@ -51,7 +51,7 @@ RSpec.describe 'Tags' do
       post "/api/v1/tags/#{name}/follow", headers: headers
     end
 
-    let!(:tag) { Fabricate(:tag) }
+    let_it_be(:tag) { Fabricate(:tag) }
     let(:name) { tag.name }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:follows'
@@ -104,10 +104,10 @@ RSpec.describe 'Tags' do
       post "/api/v1/tags/#{name}/unfollow", headers: headers
     end
 
+    let_it_be(:tag) { Fabricate(:tag, name: 'foo') }
     let(:name) { tag.name }
-    let!(:tag) { Fabricate(:tag, name: 'foo') }
 
-    before do
+    before_all do
       Fabricate(:tag_follow, account: user.account, tag: tag)
     end
 
