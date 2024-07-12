@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Media API' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'write' }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'write') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v2/media' do
@@ -45,7 +44,7 @@ RSpec.describe 'Media API' do
 
     describe 'when paperclip errors occur' do
       let(:media_attachments) { double }
-      let(:params)            { { file: fixture_file_upload('attachment.jpg', 'image/jpeg') } }
+      let(:params) { { file: fixture_file_upload('attachment.jpg', 'image/jpeg') } }
 
       before do
         allow(User).to receive(:find).with(token.resource_owner_id).and_return(user)
