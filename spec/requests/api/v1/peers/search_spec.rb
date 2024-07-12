@@ -40,9 +40,11 @@ describe 'API Peers Search' do
     end
 
     context 'with search param' do
-      let!(:account) { Fabricate(:account, domain: 'host.example') }
+      let_it_be(:account) { Fabricate(:account, domain: 'host.example') }
 
-      before { Instance.refresh }
+      before_all do
+        Instance.refresh
+      end
 
       it 'returns http success and json with known domains' do
         get '/api/v1/peers/search', params: { q: 'host.example' }
