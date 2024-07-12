@@ -3,18 +3,18 @@
 require 'rails_helper'
 
 RSpec.describe 'account featured tags API' do
-  let(:user)     { Fabricate(:user) }
-  let(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)   { 'read:accounts' }
-  let(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account)  { Fabricate(:account) }
+  let_it_be(:user)     { Fabricate(:user) }
+  let_it_be(:token)    { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:scopes)   { 'read:accounts' }
+  let_it_be(:headers)  { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:account)  { Fabricate(:account) }
 
   describe 'GET /api/v1/accounts/:id/featured_tags' do
     subject do
       get "/api/v1/accounts/#{account.id}/featured_tags", headers: headers
     end
 
-    before do
+    before_all do
       account.featured_tags.create!(name: 'foo')
       account.featured_tags.create!(name: 'bar')
     end
