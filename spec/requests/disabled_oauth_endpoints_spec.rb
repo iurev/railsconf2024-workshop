@@ -3,81 +3,34 @@
 require 'rails_helper'
 
 describe 'Disabled OAuth routes' do
+  let_it_be(:application) { Fabricate(:application, scopes: 'read') }
+
   # These routes are disabled via the doorkeeper configuration for
   # `admin_authenticator`, as these routes should only be accessible by server
   # administrators. For now, these routes are not properly designed and
   # integrated into Mastodon, so we're disabling them completely
-  describe 'GET /oauth/applications' do
-    it 'returns 403 forbidden' do
-      get oauth_applications_path
+  {
+    'GET /oauth/applications' => :oauth_applications_path,
+    'POST /oauth/applications' => :oauth_applications_path,
+    'GET /oauth/applications/new' => :new_oauth_application_path,
+    'GET /oauth/applications/:id' => :oauth_application_path,
+    'PATCH /oauth/applications/:id' => :oauth_application_path,
+    'PUT /oauth/applications/:id' => :oauth_application_path,
+    'DELETE /oauth/applications/:id' => :oauth_application_path,
+    'GET /oauth/applications/:id/edit' => :edit_oauth_application_path
+  }.each do |description, path_helper|
+    describe description do
+      it 'returns 403 forbidden' do
+        method = description.split.first.downcase
 
-      expect(response).to have_http_status(403)
-    end
-  end
+        if path_helper == :oauth_application_path || path_helper == :edit_oauth_application_path
+          send(method, send(path_helper, application))
+        else
+          send(method, send(path_helper))
+        end
 
-  describe 'POST /oauth/applications' do
-    it 'returns 403 forbidden' do
-      post oauth_applications_path
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'GET /oauth/applications/new' do
-    it 'returns 403 forbidden' do
-      get new_oauth_application_path
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'GET /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
-    it 'returns 403 forbidden' do
-      get oauth_application_path(application)
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'PATCH /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
-    it 'returns 403 forbidden' do
-      patch oauth_application_path(application)
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'PUT /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
-    it 'returns 403 forbidden' do
-      put oauth_application_path(application)
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'DELETE /oauth/applications/:id' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
-    it 'returns 403 forbidden' do
-      delete oauth_application_path(application)
-
-      expect(response).to have_http_status(403)
-    end
-  end
-
-  describe 'GET /oauth/applications/:id/edit' do
-    let(:application) { Fabricate(:application, scopes: 'read') }
-
-    it 'returns 403 forbidden' do
-      get edit_oauth_application_path(application)
-
-      expect(response).to have_http_status(403)
+        expect(response).to have_http_status(403)
+      end
     end
   end
 end
