@@ -1,5 +1,5 @@
-name: AIptimize!
-description: Please AIptimize my spec!
+name: Optimize RSpec
+description: Optimize RSpec
 labels: ["optimize"]
 body:
   - type: input
