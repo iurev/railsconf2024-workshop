@@ -85,7 +85,8 @@ RSpec.describe Notification, :aggregate_failures do
     end
 
     it 'returns [] when notifications are empty' do
-      expect(described_class.preload_cache_collection_target_statuses([])).to eq []
+      result = described_class.preload_cache_collection_target_statuses([]) { |_| [] }
+      expect(result).to eq []
     end
 
     it 'preloads and replaces target statuses correctly' do
