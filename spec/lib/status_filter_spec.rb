@@ -4,7 +4,8 @@ require 'rails_helper'
 
 describe StatusFilter do
   describe '#filtered?' do
-    let(:status) { Fabricate(:status) }
+    let_it_be(:status) { Fabricate(:status) }
+    let_it_be(:account) { Fabricate(:account) }
 
     context 'without an account' do
       subject(:filter) { described_class.new(status, nil) }
@@ -19,6 +20,10 @@ describe StatusFilter do
         end
 
         it { is_expected.to be_filtered }
+
+        after do
+          status.account.unsilence!
+        end
       end
 
       context 'when status policy does not allow show' do
@@ -33,8 +38,6 @@ describe StatusFilter do
 
     context 'with real account' do
       subject(:filter) { described_class.new(status, account) }
-
-      let(:account) { Fabricate(:account) }
 
       context 'when there are no connections' do
         it { is_expected.to_not be_filtered }
@@ -55,6 +58,10 @@ describe StatusFilter do
         end
 
         it { is_expected.to be_filtered }
+
+        after do
+          status.account.update(domain: nil)
+        end
       end
 
       context 'when status account is muted' do
@@ -71,6 +78,10 @@ describe StatusFilter do
         end
 
         it { is_expected.to be_filtered }
+
+        after do
+          status.account.unsilence!
+        end
       end
 
       context 'when status policy does not allow show' do
