@@ -6,8 +6,10 @@ require 'pundit/rspec'
 RSpec.describe ReportNotePolicy do
   subject { described_class }
 
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)  { Fabricate(:account) }
+  let_it_be(:report_note) { Fabricate(:report_note) }
+  let_it_be(:owner_report_note) { Fabricate(:report_note, account: john) }
 
   permissions :create? do
     context 'when staff?' do
@@ -26,21 +28,18 @@ RSpec.describe ReportNotePolicy do
   permissions :destroy? do
     context 'when admin?' do
       it 'permit' do
-        report_note = Fabricate(:report_note, account: john)
         expect(subject).to permit(admin, report_note)
       end
     end
 
     context 'when owner?' do
       it 'permit' do
-        report_note = Fabricate(:report_note, account: john)
-        expect(subject).to permit(john, report_note)
+        expect(subject).to permit(john, owner_report_note)
       end
     end
 
     context 'with !owner?' do
       it 'denies' do
-        report_note = Fabricate(:report_note)
         expect(subject).to_not permit(john, report_note)
       end
     end
