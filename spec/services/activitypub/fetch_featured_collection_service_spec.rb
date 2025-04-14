@@ -5,9 +5,8 @@ require 'rails_helper'
 RSpec.describe ActivityPub::FetchFeaturedCollectionService do
   subject { described_class.new }
 
-  let(:actor) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/account', featured_collection_url: 'https://example.com/account/pinned') }
-
-  let!(:known_status) { Fabricate(:status, account: actor, uri: 'https://example.com/account/pinned/1') }
+  let_it_be(:actor) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/account', featured_collection_url: 'https://example.com/account/pinned') }
+  let_it_be(:known_status) { Fabricate(:status, account: actor, uri: 'https://example.com/account/pinned/1') }
 
   let(:status_json_pinned_known) do
     {
