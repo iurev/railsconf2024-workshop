@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Remotable do
-  let(:foo_class) do
+  let_it_be(:foo_class) do
     Class.new do
       def initialize
         @attrs = {}
@@ -31,13 +31,14 @@ RSpec.describe Remotable do
     end
   end
 
+  let_it_be(:hoge) { :hoge }
+  let_it_be(:url) { 'https://google.com' }
+
   let(:attribute_name) { :"#{hoge}_remote_url" }
-  let(:code)           { 200 }
-  let(:file)           { 'filename="foo.txt"' }
-  let(:foo)            { foo_class.new }
-  let(:headers)        { { 'content-disposition' => file } }
-  let(:hoge)           { :hoge }
-  let(:url)            { 'https://google.com' }
+  let(:code) { 200 }
+  let(:file) { 'filename="foo.txt"' }
+  let(:foo) { foo_class.new }
+  let(:headers) { { 'content-disposition' => file } }
 
   before do
     foo_class.include described_class
