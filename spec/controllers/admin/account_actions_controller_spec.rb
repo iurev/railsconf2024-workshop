@@ -5,15 +5,14 @@ require 'rails_helper'
 describe Admin::AccountActionsController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account) { Fabricate(:account) }
 
   before do
     sign_in user, scope: :user
   end
 
   describe 'GET #new' do
-    let(:account) { Fabricate(:account) }
-
     it 'returns http success' do
       get :new, params: { account_id: account.id }
 
@@ -22,8 +21,6 @@ describe Admin::AccountActionsController do
   end
 
   describe 'POST #create' do
-    let(:account) { Fabricate(:account) }
-
     it 'records the account action' do
       expect do
         post :create, params: { account_id: account.id, admin_account_action: { type: 'silence' } }
