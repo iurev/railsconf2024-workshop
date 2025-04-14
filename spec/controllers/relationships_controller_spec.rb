@@ -5,7 +5,7 @@ require 'rails_helper'
 describe RelationshipsController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #show' do
     context 'when signed in' do
@@ -35,7 +35,7 @@ describe RelationshipsController do
   end
 
   describe 'PATCH #update' do
-    let(:alice) { Fabricate(:account, username: 'alice', domain: 'example.com') }
+    let_it_be(:alice) { Fabricate(:account, username: 'alice', domain: 'example.com') }
 
     shared_examples 'redirects back to followers page' do
       it 'redirects back to followers page' do
