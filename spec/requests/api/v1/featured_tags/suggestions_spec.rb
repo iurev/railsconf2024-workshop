@@ -3,16 +3,16 @@
 require 'rails_helper'
 
 describe 'Featured Tags Suggestions API' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:accounts' }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:account) { Fabricate(:account, user: user) }
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:accounts read:featured_tags' }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:account) { Fabricate(:account, user: user) }
 
   describe 'GET /api/v1/featured_tags/suggestions' do
-    let!(:unused_featured_tag) { Fabricate(:tag, name: 'unused_featured_tag') }
-    let!(:used_tag) { Fabricate(:tag, name: 'used_tag') }
-    let!(:used_featured_tag) { Fabricate(:tag, name: 'used_featured_tag') }
+    let_it_be(:unused_featured_tag) { Fabricate(:tag, name: 'unused_featured_tag') }
+    let_it_be(:used_tag) { Fabricate(:tag, name: 'used_tag') }
+    let_it_be(:used_featured_tag) { Fabricate(:tag, name: 'used_featured_tag') }
 
     before do
       _unused_tag = Fabricate(:tag, name: 'unused_tag')
