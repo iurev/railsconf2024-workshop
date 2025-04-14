@@ -6,9 +6,9 @@ RSpec.describe CustomEmojiFilter do
   describe '#results' do
     subject { described_class.new(params).results }
 
-    let!(:custom_emoji_domain_a) { Fabricate(:custom_emoji, domain: 'a') }
-    let!(:custom_emoji_domain_b) { Fabricate(:custom_emoji, domain: 'b') }
-    let!(:custom_emoji_domain_nil) { Fabricate(:custom_emoji, domain: nil, shortcode: 'hoge') }
+    let_it_be(:custom_emoji_domain_a) { Fabricate(:custom_emoji, domain: 'a') }
+    let_it_be(:custom_emoji_domain_b) { Fabricate(:custom_emoji, domain: 'b') }
+    let_it_be(:custom_emoji_domain_nil) { Fabricate(:custom_emoji, domain: nil, shortcode: 'hoge') }
 
     context 'when params have values' do
       context 'when local' do
