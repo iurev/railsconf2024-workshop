@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'API V1 Statuses Reblogged by Accounts' do
-  let(:user) { Fabricate(:user) }
-  let(:scopes)  { 'read:accounts' }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
-  let(:alice) { Fabricate(:account) }
-  let(:bob)   { Fabricate(:account) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:scopes)  { 'read:accounts' }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:alice) { Fabricate(:account) }
+  let_it_be(:bob)   { Fabricate(:account) }
 
   context 'with an oauth token' do
     subject do
@@ -16,9 +16,9 @@ RSpec.describe 'API V1 Statuses Reblogged by Accounts' do
     end
 
     describe 'GET /api/v1/statuses/:status_id/reblogged_by' do
-      let(:status) { Fabricate(:status, account: user.account) }
+      let_it_be(:status) { Fabricate(:status, account: user.account) }
 
-      before do
+      before_all do
         Fabricate(:status, account: alice, reblog_of_id: status.id)
         Fabricate(:status, account: bob, reblog_of_id: status.id)
       end
@@ -58,10 +58,10 @@ RSpec.describe 'API V1 Statuses Reblogged by Accounts' do
     end
 
     context 'with a private status' do
-      let(:status) { Fabricate(:status, account: user.account, visibility: :private) }
+      let_it_be(:status) { Fabricate(:status, account: user.account, visibility: :private) }
 
       describe 'GET #index' do
-        before do
+        before_all do
           Fabricate(:status, reblog_of_id: status.id)
         end
 
@@ -74,10 +74,10 @@ RSpec.describe 'API V1 Statuses Reblogged by Accounts' do
     end
 
     context 'with a public status' do
-      let(:status) { Fabricate(:status, account: user.account, visibility: :public) }
+      let_it_be(:status) { Fabricate(:status, account: user.account, visibility: :public) }
 
       describe 'GET #index' do
-        before do
+        before_all do
           Fabricate(:status, reblog_of_id: status.id)
         end
 
