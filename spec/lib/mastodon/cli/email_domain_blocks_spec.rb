@@ -6,7 +6,7 @@ require 'mastodon/cli/email_domain_blocks'
 describe Mastodon::CLI::EmailDomainBlocks do
   subject { cli.invoke(action, arguments, options) }
 
-  let(:cli) { described_class.new }
+  let_it_be(:cli) { described_class.new }
   let(:arguments) { [] }
   let(:options) { {} }
 
@@ -16,8 +16,8 @@ describe Mastodon::CLI::EmailDomainBlocks do
     let(:action) { :list }
 
     context 'with email domain block records' do
-      let!(:parent_block) { Fabricate(:email_domain_block) }
-      let!(:child_block) { Fabricate(:email_domain_block, parent: parent_block) }
+      let_it_be(:parent_block) { Fabricate(:email_domain_block) }
+      let_it_be(:child_block) { Fabricate(:email_domain_block, parent: parent_block) }
 
       it 'lists the blocks' do
         expect { subject }
@@ -40,7 +40,6 @@ describe Mastodon::CLI::EmailDomainBlocks do
     end
 
     context 'when blocks exist' do
-      let(:options) { {} }
       let(:domain) { 'host.example' }
       let(:arguments) { [domain] }
 
