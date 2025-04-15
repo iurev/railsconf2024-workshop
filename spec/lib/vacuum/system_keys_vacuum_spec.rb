@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe Vacuum::SystemKeysVacuum do
-  subject { described_class.new }
+  let_it_be(:expired_system_key) { Fabricate(:system_key, created_at: (SystemKey::ROTATION_PERIOD * 4).ago) }
+  let_it_be(:current_system_key) { Fabricate(:system_key) }
+
+  subject(:vacuum) { described_class.new }
 
   describe '#perform' do
-    let!(:expired_system_key) { Fabricate(:system_key, created_at: (SystemKey::ROTATION_PERIOD * 4).ago) }
-    let!(:current_system_key) { Fabricate(:system_key) }
-
     before do
-      subject.perform
+      vacuum.perform
     end
 
     it 'deletes the expired key' do
