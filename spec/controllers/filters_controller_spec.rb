@@ -17,8 +17,10 @@ describe FiltersController do
     end
 
     context 'with a signed in user' do
+      let_it_be(:user) { Fabricate(:user) }
+
       before do
-        sign_in(Fabricate(:user))
+        sign_in(user)
         get :index
       end
 
