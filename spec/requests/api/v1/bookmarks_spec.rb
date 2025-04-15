@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Bookmarks' do
-  let(:user)    { Fabricate(:user) }
+  let_it_be(:user)    { Fabricate(:user) }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:scopes)  { 'read:bookmarks' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
@@ -14,7 +14,7 @@ RSpec.describe 'Bookmarks' do
     end
 
     let(:params)     { {} }
-    let!(:bookmarks) { Fabricate.times(2, :bookmark, account: user.account) }
+    let_it_be(:bookmarks) { Fabricate.times(2, :bookmark, account: user.account) }
 
     let(:expected_response) do
       bookmarks.map do |bookmark|
