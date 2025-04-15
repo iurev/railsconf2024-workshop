@@ -5,11 +5,18 @@ require 'rails_helper'
 RSpec.describe Admin::EmailDomainBlocksController do
   render_views
 
+  let_it_be(:admin) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+
   before do
-    sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
+    sign_in admin, scope: :user
   end
 
   describe 'GET #index' do
+    before_all do
+      2.times { Fabricate(:email_domain_block) }
+      Fabricate(:email_domain_block, allow_with_approval: true)
+    end
+
     around do |example|
       default_per_page = EmailDomainBlock.default_per_page
       EmailDomainBlock.paginates_per 2
@@ -18,8 +25,6 @@ RSpec.describe Admin::EmailDomainBlocksController do
     end
 
     it 'returns http success' do
-      2.times { Fabricate(:email_domain_block) }
-      Fabricate(:email_domain_block, allow_with_approval: true)
       get :index, params: { page: 2 }
       expect(response).to have_http_status(200)
     end
