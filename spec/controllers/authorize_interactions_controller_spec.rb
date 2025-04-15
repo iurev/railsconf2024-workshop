@@ -15,7 +15,7 @@ describe AuthorizeInteractionsController do
     end
 
     describe 'when signed in' do
-      let(:user) { Fabricate(:user) }
+      let_it_be(:user) { Fabricate(:user) }
 
       before do
         sign_in(user)
