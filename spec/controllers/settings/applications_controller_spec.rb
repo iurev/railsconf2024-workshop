@@ -5,8 +5,8 @@ require 'rails_helper'
 describe Settings::ApplicationsController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
-  let!(:app) { Fabricate(:application, owner: user) }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:app) { Fabricate(:application, owner: user) }
 
   before do
     sign_in user, scope: :user
