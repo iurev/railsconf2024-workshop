@@ -3,9 +3,12 @@
 require 'rails_helper'
 
 describe Report do
+  let_it_be(:target_account) { Fabricate(:account) }
+  let_it_be(:status) { Fabricate(:status) }
+  let_it_be(:acting_account) { Fabricate(:account) }
+
   describe 'statuses' do
     it 'returns the statuses for the report' do
-      status = Fabricate(:status)
       _other = Fabricate(:status)
       report = Fabricate(:report, status_ids: [status.id])
 
@@ -24,90 +27,59 @@ describe Report do
   end
 
   describe 'assign_to_self!' do
-    subject { report.assigned_account_id }
-
-    let(:report) { Fabricate(:report, assigned_account_id: original_account) }
-    let(:original_account) { Fabricate(:account) }
-    let(:current_account) { Fabricate(:account) }
-
-    before do
-      report.assign_to_self!(current_account)
-    end
+    let_it_be(:original_account) { Fabricate(:account) }
+    let_it_be(:current_account) { Fabricate(:account) }
+    let(:report) { Fabricate(:report, assigned_account_id: original_account.id) }
 
     it 'assigns to a given account' do
-      expect(subject).to eq current_account.id
+      report.assign_to_self!(current_account)
+      expect(report.assigned_account_id).to eq current_account.id
     end
   end
 
   describe 'unassign!' do
-    subject { report.assigned_account_id }
-
-    let(:report) { Fabricate(:report, assigned_account_id: account.id) }
-    let(:account) { Fabricate(:account) }
-
-    before do
-      report.unassign!
-    end
+    let(:report) { Fabricate(:report, assigned_account_id: Fabricate(:account).id) }
 
     it 'unassigns' do
-      expect(subject).to be_nil
+      report.unassign!
+      expect(report.assigned_account_id).to be_nil
     end
   end
 
   describe 'resolve!' do
-    subject(:report) { Fabricate(:report, action_taken_at: nil, action_taken_by_account_id: nil) }
-
-    let(:acting_account) { Fabricate(:account) }
-
-    before do
-      report.resolve!(acting_account)
-    end
+    let(:report) { Fabricate(:report, action_taken_at: nil, action_taken_by_account_id: nil) }
 
     it 'records action taken' do
+      report.resolve!(acting_account)
       expect(report.action_taken?).to be true
       expect(report.action_taken_by_account_id).to eq acting_account.id
     end
   end
 
   describe 'unresolve!' do
-    subject(:report) { Fabricate(:report, action_taken_at: Time.now.utc, action_taken_by_account_id: acting_account.id) }
-
-    let(:acting_account) { Fabricate(:account) }
-
-    before do
-      report.unresolve!
-    end
+    let(:report) { Fabricate(:report, action_taken_at: Time.now.utc, action_taken_by_account_id: acting_account.id) }
 
     it 'unresolves' do
+      report.unresolve!
       expect(report.action_taken?).to be false
       expect(report.action_taken_by_account_id).to be_nil
     end
   end
 
   describe 'unresolved?' do
-    subject { report.unresolved? }
-
-    let(:report) { Fabricate(:report, action_taken_at: action_taken) }
-
-    context 'when action is taken' do
-      let(:action_taken) { Time.now.utc }
-
-      it { is_expected.to be false }
+    it 'returns true when action is not taken' do
+      report = Fabricate(:report, action_taken_at: nil)
+      expect(report.unresolved?).to be true
     end
 
-    context 'when action not is taken' do
-      let(:action_taken) { nil }
-
-      it { is_expected.to be true }
+    it 'returns false when action is taken' do
+      report = Fabricate(:report, action_taken_at: Time.now.utc)
+      expect(report.unresolved?).to be false
     end
   end
 
   describe 'history' do
-    subject(:action_logs) { report.history }
-
     let(:report) { Fabricate(:report, target_account_id: target_account.id, status_ids: [status.id], created_at: 3.days.ago, updated_at: 1.day.ago) }
-    let(:target_account) { Fabricate(:account) }
-    let(:status) { Fabricate(:status) }
 
     before do
       Fabricate(:action_log, target_type: 'Report', account_id: target_account.id, target_id: report.id, created_at: 2.days.ago)
@@ -116,12 +88,12 @@ describe Report do
     end
 
     it 'returns right logs' do
-      expect(action_logs.count).to eq 3
+      expect(report.history.count).to eq 3
     end
   end
 
   describe 'validations' do
-    let(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
+    let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com', protocol: :activitypub, inbox_url: 'http://example.com/inbox') }
 
     it 'is invalid if comment is longer than 1000 characters only if reporter is local' do
       report = Fabricate.build(:report, comment: Faker::Lorem.characters(number: 1001))
