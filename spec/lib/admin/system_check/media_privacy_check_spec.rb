@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Admin::SystemCheck::MediaPrivacyCheck do
   subject(:check) { described_class.new(user) }
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   it_behaves_like 'a check available to devops users'
 
