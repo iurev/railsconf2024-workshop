@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Add do
-  let(:sender) { Fabricate(:account, featured_collection_url: 'https://example.com/featured', domain: 'example.com') }
-  let(:status) { Fabricate(:status, account: sender, visibility: :private) }
+  let_it_be(:sender) { Fabricate(:account, featured_collection_url: 'https://example.com/featured', domain: 'example.com') }
+  let_it_be(:status) { Fabricate(:status, account: sender, visibility: :private) }
 
   let(:json) do
     {
