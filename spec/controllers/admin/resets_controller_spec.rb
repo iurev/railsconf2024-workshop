@@ -7,7 +7,7 @@ describe Admin::ResetsController do
 
   subject { post :create, params: { account_id: account.id } }
 
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
 
   before do
     sign_in Fabricate(:user, role: UserRole.find_by(name: 'Admin')), scope: :user
