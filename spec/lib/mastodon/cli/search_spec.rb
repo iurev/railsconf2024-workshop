@@ -82,7 +82,6 @@ describe Mastodon::CLI::Search do
         estimate!: 100,
         import!: nil,
         on_failure: nil,
-        # on_progress: nil,
         optimize_for_import!: nil,
         optimize_for_search!: nil
       )
