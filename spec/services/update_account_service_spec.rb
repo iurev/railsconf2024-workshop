@@ -6,10 +6,10 @@ RSpec.describe UpdateAccountService do
   subject { described_class.new }
 
   describe 'switching form locked to unlocked accounts' do
-    let(:account) { Fabricate(:account, locked: true) }
-    let(:alice)   { Fabricate(:account) }
-    let(:bob)     { Fabricate(:account) }
-    let(:eve)     { Fabricate(:account) }
+    let_it_be(:account) { Fabricate(:account, locked: true) }
+    let_it_be(:alice)   { Fabricate(:account) }
+    let_it_be(:bob)     { Fabricate(:account) }
+    let_it_be(:eve)     { Fabricate(:account) }
 
     before do
       bob.touch(:silenced_at)
