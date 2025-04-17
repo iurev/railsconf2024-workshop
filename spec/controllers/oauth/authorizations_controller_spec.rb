@@ -5,7 +5,8 @@ require 'rails_helper'
 RSpec.describe Oauth::AuthorizationsController do
   render_views
 
-  let(:app) { Doorkeeper::Application.create!(name: 'test', redirect_uri: 'http://localhost/', scopes: 'read') }
+  let_it_be(:app) { Doorkeeper::Application.create!(name: 'test', redirect_uri: 'http://localhost/', scopes: 'read') }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #new' do
     subject do
@@ -20,8 +21,6 @@ RSpec.describe Oauth::AuthorizationsController do
     end
 
     context 'when signed in' do
-      let!(:user) { Fabricate(:user) }
-
       before do
         sign_in user, scope: :user
       end
