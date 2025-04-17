@@ -4,12 +4,11 @@ require 'rails_helper'
 
 RSpec.describe CustomEmoji do
   describe '#search' do
+    let_it_be(:custom_emoji) { Fabricate(:custom_emoji, shortcode: 'blobpats') }
+
     subject { described_class.search(search_term) }
 
-    let(:custom_emoji) { Fabricate(:custom_emoji, shortcode: shortcode) }
-
     context 'when shortcode is exact' do
-      let(:shortcode) { 'blobpats' }
       let(:search_term) { 'blobpats' }
 
       it 'finds emoji' do
@@ -18,7 +17,6 @@ RSpec.describe CustomEmoji do
     end
 
     context 'when shortcode is partial' do
-      let(:shortcode) { 'blobpats' }
       let(:search_term) { 'blob' }
 
       it 'finds emoji' do
@@ -30,10 +28,8 @@ RSpec.describe CustomEmoji do
   describe '#local?' do
     subject { custom_emoji.local? }
 
-    let(:custom_emoji) { Fabricate(:custom_emoji, domain: domain) }
-
     context 'when domain is nil' do
-      let(:domain) { nil }
+      let_it_be(:custom_emoji) { Fabricate(:custom_emoji, domain: nil) }
 
       it 'returns true' do
         expect(subject).to be true
@@ -41,7 +37,7 @@ RSpec.describe CustomEmoji do
     end
 
     context 'when domain is present' do
-      let(:domain) { 'example.com' }
+      let_it_be(:custom_emoji) { Fabricate(:custom_emoji, domain: 'example.com') }
 
       it 'returns false' do
         expect(subject).to be false
@@ -50,16 +46,17 @@ RSpec.describe CustomEmoji do
   end
 
   describe '#object_type' do
+    let_it_be(:custom_emoji) { Fabricate(:custom_emoji) }
+
     it 'returns :emoji' do
-      custom_emoji = Fabricate(:custom_emoji)
       expect(custom_emoji.object_type).to be :emoji
     end
   end
 
   describe '.from_text' do
-    subject { described_class.from_text(text, nil) }
+    let_it_be(:emojo) { Fabricate(:custom_emoji, shortcode: 'coolcat') }
 
-    let!(:emojo) { Fabricate(:custom_emoji, shortcode: 'coolcat') }
+    subject { described_class.from_text(text, nil) }
 
     context 'with plain text' do
       let(:text) { 'Hello :coolcat:' }
