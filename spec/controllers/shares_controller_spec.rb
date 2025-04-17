@@ -5,7 +5,7 @@ require 'rails_helper'
 describe SharesController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   before { sign_in user }
 
