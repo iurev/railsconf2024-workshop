@@ -3,17 +3,19 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::FollowersSynchronizationsController, :account do
-  let!(:follower_example_com_user_a) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/a') }
-  let!(:follower_example_com_user_b) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/b') }
-  let!(:follower_foo_com_user_a) { Fabricate(:account, domain: 'foo.com', uri: 'https://foo.com/users/a') }
-  let!(:follower_example_com_instance_actor) { Fabricate(:account, username: 'instance-actor', domain: 'example.com', uri: 'https://example.com') }
+  let_it_be(:follower_example_com_user_a) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/a') }
+  let_it_be(:follower_example_com_user_b) { Fabricate(:account, domain: 'example.com', uri: 'https://example.com/users/b') }
+  let_it_be(:follower_foo_com_user_a) { Fabricate(:account, domain: 'foo.com', uri: 'https://foo.com/users/a') }
+  let_it_be(:follower_example_com_instance_actor) { Fabricate(:account, username: 'instance-actor', domain: 'example.com', uri: 'https://example.com') }
 
-  before do
+  before_all do
     follower_example_com_user_a.follow!(account)
     follower_example_com_user_b.follow!(account)
     follower_foo_com_user_a.follow!(account)
     follower_example_com_instance_actor.follow!(account)
+  end
 
+  before do
     allow(controller).to receive(:signed_request_actor).and_return(remote_account)
   end
 
