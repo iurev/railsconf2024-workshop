@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Settings::Preferences::OtherController do
   render_views
 
-  let(:user) { Fabricate(:user, chosen_languages: []) }
+  let_it_be(:user) { Fabricate(:user, chosen_languages: []) }
 
   before do
     sign_in user, scope: :user
