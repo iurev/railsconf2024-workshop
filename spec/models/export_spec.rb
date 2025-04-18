@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe Export do
-  let(:account) { Fabricate(:account) }
-  let(:target_accounts) do
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:target_accounts) do
     [{}, { username: 'one', domain: 'local.host' }].map(&method(:Fabricate).curry(2).call(:account))
   end
 
@@ -43,26 +43,43 @@ describe Export do
   end
 
   describe 'total_storage' do
+    let_it_be(:media_attachment) { Fabricate(:media_attachment, account: account) }
+
     it 'returns the total size of the media attachments' do
-      media_attachment = Fabricate(:media_attachment, account: account)
       expect(described_class.new(account).total_storage).to eq media_attachment.file_file_size || 0
     end
   end
 
   describe 'total_follows' do
-    it 'returns the total number of the followed accounts' do
+    before_all do
       target_accounts.each { |target_account| account.follow!(target_account) }
-      expect(described_class.new(account.reload).total_follows).to eq 2
+      account.reload
+    end
+
+    it 'returns the total number of the followed accounts' do
+      expect(described_class.new(account).total_follows).to eq 2
+    end
+  end
+
+  describe 'total_blocks' do
+    before_all do
+      target_accounts.each { |target_account| account.block!(target_account) }
+      account.reload
     end
 
     it 'returns the total number of the blocked accounts' do
-      target_accounts.each { |target_account| account.block!(target_account) }
-      expect(described_class.new(account.reload).total_blocks).to eq 2
+      expect(described_class.new(account).total_blocks).to eq 2
+    end
+  end
+
+  describe 'total_mutes' do
+    before_all do
+      target_accounts.each { |target_account| account.mute!(target_account) }
+      account.reload
     end
 
     it 'returns the total number of the muted accounts' do
-      target_accounts.each { |target_account| account.mute!(target_account) }
-      expect(described_class.new(account.reload).total_mutes).to eq 2
+      expect(described_class.new(account).total_mutes).to eq 2
     end
   end
 end
