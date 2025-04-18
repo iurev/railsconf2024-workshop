@@ -5,8 +5,8 @@ require 'rails_helper'
 describe Settings::AliasesController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
-  let(:account) { user.account }
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:account) { user.account }
 
   before do
     sign_in user, scope: :user
