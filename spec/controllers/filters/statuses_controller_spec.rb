@@ -5,9 +5,9 @@ require 'rails_helper'
 describe Filters::StatusesController do
   render_views
 
-  describe 'GET #index' do
-    let(:filter) { Fabricate(:custom_filter) }
+  let_it_be(:filter) { Fabricate(:custom_filter) }
 
+  describe 'GET #index' do
     context 'with signed out user' do
       it 'redirects' do
         get :index, params: { filter_id: filter }
