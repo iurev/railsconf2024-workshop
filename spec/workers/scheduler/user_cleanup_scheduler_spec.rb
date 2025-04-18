@@ -5,14 +5,13 @@ require 'rails_helper'
 describe Scheduler::UserCleanupScheduler do
   subject { described_class.new }
 
-  let!(:new_unconfirmed_user) { Fabricate(:user) }
-  let!(:old_unconfirmed_user) { Fabricate(:user) }
-  let!(:confirmed_user)       { Fabricate(:user) }
-  let!(:moderation_note)      { Fabricate(:account_moderation_note, account: Fabricate(:account), target_account: old_unconfirmed_user.account) }
+  let_it_be(:new_unconfirmed_user) { Fabricate(:user) }
+  let_it_be(:old_unconfirmed_user) { Fabricate(:user) }
+  let_it_be(:confirmed_user)       { Fabricate(:user) }
+  let_it_be(:moderation_note)      { Fabricate(:account_moderation_note, account: Fabricate(:account), target_account: old_unconfirmed_user.account) }
 
   describe '#perform' do
-    before do
-      # Need to update the already-existing users because their initialization overrides confirmation_sent_at
+    before_all do
       new_unconfirmed_user.update!(confirmed_at: nil, confirmation_sent_at: Time.now.utc)
       old_unconfirmed_user.update!(confirmed_at: nil, confirmation_sent_at: 1.week.ago)
       confirmed_user.update!(confirmed_at: 1.day.ago)
