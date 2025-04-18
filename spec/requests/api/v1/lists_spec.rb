@@ -3,17 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Lists' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:lists write:lists' }
+  let_it_be(:user) { Fabricate(:user) }
+  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes) { 'read:lists write:lists' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/lists' do
-    subject do
-      get '/api/v1/lists', headers: headers
-    end
-
-    let!(:lists) do
+    let_it_be(:lists) do
       [
         Fabricate(:list, account: user.account, title: 'first list', replies_policy: :followed),
         Fabricate(:list, account: user.account, title: 'second list', replies_policy: :list),
@@ -33,8 +29,12 @@ RSpec.describe 'Lists' do
       end
     end
 
-    before do
+    before_all do
       Fabricate(:list)
+    end
+
+    subject do
+      get '/api/v1/lists', headers: headers
     end
 
     it_behaves_like 'forbidden for wrong scope', 'write write:lists'
@@ -48,11 +48,11 @@ RSpec.describe 'Lists' do
   end
 
   describe 'GET /api/v1/lists/:id' do
+    let_it_be(:list) { Fabricate(:list, account: user.account) }
+
     subject do
       get "/api/v1/lists/#{list.id}", headers: headers
     end
-
-    let(:list) { Fabricate(:list, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'write write:lists'
 
@@ -69,7 +69,7 @@ RSpec.describe 'Lists' do
     end
 
     context 'when the list belongs to a different user' do
-      let(:list) { Fabricate(:list) }
+      let_it_be(:list) { Fabricate(:list) }
 
       it 'returns http not found' do
         subject
@@ -88,11 +88,11 @@ RSpec.describe 'Lists' do
   end
 
   describe 'POST /api/v1/lists' do
+    let(:params) { { title: 'my list', replies_policy: 'none', exclusive: 'true' } }
+
     subject do
       post '/api/v1/lists', headers: headers, params: params
     end
-
-    let(:params) { { title: 'my list', replies_policy: 'none', exclusive: 'true' } }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:lists'
 
@@ -126,12 +126,12 @@ RSpec.describe 'Lists' do
   end
 
   describe 'PUT /api/v1/lists/:id' do
+    let_it_be(:list) { Fabricate(:list, account: user.account, title: 'my list') }
+    let(:params) { { title: 'list', replies_policy: 'followed', exclusive: 'true' } }
+
     subject do
       put "/api/v1/lists/#{list.id}", headers: headers, params: params
     end
-
-    let(:list)   { Fabricate(:list, account: user.account, title: 'my list') }
-    let(:params) { { title: 'list', replies_policy: 'followed', exclusive: 'true' } }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:lists'
 
@@ -173,7 +173,7 @@ RSpec.describe 'Lists' do
     end
 
     context 'when the list belongs to another user' do
-      let(:list) { Fabricate(:list) }
+      let_it_be(:list) { Fabricate(:list) }
 
       it 'returns http not found' do
         subject
@@ -184,11 +184,11 @@ RSpec.describe 'Lists' do
   end
 
   describe 'DELETE /api/v1/lists/:id' do
+    let_it_be(:list) { Fabricate(:list, account: user.account) }
+
     subject do
       delete "/api/v1/lists/#{list.id}", headers: headers
     end
-
-    let(:list) { Fabricate(:list, account: user.account) }
 
     it_behaves_like 'forbidden for wrong scope', 'read read:lists'
 
@@ -208,7 +208,7 @@ RSpec.describe 'Lists' do
     end
 
     context 'when the list belongs to another user' do
-      let(:list) { Fabricate(:list) }
+      let_it_be(:list) { Fabricate(:list) }
 
       it 'returns http not found' do
         subject
