@@ -11,11 +11,10 @@ describe Admin::Metrics::Dimension::SourcesDimension do
   let(:params) { ActionController::Parameters.new }
 
   describe '#data' do
-    let(:app) { Fabricate(:application) }
-    let(:alice) { Fabricate(:user) }
-    let(:bob) { Fabricate(:user) }
+    let_it_be(:app) { Fabricate(:application) }
 
     before do
+      alice = Fabricate(:user)
       alice.update(created_by_application: app)
     end
 
