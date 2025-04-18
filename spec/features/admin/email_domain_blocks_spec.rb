@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe 'Admin::EmailDomainBlocks' do
-  let(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:current_user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in current_user
