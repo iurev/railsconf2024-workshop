@@ -3,13 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe 'FeaturedTags' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:accounts write:accounts' }
+  let_it_be(:user) { Fabricate(:user) }
+  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let(:scopes) { 'read:accounts write:accounts' }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/featured_tags' do
     context 'with wrong scope' do
+      let(:scopes) { 'read:statuses' }
+
       before do
         get '/api/v1/featured_tags', headers: headers
       end
@@ -83,6 +85,8 @@ RSpec.describe 'FeaturedTags' do
     end
 
     context 'with wrong scope' do
+      let(:scopes) { 'read:statuses' }
+
       before do
         post '/api/v1/featured_tags', headers: headers, params: params
       end
@@ -156,6 +160,8 @@ RSpec.describe 'FeaturedTags' do
     end
 
     context 'with wrong scope' do
+      let(:scopes) { 'read:statuses' }
+
       before do
         delete "/api/v1/featured_tags/#{id}", headers: headers
       end
