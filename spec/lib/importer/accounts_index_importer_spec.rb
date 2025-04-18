@@ -7,7 +7,7 @@ describe Importer::AccountsIndexImporter do
     let(:pool) { Concurrent::FixedThreadPool.new(5) }
     let(:importer) { described_class.new(batch_size: 123, executor: pool) }
 
-    before { Fabricate(:account) }
+    let_it_be(:account) { Fabricate(:account) }
 
     it 'indexes relevant accounts' do
       expect { importer.import! }.to update_index(AccountsIndex)
