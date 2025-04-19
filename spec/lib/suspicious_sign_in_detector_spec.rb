@@ -6,7 +6,7 @@ RSpec.describe SuspiciousSignInDetector do
   describe '#suspicious?' do
     subject { described_class.new(user).suspicious?(request) }
 
-    let(:user) { Fabricate(:user, current_sign_in_at: 1.day.ago) }
+    let_it_be(:user) { Fabricate(:user, current_sign_in_at: 1.day.ago) }
     let(:request) { instance_double(ActionDispatch::Request, remote_ip: remote_ip) }
     let(:remote_ip) { nil }
 
