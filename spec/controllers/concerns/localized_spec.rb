@@ -42,9 +42,9 @@ describe Localized do
   end
 
   context 'with a user with valid locale has signed in' do
-    it "sets user's locale" do
-      user = Fabricate(:user, locale: :ca)
+    let_it_be(:user) { Fabricate(:user, locale: :ca) }
 
+    it "sets user's locale" do
       sign_in(user)
       get 'success'
 
