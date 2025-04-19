@@ -11,10 +11,12 @@ describe Admin::Metrics::Measure::OpenedReportsMeasure do
 
   describe '#data' do
     context 'with report records' do
-      before do
-        3.times { Fabricate :report, created_at: 2.days.ago }
-        2.times { Fabricate :report, created_at: 1.day.ago }
-        Fabricate :report, created_at: 0.days.ago
+      let_it_be(:reports) do
+        [
+          *3.times.map { Fabricate(:report, created_at: 2.days.ago) },
+          *2.times.map { Fabricate(:report, created_at: 1.day.ago) },
+          Fabricate(:report, created_at: 0.days.ago)
+        ]
       end
 
       it 'returns correct report counts' do
