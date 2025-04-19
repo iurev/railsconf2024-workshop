@@ -6,7 +6,8 @@ describe FormattingHelper do
   include Devise::Test::ControllerHelpers
 
   describe '#rss_status_content_format' do
-    let(:status) { Fabricate(:status, text: 'Hello world<>', spoiler_text: 'This is a spoiler<>', poll: Fabricate(:poll, options: %w(Yes<> No))) }
+    let_it_be(:poll) { Fabricate(:poll, options: %w(Yes<> No)) }
+    let_it_be(:status) { Fabricate(:status, text: 'Hello world<>', spoiler_text: 'This is a spoiler<>', poll: poll) }
     let(:html) { helper.rss_status_content_format(status) }
 
     it 'renders the spoiler text' do
