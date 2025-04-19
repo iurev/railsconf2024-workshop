@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Domain Blocks' do
-  describe 'GET /api/v1/instance/domain_blocks' do
-    before do
-      Fabricate(:domain_block)
-    end
+  let_it_be(:domain_block) { Fabricate(:domain_block) }
 
+  describe 'GET /api/v1/instance/domain_blocks' do
     context 'with domain blocks set to all' do
       before { Setting.show_domain_blocks = 'all' }
 
