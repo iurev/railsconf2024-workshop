@@ -4,9 +4,9 @@ require 'rails_helper'
 
 describe Poll do
   describe 'scopes' do
-    let(:status) { Fabricate(:status) }
-    let(:attached_poll) { Fabricate(:poll, status: status) }
-    let(:not_attached_poll) do
+    let_it_be(:status) { Fabricate(:status) }
+    let_it_be(:attached_poll) { Fabricate(:poll, status: status) }
+    let_it_be(:not_attached_poll) do
       Fabricate(:poll).tap do |poll|
         poll.status = nil
         poll.save(validate: false)
