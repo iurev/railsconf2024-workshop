@@ -4,9 +4,9 @@ require 'rails_helper'
 require 'pundit/rspec'
 
 describe WebhookPolicy do
-  let(:policy) { described_class }
-  let(:admin)   { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
-  let(:john)    { Fabricate(:account) }
+  let_it_be(:policy) { described_class }
+  let_it_be(:admin)  { Fabricate(:user, role: UserRole.find_by(name: 'Admin')).account }
+  let_it_be(:john)   { Fabricate(:account) }
 
   permissions :index?, :create? do
     context 'with an admin' do
@@ -23,7 +23,7 @@ describe WebhookPolicy do
   end
 
   permissions :show?, :update?, :enable?, :disable?, :rotate_secret?, :destroy? do
-    let(:webhook) { Fabricate(:webhook, events: ['account.created', 'report.created']) }
+    let_it_be(:webhook) { Fabricate(:webhook, events: ['account.created', 'report.created']) }
 
     context 'with an admin' do
       it 'permits' do
