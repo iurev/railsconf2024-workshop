@@ -35,11 +35,9 @@ describe 'Custom CSS' do
     end
 
     context 'with highlighted colored UserRole records' do
-      before do
-        _highlighted_colored = Fabricate :user_role, highlighted: true, color: '#336699', id: '123_123_123'
-        _highlighted_no_color = Fabricate :user_role, highlighted: true, color: ''
-        _no_highlight_with_color = Fabricate :user_role, highlighted: false, color: ''
-      end
+      let_it_be(:highlighted_colored) { Fabricate :user_role, highlighted: true, color: '#336699', id: '123_123_123' }
+      let_it_be(:highlighted_no_color) { Fabricate :user_role, highlighted: true, color: '' }
+      let_it_be(:no_highlight_with_color) { Fabricate :user_role, highlighted: false, color: '' }
 
       it 'returns stylesheet from settings' do
         get '/custom.css'
