@@ -5,7 +5,8 @@ require 'rails_helper'
 describe Settings::Migration::RedirectsController do
   render_views
 
-  let!(:user) { Fabricate(:user, password: 'testtest') }
+  let_it_be(:user) { Fabricate(:user, password: 'testtest') }
+  let_it_be(:account) { Fabricate(:account) }
 
   before do
     sign_in user, scope: :user
@@ -44,8 +45,6 @@ describe Settings::Migration::RedirectsController do
   end
 
   describe 'DELETE #destroy' do
-    let(:account) { Fabricate(:account) }
-
     before do
       user.account.update(moved_to_account_id: account.id)
     end
@@ -61,7 +60,7 @@ describe Settings::Migration::RedirectsController do
   private
 
   def stub_resolver
-    resolver = instance_double(ResolveAccountService, call: Fabricate(:account))
+    resolver = instance_double(ResolveAccountService, call: account)
     allow(ResolveAccountService).to receive(:new).and_return(resolver)
   end
 end
