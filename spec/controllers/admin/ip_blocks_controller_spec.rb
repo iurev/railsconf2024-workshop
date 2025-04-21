@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-describe Admin::IpBlocksController do
+describe Admin::IpBlocksController, :admin do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
 
   before do
     sign_in user, scope: :user
