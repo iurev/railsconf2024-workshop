@@ -3,8 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe SessionActivation do
+  let_it_be(:user) { Fabricate(:user) }
+  let_it_be(:session_activation) { Fabricate(:session_activation, user: user) }
+
   describe '#detection' do
-    let(:session_activation) { Fabricate(:session_activation, user_agent: 'Chrome/62.0.3202.89') }
+    before { session_activation.update(user_agent: 'Chrome/62.0.3202.89') }
 
     it 'sets a Browser instance as detection' do
       expect(session_activation.detection).to be_a Browser::Chrome
@@ -12,12 +15,11 @@ RSpec.describe SessionActivation do
   end
 
   describe '#browser' do
+    let(:detection) { instance_double(Browser::Chrome, id: 1) }
+
     before do
       allow(session_activation).to receive(:detection).and_return(detection)
     end
-
-    let(:detection)          { instance_double(Browser::Chrome, id: 1) }
-    let(:session_activation) { Fabricate(:session_activation) }
 
     it 'returns detection.id' do
       expect(session_activation.browser).to be 1
@@ -25,12 +27,11 @@ RSpec.describe SessionActivation do
   end
 
   describe '#platform' do
+    let(:detection) { instance_double(Browser::Chrome, platform: instance_double(Browser::Platform, id: 1)) }
+
     before do
       allow(session_activation).to receive(:detection).and_return(detection)
     end
-
-    let(:session_activation) { Fabricate(:session_activation) }
-    let(:detection)          { instance_double(Browser::Chrome, platform: instance_double(Browser::Platform, id: 1)) }
 
     it 'returns detection.platform.id' do
       expect(session_activation.platform).to be 1
@@ -49,8 +50,7 @@ RSpec.describe SessionActivation do
     end
 
     context 'when id is present' do
-      let(:id) { '1' }
-      let!(:session_activation) { Fabricate(:session_activation, session_id: id) }
+      let(:id) { session_activation.session_id }
 
       context 'when id exists as session_id' do
         it 'returns true' do
@@ -59,19 +59,17 @@ RSpec.describe SessionActivation do
       end
 
       context 'when id does not exist as session_id' do
-        before do
-          session_activation.update!(session_id: '2')
-        end
+        let(:non_existent_id) { 'non_existent_id' }
 
         it 'returns false' do
-          expect(subject).to be false
+          expect(described_class.active?(non_existent_id)).to be false
         end
       end
     end
   end
 
   describe '.activate' do
-    let(:options) { { user: Fabricate(:user), session_id: '1' } }
+    let(:options) { { user: user, session_id: '1' } }
 
     it 'calls create! and purge_old' do
       allow(described_class).to receive(:create!).with(**options)
@@ -98,8 +96,6 @@ RSpec.describe SessionActivation do
     end
 
     context 'when id exists' do
-      let!(:session_activation) { Fabricate(:session_activation) }
-
       it 'destroys the record' do
         described_class.deactivate(session_activation.session_id)
 
@@ -116,26 +112,25 @@ RSpec.describe SessionActivation do
       Rails.configuration.x.max_session_activations = before
     end
 
-    let!(:oldest_session_activation) { Fabricate(:session_activation, created_at: 10.days.ago) }
-    let!(:newest_session_activation) { Fabricate(:session_activation, created_at: 5.days.ago) }
+    let!(:oldest_session_activation) { Fabricate(:session_activation, user: user, created_at: 10.days.ago) }
+    let!(:newest_session_activation) { Fabricate(:session_activation, user: user, created_at: 5.days.ago) }
 
     it 'preserves the newest X records based on config' do
       described_class.purge_old
 
       expect { oldest_session_activation.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      expect { newest_session_activation.reload }.to_not raise_error
+      expect(described_class.find_by(id: newest_session_activation.id)).to eq(newest_session_activation)
     end
   end
 
   describe '.exclusive' do
-    let!(:unwanted_session_activation) { Fabricate(:session_activation) }
-    let!(:wanted_session_activation) { Fabricate(:session_activation) }
+    let!(:unwanted_session_activation) { Fabricate(:session_activation, user: user) }
 
     it 'preserves supplied record and destroys all others' do
-      described_class.exclusive(wanted_session_activation.session_id)
+      described_class.exclusive(session_activation.session_id)
 
       expect { unwanted_session_activation.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      expect { wanted_session_activation.reload }.to_not raise_error
+      expect { session_activation.reload }.not_to raise_error
     end
   end
 end
