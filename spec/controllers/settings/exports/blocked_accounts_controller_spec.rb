@@ -5,9 +5,10 @@ require 'rails_helper'
 describe Settings::Exports::BlockedAccountsController do
   render_views
 
+  let_it_be(:user) { Fabricate(:user) }
+
   describe 'GET #index' do
     it 'returns a csv of the blocking accounts' do
-      user = Fabricate(:user)
       user.account.block!(Fabricate(:account, username: 'username', domain: 'domain'))
 
       sign_in user, scope: :user
