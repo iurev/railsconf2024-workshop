@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 describe 'Scheduled Statuses' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user) { Fabricate(:user) }
+  let(:scopes) { 'read:statuses' }
+  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/scheduled_statuses' do
@@ -18,6 +19,8 @@ describe 'Scheduled Statuses' do
     end
 
     context 'with wrong scope' do
+      let(:scopes) { 'write write:statuses' }
+
       before do
         get api_v1_scheduled_statuses_path, headers: headers
       end
@@ -26,8 +29,6 @@ describe 'Scheduled Statuses' do
     end
 
     context 'with correct scope' do
-      let(:scopes) { 'read:statuses' }
-
       context 'without scheduled statuses' do
         it 'returns http success without json' do
           get api_v1_scheduled_statuses_path, headers: headers
