@@ -7,8 +7,8 @@ RSpec.describe 'Tags' do
   let(:user)    { Fabricate(:user, role: role) }
   let(:scopes)  { 'admin:read admin:write' }
   let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:tag)     { Fabricate(:tag) }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:tag)     { Fabricate(:tag) }
 
   describe 'GET /api/v1/admin/tags' do
     subject do
@@ -27,6 +27,8 @@ RSpec.describe 'Tags' do
     end
 
     context 'when there are no tags' do
+      before { Tag.destroy_all }
+
       it 'returns an empty list' do
         subject
 
@@ -34,14 +36,9 @@ RSpec.describe 'Tags' do
       end
     end
 
-    context 'when there are tagss' do
-      let!(:tags) do
-        [
-          Fabricate(:tag),
-          Fabricate(:tag),
-          Fabricate(:tag),
-          Fabricate(:tag),
-        ]
+    context 'when there are tags' do
+      let_it_be(:tags) do
+        Fabricate.times(4, :tag)
       end
 
       it 'returns the expected tags' do
@@ -67,8 +64,6 @@ RSpec.describe 'Tags' do
     subject do
       get "/api/v1/admin/tags/#{tag.id}", headers: headers
     end
-
-    let!(:tag) { Fabricate(:tag) }
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
     it_behaves_like 'forbidden for wrong role', ''
@@ -100,7 +95,6 @@ RSpec.describe 'Tags' do
       put "/api/v1/admin/tags/#{tag.id}", headers: headers, params: params
     end
 
-    let!(:tag)   { Fabricate(:tag) }
     let(:params) { { display_name: tag.name.upcase } }
 
     it_behaves_like 'forbidden for wrong scope', 'write:statuses'
