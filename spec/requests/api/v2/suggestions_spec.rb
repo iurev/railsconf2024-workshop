@@ -2,18 +2,16 @@
 
 require 'rails_helper'
 
-describe 'Suggestions API' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read' }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+describe 'Suggestions API', :account do
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'GET /api/v2/suggestions' do
-    let(:bob) { Fabricate(:account) }
-    let(:jeff) { Fabricate(:account) }
-    let(:params) { {} }
+    let_it_be(:bob)  { Fabricate(:account) }
+    let_it_be(:jeff) { Fabricate(:account) }
 
-    before do
+    before_all do
       Setting.bootstrap_timeline_accounts = [bob, jeff].map(&:acct).join(',')
     end
 
