@@ -3,12 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Trends::Tags do
-  subject { described_class.new(threshold: 5, review_threshold: 10) }
-
-  let!(:at_time) { DateTime.new(2021, 11, 14, 10, 15, 0) }
+  let_it_be(:at_time) { DateTime.new(2021, 11, 14, 10, 15, 0) }
+  let_it_be(:subject) { described_class.new(threshold: 5, review_threshold: 10) }
 
   describe '#add' do
-    let(:tag) { Fabricate(:tag) }
+    let_it_be(:tag) { Fabricate(:tag) }
 
     before do
       subject.add(tag, 1, at_time)
@@ -30,12 +29,11 @@ RSpec.describe Trends::Tags do
   end
 
   describe '#refresh' do
-    let!(:today) { at_time }
-    let!(:yesterday) { today - 1.day }
-
-    let!(:tag_cats) { Fabricate(:tag, name: 'Catstodon', trendable: true) }
-    let!(:tag_dogs) { Fabricate(:tag, name: 'DogsOfMastodon', trendable: true) }
-    let!(:tag_ocs) { Fabricate(:tag, name: 'OCs', trendable: true) }
+    let_it_be(:today) { at_time }
+    let_it_be(:yesterday) { today - 1.day }
+    let_it_be(:tag_cats) { Fabricate(:tag, name: 'Catstodon', trendable: true) }
+    let_it_be(:tag_dogs) { Fabricate(:tag, name: 'DogsOfMastodon', trendable: true) }
+    let_it_be(:tag_ocs) { Fabricate(:tag, name: 'OCs', trendable: true) }
 
     before do
       2.times  { |i| subject.add(tag_cats, i, yesterday) }
