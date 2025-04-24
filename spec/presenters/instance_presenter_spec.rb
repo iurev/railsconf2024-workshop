@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe InstancePresenter do
-  let(:instance_presenter) { described_class.new }
+  let_it_be(:instance_presenter) { described_class.new }
 
   describe '#description' do
     it 'delegates site_description to Setting' do
