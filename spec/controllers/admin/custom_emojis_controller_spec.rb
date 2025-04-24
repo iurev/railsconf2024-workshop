@@ -5,17 +5,14 @@ require 'rails_helper'
 describe Admin::CustomEmojisController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:custom_emoji) { Fabricate(:custom_emoji) }
 
   before do
     sign_in user, scope: :user
   end
 
   describe 'GET #index' do
-    before do
-      Fabricate(:custom_emoji)
-    end
-
     it 'renders index page' do
       get :index
 
