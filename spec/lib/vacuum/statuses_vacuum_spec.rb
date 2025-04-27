@@ -7,13 +7,13 @@ RSpec.describe Vacuum::StatusesVacuum do
 
   let(:retention_period) { 7.days }
 
-  let(:remote_account) { Fabricate(:account, domain: 'example.com') }
+  let_it_be(:remote_account) { Fabricate(:account, domain: 'example.com') }
 
   describe '#perform' do
-    let!(:remote_status_old) { Fabricate(:status, account: remote_account, created_at: (retention_period + 2.days).ago) }
-    let!(:remote_status_recent) { Fabricate(:status, account: remote_account, created_at: (retention_period - 2.days).ago) }
-    let!(:local_status_old) { Fabricate(:status, created_at: (retention_period + 2.days).ago) }
-    let!(:local_status_recent) { Fabricate(:status, created_at: (retention_period - 2.days).ago) }
+    let_it_be(:remote_status_old) { Fabricate(:status, account: remote_account, created_at: 9.days.ago) }
+    let_it_be(:remote_status_recent) { Fabricate(:status, account: remote_account, created_at: 5.days.ago) }
+    let_it_be(:local_status_old) { Fabricate(:status, created_at: 9.days.ago) }
+    let_it_be(:local_status_recent) { Fabricate(:status, created_at: 5.days.ago) }
 
     before do
       subject.perform
