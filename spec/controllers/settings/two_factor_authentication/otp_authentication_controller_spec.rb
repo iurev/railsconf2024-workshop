@@ -5,7 +5,7 @@ require 'rails_helper'
 describe Settings::TwoFactorAuthentication::OtpAuthenticationController do
   render_views
 
-  let(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
 
   describe 'GET #show' do
     context 'when signed in' do
