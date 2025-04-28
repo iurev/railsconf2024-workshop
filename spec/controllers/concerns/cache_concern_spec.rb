@@ -43,8 +43,8 @@ RSpec.describe CacheConcern do
     end
 
     context 'when given a collection of statuses' do
-      let!(:account) { Fabricate(:account) }
-      let!(:status)  { Fabricate(:status, account: account) }
+      let_it_be(:account) { Fabricate(:account) }
+      let_it_be(:status)  { Fabricate(:status, account: account) }
 
       it 'correctly updates with new interactions' do
         get :account_statuses_favourites, params: { id: account.id }
