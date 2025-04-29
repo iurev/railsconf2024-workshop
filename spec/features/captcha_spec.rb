@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe 'email confirmation flow when captcha is enabled' do
-  let(:user)        { Fabricate(:user, confirmed_at: nil, confirmation_token: 'foobar', created_by_application: client_app) }
-  let(:client_app)  { nil }
+  let_it_be(:user) { Fabricate(:user, confirmed_at: nil, confirmation_token: 'foobar', created_by_application: nil) }
+  let(:client_app) { nil }
 
   before do
     allow(Auth::ConfirmationsController).to receive(:new).and_return(stubbed_controller)
@@ -14,6 +14,8 @@ describe 'email confirmation flow when captcha is enabled' do
     let(:client_app) { Fabricate(:application) }
 
     it 'logs in' do
+      user.update!(created_by_application: client_app)
+
       visit "/auth/confirmation?confirmation_token=#{user.confirmation_token}&redirect_to_app=true"
 
       # It presents the user with a captcha form
