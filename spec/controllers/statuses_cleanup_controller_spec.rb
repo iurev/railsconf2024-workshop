@@ -5,7 +5,15 @@ require 'rails_helper'
 RSpec.describe StatusesCleanupController do
   render_views
 
-  let!(:user) { Fabricate(:user) }
+  let_it_be(:user) { Fabricate(:user) }
+
+  before(:all) do
+    RSpec.configuration.use_transactional_examples = false
+  end
+
+  after(:all) do
+    RSpec.configuration.use_transactional_examples = true
+  end
 
   before do
     sign_in user, scope: :user
