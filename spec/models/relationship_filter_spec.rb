@@ -3,21 +3,20 @@
 require 'rails_helper'
 
 describe RelationshipFilter do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:account_of_7_months) { Fabricate(:account_stat, statuses_count: 1, last_status_at: 7.months.ago).account }
+  let_it_be(:account_of_1_day)    { Fabricate(:account_stat, statuses_count: 1, last_status_at: 1.day.ago).account }
+  let_it_be(:account_of_3_days)   { Fabricate(:account_stat, statuses_count: 1, last_status_at: 3.days.ago).account }
+  let_it_be(:silent_account)      { Fabricate(:account_stat, statuses_count: 0, last_status_at: nil).account }
+
+  before_all do
+    account.follow!(account_of_7_months)
+    account.follow!(account_of_1_day)
+    account.follow!(account_of_3_days)
+    account.follow!(silent_account)
+  end
 
   describe '#results' do
-    let(:account_of_7_months) { Fabricate(:account_stat, statuses_count: 1, last_status_at: 7.months.ago).account }
-    let(:account_of_1_day)    { Fabricate(:account_stat, statuses_count: 1, last_status_at: 1.day.ago).account }
-    let(:account_of_3_days)   { Fabricate(:account_stat, statuses_count: 1, last_status_at: 3.days.ago).account }
-    let(:silent_account)      { Fabricate(:account_stat, statuses_count: 0, last_status_at: nil).account }
-
-    before do
-      account.follow!(account_of_7_months)
-      account.follow!(account_of_1_day)
-      account.follow!(account_of_3_days)
-      account.follow!(silent_account)
-    end
-
     context 'when ordering by last activity' do
       context 'when not filtering' do
         subject do
