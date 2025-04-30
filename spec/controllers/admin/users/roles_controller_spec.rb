@@ -5,11 +5,9 @@ require 'rails_helper'
 describe Admin::Users::RolesController do
   render_views
 
-  let(:current_role) { UserRole.create(name: 'Foo', permissions: UserRole::FLAGS[:manage_roles], position: 10) }
-  let(:current_user) { Fabricate(:user, role: current_role) }
-
-  let(:previous_role) { nil }
-  let(:user) { Fabricate(:user, role: previous_role) }
+  let_it_be(:current_role) { UserRole.create(name: 'Foo', permissions: UserRole::FLAGS[:manage_roles], position: 10) }
+  let_it_be(:current_user) { Fabricate(:user, role: current_role) }
+  let_it_be(:user) { Fabricate(:user) }
 
   before do
     sign_in current_user, scope: :user
@@ -25,7 +23,12 @@ describe Admin::Users::RolesController do
     end
 
     context 'when target user is higher ranked than current user' do
-      let(:previous_role) { UserRole.create(name: 'Baz', permissions: UserRole::FLAGS[:administrator], position: 100) }
+      let_it_be(:previous_role) { UserRole.create(name: 'Baz', permissions: UserRole::FLAGS[:administrator], position: 100) }
+
+      before do
+        user.update(role: previous_role)
+        get :show, params: { user_id: user.id }
+      end
 
       it 'returns http forbidden' do
         expect(response).to have_http_status(403)
@@ -34,16 +37,13 @@ describe Admin::Users::RolesController do
   end
 
   describe 'PUT #update' do
-    let(:selected_role) { UserRole.create(name: 'Bar', permissions: permissions, position: position) }
+    let_it_be(:selected_role) { UserRole.create(name: 'Bar', permissions: UserRole::FLAGS[:manage_roles], position: 1) }
 
     before do
       put :update, params: { user_id: user.id, user: { role_id: selected_role.id } }
     end
 
     context 'with manage roles permissions' do
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
-      let(:position) { 1 }
-
       it 'updates user role' do
         expect(user.reload.role_id).to eq selected_role&.id
       end
@@ -54,11 +54,14 @@ describe Admin::Users::RolesController do
     end
 
     context 'when selected role has higher position than current user\'s role' do
-      let(:permissions) { UserRole::FLAGS[:administrator] }
-      let(:position) { 100 }
+      let_it_be(:higher_role) { UserRole.create(name: 'Higher', permissions: UserRole::FLAGS[:administrator], position: 100) }
+
+      before do
+        put :update, params: { user_id: user.id, user: { role_id: higher_role.id } }
+      end
 
       it 'does not update user role' do
-        expect(user.reload.role_id).to eq previous_role&.id
+        expect(user.reload.role_id).to be_nil
       end
 
       it 'renders edit form' do
@@ -67,9 +70,12 @@ describe Admin::Users::RolesController do
     end
 
     context 'when target user is higher ranked than current user' do
-      let(:previous_role) { UserRole.create(name: 'Baz', permissions: UserRole::FLAGS[:administrator], position: 100) }
-      let(:permissions) { UserRole::FLAGS[:manage_roles] }
-      let(:position) { 1 }
+      let_it_be(:previous_role) { UserRole.create(name: 'Baz', permissions: UserRole::FLAGS[:administrator], position: 100) }
+
+      before do
+        user.update(role: previous_role)
+        put :update, params: { user_id: user.id, user: { role_id: selected_role.id } }
+      end
 
       it 'does not update user role' do
         expect(user.reload.role_id).to eq previous_role&.id
