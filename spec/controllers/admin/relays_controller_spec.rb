@@ -5,7 +5,8 @@ require 'rails_helper'
 describe Admin::RelaysController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:relay) { Fabricate(:relay) }
 
   before do
     sign_in user, scope: :user
@@ -58,8 +59,6 @@ describe Admin::RelaysController do
   end
 
   describe 'DELETE #destroy' do
-    let(:relay) { Fabricate(:relay) }
-
     it 'deletes an existing relay' do
       delete :destroy, params: { id: relay.id }
 
@@ -69,9 +68,8 @@ describe Admin::RelaysController do
   end
 
   describe 'POST #enable' do
-    let(:relay) { Fabricate(:relay, state: :idle) }
-
     before do
+      relay.update!(state: :idle)
       stub_request(:post, /example.com/).to_return(status: 200)
     end
 
@@ -84,9 +82,8 @@ describe Admin::RelaysController do
   end
 
   describe 'POST #disable' do
-    let(:relay) { Fabricate(:relay, state: :pending) }
-
     before do
+      relay.update!(state: :pending)
       stub_request(:post, /example.com/).to_return(status: 200)
     end
 
