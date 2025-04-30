@@ -3,16 +3,16 @@
 require 'rails_helper'
 
 describe 'Search API' do
+  let_it_be(:user)    { Fabricate(:user) }
+  let_it_be(:bob)     { Fabricate(:account, username: 'bob_test') }
+  let_it_be(:ana)     { Fabricate(:account, username: 'ana_test') }
+  let_it_be(:tom)     { Fabricate(:account, username: 'tom_test') }
+
   context 'with token' do
-    let(:user)    { Fabricate(:user) }
-    let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-    let(:scopes)  { 'read:search' }
-    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    let_it_be(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:search') }
+    let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
     describe 'GET /api/v2/search' do
-      let!(:bob)   { Fabricate(:account, username: 'bob_test') }
-      let!(:ana)   { Fabricate(:account, username: 'ana_test') }
-      let!(:tom)   { Fabricate(:account, username: 'tom_test') }
       let(:params) { { q: 'test' } }
 
       it 'returns http success' do
