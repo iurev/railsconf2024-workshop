@@ -5,7 +5,8 @@ require 'rails_helper'
 describe Admin::InvitesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:invite) { Fabricate(:invite, expires_at: nil) }
 
   before do
     sign_in user, scope: :user
@@ -13,8 +14,6 @@ describe Admin::InvitesController do
 
   describe 'GET #index' do
     subject { get :index, params: { available: true } }
-
-    let!(:invite) { Fabricate(:invite) }
 
     it 'renders index page' do
       expect(subject).to render_template :index
@@ -34,8 +33,6 @@ describe Admin::InvitesController do
 
   describe 'DELETE #destroy' do
     subject { delete :destroy, params: { id: invite.id } }
-
-    let!(:invite) { Fabricate(:invite, expires_at: nil) }
 
     it 'expires invite' do
       expect(subject).to redirect_to admin_invites_path
