@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'API V1 Polls Votes' do
-  let(:user)   { Fabricate(:user) }
-  let(:scopes) { 'write:statuses' }
-  let(:token)  { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let_it_be(:user)   { Fabricate(:user) }
+  let_it_be(:scopes) { 'write:statuses' }
+  let_it_be(:token)  { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'POST /api/v1/polls/:poll_id/votes' do
-    let(:poll) { Fabricate(:poll) }
+    let_it_be(:poll) { Fabricate(:poll) }
 
     before do
       post "/api/v1/polls/#{poll.id}/votes", params: { choices: %w(1) }, headers: headers
