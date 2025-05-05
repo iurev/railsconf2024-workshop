@@ -3,10 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Activity::Accept do
-  let(:sender)    { Fabricate(:account) }
-  let(:recipient) { Fabricate(:account) }
+  let_it_be(:sender)    { Fabricate(:account) }
+  let_it_be(:recipient) { Fabricate(:account) }
+  let_it_be(:follow_request) { Fabricate(:follow_request, account: recipient, target_account: sender) }
 
-  let(:json) do
+  let_it_be(:json) do
     {
       '@context': 'https://www.w3.org/ns/activitystreams',
       id: 'foo',
@@ -26,7 +27,6 @@ RSpec.describe ActivityPub::Activity::Accept do
 
     before do
       allow(RemoteAccountRefreshWorker).to receive(:perform_async)
-      Fabricate(:follow_request, account: recipient, target_account: sender)
       subject.perform
     end
 
@@ -44,11 +44,11 @@ RSpec.describe ActivityPub::Activity::Accept do
   end
 
   context 'when given a relay' do
-    subject { described_class.new(json, sender) }
+    subject { described_class.new(relay_json, sender) }
 
-    let!(:relay) { Fabricate(:relay, state: :pending, follow_activity_id: 'https://abc-123/456') }
+    let_it_be(:relay) { Fabricate(:relay, state: :pending, follow_activity_id: 'https://abc-123/456') }
 
-    let(:json) do
+    let(:relay_json) do
       {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: 'foo',
