@@ -3,14 +3,13 @@
 require 'rails_helper'
 
 describe 'API V1 Statuses Translations' do
-  let(:user)  { Fabricate(:user) }
-  let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
-  let(:scopes)  { 'read:statuses' }
+  let_it_be(:user)  { Fabricate(:user) }
+  let_it_be(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read:statuses') }
   let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   context 'with an oauth token' do
     describe 'POST /api/v1/statuses/:status_id/translate' do
-      let(:status) { Fabricate(:status, account: user.account, text: 'Hola', language: 'es') }
+      let_it_be(:status) { Fabricate(:status, account: user.account, text: 'Hola', language: 'es') }
 
       before do
         translation = TranslationService::Translation.new(text: 'Hello')
