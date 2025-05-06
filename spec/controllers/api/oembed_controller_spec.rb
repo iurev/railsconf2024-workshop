@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe Api::OEmbedController do
   render_views
 
-  let(:alice)  { Fabricate(:account, username: 'alice') }
-  let(:status) { Fabricate(:status, text: 'Hello world', account: alice) }
+  let_it_be(:alice)  { Fabricate(:account, username: 'alice') }
+  let_it_be(:status) { Fabricate(:status, text: 'Hello world', account: alice) }
 
   describe 'GET #show' do
     before do
