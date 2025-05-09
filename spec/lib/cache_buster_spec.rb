@@ -9,7 +9,7 @@ describe CacheBuster do
   let(:secret) { nil }
   let(:http_method) { nil }
 
-  let(:purge_url) { 'https://example.com/test_purge' }
+  let_it_be(:purge_url) { 'https://example.com/test_purge' }
 
   describe '#bust' do
     shared_examples 'makes_request' do
