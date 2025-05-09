@@ -3,17 +3,15 @@
 require 'rails_helper'
 
 describe 'statuses/show.html.haml', :without_verify_partial_doubles do
-  let(:alice) { Fabricate(:account, username: 'alice', display_name: 'Alice') }
-  let(:status) { Fabricate(:status, account: alice, text: 'Hello World') }
+  let_it_be(:alice) { Fabricate(:account, username: 'alice', display_name: 'Alice') }
+  let_it_be(:status) { Fabricate(:status, account: alice, text: 'Hello World') }
+  let_it_be(:media_attachment) { Fabricate(:media_attachment, account: alice, status: status, type: :video) }
 
   before do
     allow(view).to receive_messages(api_oembed_url: '', site_title: 'example site', site_hostname: 'example.com', full_asset_url: '//asset.host/image.svg', current_account: nil, single_user_mode?: false)
     allow(view).to receive(:local_time)
     allow(view).to receive(:local_time_ago)
     assign(:instance_presenter, InstancePresenter.new)
-
-    Fabricate(:media_attachment, account: alice, status: status, type: :video)
-
     assign(:status, status)
     assign(:account, alice)
     assign(:descendant_threads, [])

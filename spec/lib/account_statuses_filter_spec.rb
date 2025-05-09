@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe AccountStatusesFilter do
-  let(:account) { Fabricate(:account) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:tag) { Fabricate(:tag) }
   let(:current_account) { nil }
   let(:params) { {} }
 
@@ -38,9 +39,7 @@ RSpec.describe AccountStatusesFilter do
   describe '#results' do
     subject { described_class.new(account, current_account, params).results }
 
-    let(:tag) { Fabricate(:tag) }
-
-    before do
+    before_all do
       status!(:public)
       status!(:unlisted)
       status!(:private)
@@ -127,7 +126,7 @@ RSpec.describe AccountStatusesFilter do
     end
 
     context 'when accessed by a follower' do
-      let(:current_account) { Fabricate(:account) }
+      let_it_be(:current_account) { Fabricate(:account) }
 
       before do
         current_account.follow!(account)
@@ -153,7 +152,7 @@ RSpec.describe AccountStatusesFilter do
     end
 
     context 'when accessed by a non-follower' do
-      let(:current_account) { Fabricate(:account) }
+      let_it_be(:current_account) { Fabricate(:account) }
 
       it 'returns only public statuses, replies, and reblogs' do
         expect(results_unique_visibilities).to match_array %w(unlisted public)

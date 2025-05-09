@@ -5,49 +5,38 @@ require 'rails_helper'
 describe Admin::StatusesController do
   render_views
 
-  let(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
-  let(:account) { Fabricate(:account) }
-  let!(:status) { Fabricate(:status, account: account) }
-  let(:media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
-  let(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
-  let(:sensitive) { true }
+  let_it_be(:user) { Fabricate(:user, role: UserRole.find_by(name: 'Admin')) }
+  let_it_be(:account) { Fabricate(:account) }
+  let_it_be(:status) { Fabricate(:status, account: account) }
+  let_it_be(:sensitive) { true }
+  let_it_be(:media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
+  let_it_be(:last_media_attached_status) { Fabricate(:status, account: account, sensitive: !sensitive) }
+
+  before_all do
+    Fabricate(:media_attachment, account: account, status: last_media_attached_status)
+    Fabricate(:status, account: account)
+    Fabricate(:media_attachment, account: account, status: media_attached_status)
+  end
 
   before do
-    _last_media_attachment = Fabricate(:media_attachment, account: account, status: last_media_attached_status)
-    _last_status = Fabricate(:status, account: account)
-    _media_attachment = Fabricate(:media_attachment, account: account, status: media_attached_status)
-
     sign_in user, scope: :user
   end
 
   describe 'GET #index' do
-    context 'with a valid account' do
-      before do
-        get :index, params: { account_id: account.id }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
+    it 'returns http success with a valid account' do
+      get :index, params: { account_id: account.id }
+      expect(response).to have_http_status(200)
     end
 
-    context 'when filtering by media' do
-      before do
-        get :index, params: { account_id: account.id, media: '1' }
-      end
-
-      it 'returns http success' do
-        expect(response).to have_http_status(200)
-      end
+    it 'returns http success when filtering by media' do
+      get :index, params: { account_id: account.id, media: '1' }
+      expect(response).to have_http_status(200)
     end
   end
 
   describe 'GET #show' do
-    before do
-      get :show, params: { account_id: account.id, id: status.id }
-    end
-
     it 'returns http success' do
+      get :show, params: { account_id: account.id, id: status.id }
       expect(response).to have_http_status(200)
     end
   end
@@ -56,10 +45,9 @@ describe Admin::StatusesController do
     subject { post :batch, params: { :account_id => account.id, action => '', :admin_status_batch_action => { status_ids: status_ids } } }
 
     let(:status_ids) { [media_attached_status.id] }
+    let(:action) { 'report' }
 
-    shared_examples 'when action is report' do
-      let(:action) { 'report' }
-
+    shared_examples 'creates a report and redirects' do
       it 'creates a report and redirects to report page' do
         subject
 
@@ -73,14 +61,14 @@ describe Admin::StatusesController do
       end
     end
 
-    it_behaves_like 'when action is report'
+    it_behaves_like 'creates a report and redirects'
 
     context 'when the moderator is blocked by the author' do
       before do
         account.block!(user.account)
       end
 
-      it_behaves_like 'when action is report'
+      it_behaves_like 'creates a report and redirects'
     end
   end
 end
