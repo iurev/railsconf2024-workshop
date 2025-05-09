@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Favourites' do
-  let(:user)    { Fabricate(:user) }
-  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
+  let_it_be(:user)    { Fabricate(:user) }
   let(:scopes)  { 'read:favourites' }
+  let(:token)   { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: scopes) }
   let(:headers) { { Authorization: "Bearer #{token.token}" } }
 
   describe 'GET /api/v1/favourites' do
@@ -14,7 +14,10 @@ RSpec.describe 'Favourites' do
     end
 
     let(:params)      { {} }
-    let!(:favourites) { Fabricate.times(2, :favourite, account: user.account) }
+    
+    let_it_be(:favourites) do
+      Fabricate.times(2, :favourite, account: user.account)
+    end
 
     let(:expected_response) do
       favourites.map do |favourite|
