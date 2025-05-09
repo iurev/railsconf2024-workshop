@@ -3,39 +3,36 @@
 require 'rails_helper'
 
 RSpec.describe StatusPin do
+  let_it_be(:account) { Fabricate(:account) }
+
   describe 'validations' do
     it 'allows pins of own statuses' do
-      account = Fabricate(:account)
-      status  = Fabricate(:status, account: account)
+      status = Fabricate(:status, account: account)
 
       expect(described_class.new(account: account, status: status).save).to be true
     end
 
     it 'does not allow pins of statuses by someone else' do
-      account = Fabricate(:account)
-      status  = Fabricate(:status)
+      status = Fabricate(:status)
 
       expect(described_class.new(account: account, status: status).save).to be false
     end
 
     it 'does not allow pins of reblogs' do
-      account = Fabricate(:account)
-      status  = Fabricate(:status, account: account)
-      reblog  = Fabricate(:status, reblog: status)
+      status = Fabricate(:status, account: account)
+      reblog = Fabricate(:status, reblog: status)
 
       expect(described_class.new(account: account, status: reblog).save).to be false
     end
 
     it 'does allow pins of direct statuses' do
-      account = Fabricate(:account)
-      status  = Fabricate(:status, account: account, visibility: :private)
+      status = Fabricate(:status, account: account, visibility: :private)
 
       expect(described_class.new(account: account, status: status).save).to be true
     end
 
     it 'does not allow pins of direct statuses' do
-      account = Fabricate(:account)
-      status  = Fabricate(:status, account: account, visibility: :direct)
+      status = Fabricate(:status, account: account, visibility: :direct)
 
       expect(described_class.new(account: account, status: status).save).to be false
     end
@@ -44,8 +41,6 @@ RSpec.describe StatusPin do
       before { stub_const('StatusPinValidator::PIN_LIMIT', 2) }
 
       it 'does not allow pins above the max' do
-        account = Fabricate(:account)
-
         Fabricate.times(StatusPinValidator::PIN_LIMIT, :status_pin, account: account)
 
         pin = described_class.new(account: account, status: Fabricate(:status, account: account))
@@ -57,11 +52,11 @@ RSpec.describe StatusPin do
       end
 
       it 'allows pins above the max for remote accounts' do
-        account = Fabricate(:account, domain: 'remote.test', username: 'bob', url: 'https://remote.test/')
+        remote_account = Fabricate(:account, domain: 'remote.test', username: 'bob', url: 'https://remote.test/')
 
-        Fabricate.times(StatusPinValidator::PIN_LIMIT, :status_pin, account: account)
+        Fabricate.times(StatusPinValidator::PIN_LIMIT, :status_pin, account: remote_account)
 
-        pin = described_class.new(account: account, status: Fabricate(:status, account: account))
+        pin = described_class.new(account: remote_account, status: Fabricate(:status, account: remote_account))
         expect(pin.save)
           .to be(true)
 
