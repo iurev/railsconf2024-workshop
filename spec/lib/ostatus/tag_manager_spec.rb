@@ -3,6 +3,9 @@
 require 'rails_helper'
 
 describe OStatus::TagManager do
+  let_it_be(:account) { Fabricate(:account, username: 'alice') }
+  let_it_be(:status) { Fabricate(:status, created_at: '2000-01-01T00:00:00Z', account: account) }
+
   describe '#unique_tag' do
     it 'returns a unique tag' do
       expect(described_class.instance.unique_tag(Time.utc(2000), 12, 'Status')).to eq 'tag:cb6e6126.ngrok.io,2000-01-01:objectId=12:objectType=Status'
@@ -41,7 +44,7 @@ describe OStatus::TagManager do
     subject { described_class.instance.uri_for(target) }
 
     context 'with comment object' do
-      let(:target) { Fabricate(:status, created_at: '2000-01-01T00:00:00Z', reply: true) }
+      let(:target) { status.tap { |s| s.update(reply: true) } }
 
       it 'returns the unique tag for status' do
         expect(target.object_type).to eq :comment
@@ -50,7 +53,7 @@ describe OStatus::TagManager do
     end
 
     context 'with note object' do
-      let(:target) { Fabricate(:status, created_at: '2000-01-01T00:00:00Z', reply: false, thread: nil) }
+      let(:target) { status.tap { |s| s.update(reply: false, thread: nil) } }
 
       it 'returns the unique tag for status' do
         expect(target.object_type).to eq :note
@@ -59,7 +62,7 @@ describe OStatus::TagManager do
     end
 
     context 'when person object' do
-      let(:target) { Fabricate(:account, username: 'alice') }
+      let(:target) { account }
 
       it 'returns the URL for account' do
         expect(target.object_type).to eq :person
