@@ -6,12 +6,12 @@ describe Settings::Exports::ListsController do
   render_views
 
   describe 'GET #index' do
-    it 'returns a csv of the domains' do
-      account = Fabricate(:account)
-      user = Fabricate(:user, account: account)
-      list = Fabricate(:list, account: account, title: 'The List')
-      Fabricate(:list_account, list: list, account: account)
+    let_it_be(:account) { Fabricate(:account) }
+    let_it_be(:user) { Fabricate(:user, account: account) }
+    let_it_be(:list) { Fabricate(:list, account: account, title: 'The List') }
+    let_it_be(:list_account) { Fabricate(:list_account, list: list, account: account) }
 
+    it 'returns a csv of the domains' do
       sign_in user, scope: :user
       get :index, format: :csv
 
