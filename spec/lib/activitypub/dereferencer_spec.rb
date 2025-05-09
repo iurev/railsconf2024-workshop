@@ -3,17 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe ActivityPub::Dereferencer do
+  let_it_be(:object) { { '@context': 'https://www.w3.org/ns/activitystreams', id: 'https://example.com/foo', type: 'Note', content: 'Hoge' } }
+  let_it_be(:signature_actor) { Fabricate(:account) }
+  let(:permitted_origin) { 'https://example.com' }
+  let(:uri) { nil }
+
+  before do
+    stub_request(:get, 'https://example.com/foo').to_return(body: Oj.dump(object), headers: { 'Content-Type' => 'application/activity+json' })
+  end
+
   describe '#object' do
     subject { described_class.new(uri, permitted_origin: permitted_origin, signature_actor: signature_actor).object }
-
-    let(:object) { { '@context': 'https://www.w3.org/ns/activitystreams', id: 'https://example.com/foo', type: 'Note', content: 'Hoge' } }
-    let(:permitted_origin) { 'https://example.com' }
-    let(:signature_actor) { nil }
-    let(:uri) { nil }
-
-    before do
-      stub_request(:get, 'https://example.com/foo').to_return(body: Oj.dump(object), headers: { 'Content-Type' => 'application/activity+json' })
-    end
 
     context 'with a URI' do
       let(:uri) { 'https://example.com/foo' }
@@ -23,8 +23,6 @@ RSpec.describe ActivityPub::Dereferencer do
       end
 
       context 'with signature account' do
-        let(:signature_actor) { Fabricate(:account) }
-
         it 'makes signed request' do
           subject
           expect(a_request(:get, 'https://example.com/foo').with { |req| req.headers['Signature'].present? }).to have_been_made
@@ -54,8 +52,6 @@ RSpec.describe ActivityPub::Dereferencer do
       end
 
       context 'with signature account' do
-        let(:signature_actor) { Fabricate(:account) }
-
         it 'makes signed request' do
           subject
           expect(a_request(:get, 'https://example.com/foo').with { |req| req.headers['Signature'].present? && req.headers['Authorization'] == 'Bearer hoge' }).to have_been_made
